@@ -1671,6 +1671,12 @@
                   this.formData?.guardian_nationality === "NP" ? null : "FORCT",
                 guardian_dedup_id_number: "",
               });
+              // this.convertToArray(
+              //   value,
+              //   "id_type_id",
+              //   "guardian_id_type_details",
+              //   ["guardian_dedup_identification", "id_type_id"]
+              // );
             },
           },
         },
@@ -1703,6 +1709,12 @@
                 guardian_place_of_issue: null,
                 guardian_dedup_id_number: "",
               });
+              // this.convertToArray(
+              //   value,
+              //   "issuing_authority",
+              //   "guardian_id_type_details",
+              //   ["guardian_issuing_authority", "issuing_authority"]
+              // );
             },
           },
         },
@@ -1710,12 +1722,12 @@
         guardian_dedup_id_number: {
           "ui:options": {
             onChange: (value) => {
-              this.convertToArray(
-                value,
-                "identification_number",
-                "guardian_id_type_details",
-                ["guardian_dedup_identification", "id_type_id"]
-              );
+              // this.convertToArray(
+              //   value,
+              //   "identification_number",
+              //   "guardian_id_type_details",
+              //   ["guardian_dedup_identification", "id_type_id"]
+              // );
             },
           },
         },
@@ -2131,21 +2143,18 @@
             id_type_id: {
               "ui:widget": "CascadeDropdown",
               "ui:options": {
-                setDisabled: (formData, index) => {
-                  return index !== 0 ? false : true;
-                },
                 getOptions: (formData, index) => {
                   const newSelectedData =
                     formData?.guardian_id_type_details?.map((item, idx) =>
                       idx !== index ? item?.id_type_id : null
                     );
                   const filterOption =
-                    this.formData?.is_nrn === "Yes"
+                    this.formData?.guardian_is_nrn === "Yes"
                       ? this.functionGroup?.getRequiredDocuments(
                           this.optionsData["multi_validation_mapping"],
                           { non_resident_nepali: "default" }
                         )
-                      : this.formData?.is_refugee === "Yes"
+                      : this.formData?.guardian_is_refugee === "Yes"
                       ? this.functionGroup?.getRequiredDocuments(
                           this.optionsData["multi_validation_mapping"],
                           { non_nepali: "default" }
@@ -2154,16 +2163,16 @@
                           this.optionsData["multi_validation_mapping"],
                           {
                             nationality:
-                              formData?.nationality ||
-                              this.formData?.nationality,
+                              formData?.guardian_nationality ||
+                              this.formData?.guardian_nationality,
                             account_type:
-                              formData?.account_info ||
-                              this.formData?.account_info,
-                            ...((formData?.nationality ||
-                              this.formData?.nationality) === "NP" && {
+                              formData?.guardian_account_info ||
+                              this.formData?.guardian_account_info,
+                            ...((formData?.guardian_nationality ||
+                              this.formData?.guardian_nationality) === "NP" && {
                               current_country:
-                                formData?.current_country ||
-                                this.formData?.current_country,
+                                formData?.guardian_current_country ||
+                                this.formData?.guardian_urrent_country,
                             }),
                           }
                         );
@@ -2188,7 +2197,7 @@
                       issuing_authority:
                         defaultSelectedValue(value)?.[0]?.value,
                     },
-                    "id_type_details",
+                    "guardian_id_type_details",
                     index
                   );
                 },
@@ -2200,10 +2209,10 @@
                 setDisabled: (formData, index) => {
                   return index === 0
                     ? true
-                    : (formData?.nationality === "IN" &&
+                    : (formData?.guardian_nationality === "IN" &&
                         formData?.guardian_id_type_details?.[index]
                           ?.id_type_id === "DL") ||
-                      (formData?.nationality !== "IN" &&
+                      (formData?.guardian_nationality !== "IN" &&
                         formData?.guardian_id_type_details?.[index]
                           ?.id_type_id === "DL")
                     ? true
@@ -2228,23 +2237,23 @@
 
             identification_number: {
               "ui:options": {
-                setDisabled: (formData, index) => {
-                  return index !== 0 ? false : true;
-                },
                 maxLength: 30,
               },
             },
 
             issue_country: {
+              "ui:widget": "CascadeDropdown",
               "ui:options": {
-              
+                getOptions: (formData, index) => {
+                  return this.filterOptions("countries");
+                },
                 onChange: (value, index) => {
                   this.dropdownReset(
                     {
                       issue_country: value,
                       issued_district: value === "NP" ? null : "FORCT",
                     },
-                    "id_type_details",
+                    "guardian_id_type_details",
                     index
                   );
                 },
@@ -2254,9 +2263,6 @@
             issued_district: {
               "ui:widget": "CascadeDropdown",
               "ui:options": {
-                setDisabled: (formData, index) => {
-                  return index !== 0 ? false : true;
-                },
                 getOptions: (formData, index) => {
                   return this.filterOptions("districts");
                 },
@@ -2273,28 +2279,21 @@
                 validAge: 0,
                 disableFutureDates: true,
                 minimumDate: (formData) => {
-                  const minDateValue = formData?.guardian_id_type_details?.map(
-                    (item) =>
-                      this.moment(formData?.date_of_birth_ad)
-                        .add(16, "years")
-                        .format("YYYY-MM-DD")
-                  );
-
-                  return minDateValue && minDateValue[0];
+                  const minDateValue = this.moment(
+                    formData?.guardian_date_of_birth_ad
+                  )
+                    .add(16, "years")
+                    .format("YYYY-MM-DD");
+                  return minDateValue && minDateValue;
                 },
 
                 onDateChange: (selectedDate, index) => {
                   this.convertDate(
                     selectedDate,
-
                     setFormData,
-
                     true,
-
                     "id_issued_date_ad",
-
-                    "id_type_details",
-
+                    "guardian_id_type_details",
                     index ? index : 0
                   );
                 },
@@ -2306,21 +2305,16 @@
               "ui:help": "Date Format: YYYY-MM-DD",
               "ui:options": {
                 name: "id_issued_date_bs",
-                enforceAgeRestriction: true,
+                enforceAgeRestriction: false,
                 validAge: 0,
                 disableFutureDates: true,
                 minimumDate: (formData) => {
-                  const minDateValue = formData?.guardian_id_type_details?.map(
-                    (item) =>
-                      formData?.date_of_birth_ad &&
-                      this.NepaliDate.parseEnglishDate(
-                        this.moment(formData?.date_of_birth_ad)
-                          .add(16, "years")
-                          .format("YYYY-MM-DD"),
-                        "YYYY-MM-DD"
-                      ).format("YYYY-MM-DD")
-                  );
-                  return minDateValue && minDateValue[0];
+                  const minDateValue = this.moment(
+                    formData?.guardian_date_of_birth_bs
+                  )
+                    .add(16, "years")
+                    .format("YYYY-MM-DD");
+                  return minDateValue && minDateValue;
                 },
 
                 onDateChange: (selectedDate, index) => {
@@ -2329,7 +2323,7 @@
                     setFormData,
                     false,
                     "id_issued_date_bs",
-                    "id_type_details",
+                    "guardian_id_type_details",
                     index ? index : 0
                   );
                 },
@@ -2352,7 +2346,7 @@
                     setFormData,
                     true,
                     "id_expiry_date_ad",
-                    "id_type_details",
+                    "guardian_id_type_details",
                     index ? index : 0
                   );
                 },
@@ -2373,7 +2367,7 @@
                     setFormData,
                     false,
                     "id_expiry_date_bs",
-                    "id_type_details",
+                    "guardian_id_type_details",
                     index ? index : 0
                   );
                 },

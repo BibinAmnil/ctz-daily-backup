@@ -65,9 +65,9 @@
       "type": "string",
       "title": "First Name",
       "group": "Personal Information",
-      "pattern": "^[a-zA-Z\\s.()]*$",
+      "pattern": "^[a-zA-Z.()]*$",
       "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+        "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
       },
       "readOnly": true
     },

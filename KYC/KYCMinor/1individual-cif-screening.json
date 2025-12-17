@@ -20,6 +20,19 @@
   ],
 
   "properties": {
+    "has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "CIF Enquiry",
+      "hideTitle": true,
+      "default": true,
+      "readOnly": true,
+      "width": 4
+    },
+    "cif_data": {
+      "type": "string",
+      "group": "CIF Enquiry"
+    },
     "account_info": {
       "type": "string",
       "title": "Account Category",
@@ -32,9 +45,9 @@
       "type": "string",
       "title": "First Name",
       "group": "Customer Information",
-      "pattern": "^[a-zA-Z\\s.()]*$",
+      "pattern": "^[a-zA-Z.()]*$",
       "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+        "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
       }
     },
     "middle_name": {
@@ -168,6 +181,32 @@
   },
 
   "dependencies": {
+    "has_cif": {
+      "if": {
+        "properties": {
+          "has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "CIF Enquiry",
+            "hideTitle": true
+          },
+          "cif_enquiry": {
+            "type": "string",
+            "title": "Proceed",
+            "group": "CIF Enquiry",
+            "hideTitle": true
+          }
+        },
+        "required": ["cif_number"]
+      }
+    },
     "is_nrn": {
       "if": {
         "properties": {

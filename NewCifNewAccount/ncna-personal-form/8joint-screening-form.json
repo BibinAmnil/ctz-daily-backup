@@ -60,7 +60,6 @@
       "type": "string",
       "title": "First Name",
       "group": "Personal Information",
-
       "readOnly": true
     },
     "middle_name": {

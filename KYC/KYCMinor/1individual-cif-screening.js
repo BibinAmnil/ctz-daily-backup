@@ -572,6 +572,71 @@
       });
     }
 
+    async fetchIndividualInfoCIFDetail(cifId) {
+      this.addLoader("cif_enquiry", true);
+
+      try {
+        const response = await this.axios.post(
+          `${this.mainRouteURL}/external-api/cif-enquiry`,
+          {
+            cif_number: cifId ?? this.formData.cif_number,
+            form_title: "personal_info",
+            id: this.case_id,
+            is_minor: true,
+          }
+        );
+        const resp = response?.data?.data;
+
+        this.setFormData((prev) => ({
+          ...resp,
+          account_info: prev?.account_info,
+          has_cif: prev?.has_cif,
+          cif_number: prev?.cif_number,
+          ...(resp?.national_id_number && {
+            national_id_number: this.functionGroup.nidFormat(
+              resp?.national_id_number
+            ),
+          }),
+          date_of_birth_bs: resp?.date_of_birth_ad
+            ? this.adToBs(resp?.date_of_birth_ad)
+            : "",
+          cif_data: JSON.stringify(resp),
+        }));
+
+        return;
+      } catch (error) {
+        this.setModalOpen({
+          open: true,
+          message: error
+            ? `${error.response?.data?.message || error?.response?.statusText}`
+            : `${error || "Unknown Error"}`,
+          subTitle: Array.isArray(error?.response?.data?.errors)
+            ? error?.response?.data?.errors
+                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
+                .join("\n")
+            : "",
+          status: "error",
+          close: "Close",
+          showButton:
+            error.response?.data?.message
+              .toLowerCase()
+              ?.includes("incomplete") && true,
+          buttonName:
+            error.response?.data?.message
+              .toLowerCase()
+              ?.includes("incomplete") && "Redirect to BPM",
+          buttonUrl:
+            error.response?.data?.message
+              .toLowerCase()
+              ?.includes("incomplete") && "",
+        });
+
+        return {};
+      } finally {
+        this.addLoader("cif_enquiry", false);
+      }
+    }
+
     async formDataCleaner(fields, formData) {
       if (typeof formData !== "object" || formData === null) return {};
 
@@ -788,6 +853,10 @@
         "ui:ObjectFieldTemplate": ObjectFieldTemplate,
 
         "ui:order": [
+          "has_cif",
+          "cif_number",
+          "cif_enquiry",
+
           "account_info",
 
           "first_name",
@@ -810,11 +879,42 @@
           "dedup_check",
           "personal_screening_data",
           "screening_ref_code",
+          "cif_data",
         ],
         connectedPairs: [
           ["last_name", "last_name_not_available"],
           ["email", "email_not_available"],
         ],
+
+        has_cif: {
+          "ui:widget": "CustomCheckBoxWidget",
+          "ui:label": false,
+          "ui:options": {
+            onChange: (value) =>
+              !value &&
+              setFormData((prev) => ({
+                account_info: prev?.account_info,
+              })),
+          },
+        },
+
+        cif_enquiry: {
+          "ui:widget": "ButtonField",
+          "ui:label": false,
+          "ui:classNames": "d-flex h-100 mt-5 align-items-center",
+          "ui:options": {
+            disableButton: (formData) => !formData?.cif_number?.trim(),
+            onClick: (formData) => {
+              this.fetchIndividualInfoCIFDetail(
+                formData?.cif_number || this.formData?.cif_number
+              );
+            },
+          },
+        },
+
+        cif_data: {
+          "ui:widget": "hidden",
+        },
 
         account_info: {
           "ui:widget": "CustomRadioWidget",

@@ -568,7 +568,7 @@
 
     async fetchIndividualInfoCIFDetail(cifId) {
       this.addLoader("cif_enquiry", true);
-      console.log("CIF", cifId, this.formData.cif_number);
+
       try {
         const response = await this.axios.post(
           `${this.mainRouteURL}/external-api/cif-enquiry`,
@@ -629,7 +629,6 @@
         this.addLoader("cif_enquiry", false);
       }
     }
-
     async formDataCleaner(fields, formData) {
       if (typeof formData !== "object" || formData === null) return {};
 
