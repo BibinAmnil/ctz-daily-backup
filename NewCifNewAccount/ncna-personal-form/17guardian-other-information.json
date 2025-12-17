@@ -1,0 +1,397 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "hasStep": true,
+  "form_title": "guardian_info",
+  "isDisabled": false,
+  "submissionHidden": false,
+  "required": [
+    "guardian_occupation_type",
+    "guardian_source_of_income",
+    "guardian_declared_anticipated_annual_transaction",
+    "guardian_expected_anticipated_annual_transaction",
+    "guardian_number_of_transaction",
+    "guardian_yearly_income",
+    "guardian_transaction_justification",
+    "guardian_transaction_fund_details",
+
+    "guardian_pep",
+    "guardian_family_pep_declaration",
+    "guardian_adverse_media",
+    "guardian_loan_status",
+    "guardian_is_blacklisted",
+    "guardian_customer_introduce_by",
+    "guardian_met_in_person"
+  ],
+
+  "properties": {
+    "account_info": {
+      "type": "string",
+      "width": "full",
+      "group": "Guardian Account Information",
+      "hideTitle": true
+    },
+
+    "is_minor_account": {
+      "type": "boolean",
+      "width": "full",
+      "group": "Guardian Account Information",
+      "default": false,
+      "hideTitle": true
+    },
+
+    "guardian_occupation_type": {
+      "type": "string",
+      "title": "Occupation Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "guardian_source_of_income": {
+      "type": "string",
+      "title": "Source of Income",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "guardian_declared_anticipated_annual_transaction": {
+      "type": "string",
+      "title": "Estimated Annual Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+    "guardian_expected_anticipated_annual_transaction": {
+      "type": "string",
+      "title": "Estimated Annual Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+    "guardian_number_of_transaction": {
+      "type": "string",
+      "title": "Number of Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      }
+    },
+    "guardian_yearly_income": {
+      "type": "string",
+      "title": "Yearly Income (Gross Income)",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+    "guardian_transaction_justification": {
+      "type": "string",
+      "title": "Is transaction amount justified with customer profile?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "guardian_transaction_fund_details": {
+      "type": "string",
+      "title": "Is the source of funds clear and identifiable ?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "guardian_personal_info_screening": {
+      "type": "string",
+      "width": 3,
+      "title": "Screening",
+      "group": ""
+    },
+
+    "guardian_screening_ref_code": {
+      "type": "string",
+      "width": "full",
+      "title": "Screening",
+      "group": ""
+    },
+
+    "guardian_personal_screening_data": {
+      "type": "string",
+      "width": "full",
+      "group": "",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "matchedInfo", "label": "Name" },
+        { "key": "rank", "label": "Matching Percentage" }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+
+    "guardian_is_block_list": {
+      "type": "boolean",
+      "default": false
+    },
+    "guardian_is_existing_cif": {
+      "type": "boolean",
+      "default": false
+    },
+
+    "guardian_scheme_check": {
+      "type": "boolean",
+      "default": false
+    },
+
+    "guardian_is_cib_list": {
+      "type": "boolean",
+      "default": false
+    },
+
+    "guardian_is_sanction": {
+      "type": "boolean",
+      "default": false
+    },
+    "guardian_pep": {
+      "type": "string",
+      "title": "Politically Exposed Person (PEP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "guardian_family_pep_declaration": {
+      "type": "string",
+      "title": "Customer declares family member as PEP or as associate PEP ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "width": 10
+    },
+    "guardian_adverse_media": {
+      "type": "string",
+      "title": "Adverse Media",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "guardian_loan_status": {
+      "type": "string",
+      "title": "Has the customer taken any loan with us in the past ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "guardian_is_blacklisted": {
+      "type": "string",
+      "title": "Has the customer being blacklisted by us ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "guardian_customer_introduce_by": {
+      "type": "string",
+      "title": "Introducer Name",
+      "group": "statusOfClient",
+      "enum": [
+        "Bank Staff",
+        "Other Account Holder",
+        "Walk-in Customer",
+        "Local Government Bodies"
+      ],
+      "width": 8
+    },
+
+    "guardian_met_in_person": {
+      "type": "string",
+      "title": "Has the customer been met in-person (face-to-face) ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "guardian_calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
+    },
+    "guardian_risk_level": {
+      "type": "string",
+      "group": "Risk",
+      "title": "Risk Level",
+      "enum": ["Low Risk", "Medium Risk", "High Risk"],
+      "readOnly": true
+    },
+    "guardian_risk_score": {
+      "type": "number",
+      "title": "Risk Score",
+      "group": "Risk",
+      "readOnly": true
+    }
+  },
+
+  "dependencies": {
+    "guardian_customer_introduce_by": {
+      "oneOf": [
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Bank Staff"]
+            },
+            "guardian_employee_id": {
+              "type": "string",
+              "title": "Bank Staff CIF Number",
+              "group": "statusOfClient",
+              "width": 8
+            }
+          },
+          "required": ["guardian_employee_id"]
+        },
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Other Account Holder"]
+            },
+            "guardian_introducer_account_number": {
+              "type": "string",
+              "title": "Introducer Account Number",
+              "group": "statusOfClient",
+              "pattern": "^[0-9]{14}$",
+              "message": "Must be of 14 Digits",
+              "width": 8,
+              "errorMessage": {
+                "pattern": "Must be of 14 Digits"
+              }
+            }
+          },
+          "required": ["guardian_introducer_account_number"]
+        },
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Walk-in Customer", "Local Government Bodies"]
+            }
+          },
+          "required": []
+        }
+      ]
+    },
+
+    "guardian_occupation_type": {
+      "if": {
+        "properties": {
+          "guardian_occupation_type": {
+            "enum": ["BUSIN", "EMPLO", "SELFE"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_occupation_detail": {
+            "type": "array",
+            "title": "Occupation",
+            "group": "Occupation / Profession / Business Details",
+            "hideTitle": true,
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "guardian_name_of_organization": {
+                  "type": "string",
+                  "title": "Employer Name"
+                },
+                "guardian_organization_address": {
+                  "type": "string",
+                  "title": "Address"
+                },
+                "guardian_organization_contact_number": {
+                  "type": "number",
+                  "title": "Contact No.",
+                  "pattern": "^(\\d{7,12})?$",
+                  "errorMessage": {
+                    "pattern": "Mobile number must be 7 to 12 digits."
+                  }
+                },
+                "guardian_designation": {
+                  "type": "string",
+                  "title": "Designation"
+                },
+                "guardian_business_type": {
+                  "type": "string",
+                  "title": "Business Type"
+                }
+              },
+              "required": [
+                "guardian_name_of_organization",
+                "guardian_organization_address",
+                "guardian_organization_contact_number",
+                "guardian_designation",
+                "guardian_business_type"
+              ]
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+
+    "guardian_pep": {
+      "if": {
+        "properties": {
+          "guardian_pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["guardian_pep_category"]
+      }
+    },
+
+    "guardian_adverse_media": {
+      "if": {
+        "properties": {
+          "guardian_adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["guardian_adverse_category"]
+      }
+    }
+  }
+}

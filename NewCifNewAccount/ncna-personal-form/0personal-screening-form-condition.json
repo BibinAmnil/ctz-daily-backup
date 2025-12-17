@@ -1,0 +1,20 @@
+{
+  "accountInfo": [
+    {
+      "account_type": "JOINT",
+      "step_slug": "joint-screening-form"
+    },
+    {
+      "account_type": "MINOR",
+      "step_slug": "minor-account"
+    },
+    {
+      "account_type": "INDIVIDUAL",
+      "step_slug": "personal-ncna-screening-form"
+    },
+    {
+      "account_type": "CORPORATE",
+      "step_slug": "corporate-ncna-corporate-screening"
+    }
+  ]
+}

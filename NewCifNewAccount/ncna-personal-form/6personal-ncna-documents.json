@@ -1,0 +1,10 @@
+{
+  "hasStep": true,
+  "form_title": "documents",
+  "type": "object",
+  "title": "Documents",
+  "submissionHidden": false,
+  "showLogTable": false,
+  "properties": {},
+  "required": []
+}

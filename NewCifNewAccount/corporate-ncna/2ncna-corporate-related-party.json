@@ -1,0 +1,3259 @@
+{
+  "type": "object",
+  "form_title": "corporate_related_party",
+  "hasStep": true,
+  "isDisabled": false,
+  "properties": {
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "hideTitle": true,
+      "width": "full",
+      "readOnly": true
+    },
+    "legal_entity_type": {
+      "type": "string",
+      "title": "Legal Entity Type",
+      "group": "Account Information",
+      "hideTitle": true,
+      "readOnly": true
+    },
+    "related_party": {
+      "type": "array",
+      "minItems": 1,
+      "group": "Related Party",
+      "width": "full",
+      "items": {
+        "type": "object",
+        "required": ["related_party_designation"],
+        "properties": {
+          "related_party_designation": {
+            "type": "array",
+            "title": "Related Party Designation",
+            "group": "Related Party Designation",
+            "hideTitle": true,
+            "minItems": 1,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "required": ["designation", "customer_designation"],
+              "properties": {
+                "designation": {
+                  "type": "string",
+                  "title": "Related Party Type",
+                  "hideTitle": true,
+                  "group": "Related Party Designation"
+                },
+                "customer_designation": {
+                  "type": "string",
+                  "title": "Designation Type",
+                  "hideTitle": true,
+                  "group": "Related Party Designation"
+                }
+              },
+
+              "dependencies": {
+                "designation": {
+                  "if": {
+                    "properties": {
+                      "designation": {
+                        "enum": ["BENEF"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["beneficial_shares"],
+                    "properties": {
+                      "beneficial_shares": {
+                        "type": "integer",
+                        "title": "Beneficial Shares Percentage",
+                        "group": "Related Party Designation",
+                        "hideTitle": true,
+                        "default": 1
+                      }
+                    }
+                  },
+                  "else": {
+                    "required": [],
+                    "properties": {}
+                  }
+                },
+                "customer_designation": {
+                  "if": {
+                    "properties": {
+                      "customer_designation": {
+                        "enum": ["Individual", "Organization"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["shares"],
+                    "properties": {
+                      "shares": {
+                        "type": "integer",
+                        "title": "Shares Percentage",
+                        "group": "Related Party Designation",
+                        "hideTitle": true,
+                        "default": 1
+                      }
+                    },
+                    "dependencies": {
+                      "shares": {
+                        "if": {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "customer_designation": {
+                                  "const": "Organization"
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "shares": { "maximum": 14 }
+                              }
+                            }
+                          ]
+                        },
+                        "then": {
+                          "properties": {
+                            "organization_name": {
+                              "type": "string",
+                              "title": "Full Name",
+                              "group": "Related Party Designation",
+                              "hideTitle": true,
+                              "pattern": "^[a-zA-Z0-9\\s]+$",
+                              "errorMessage": {
+                                "pattern": "Only letters, numbers, and spaces are allowed"
+                              }
+                            }
+                          },
+                          "required": ["organization_name"]
+                        }
+                      }
+                    }
+                  },
+                  "else": {
+                    "required": [],
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "dependencies": {
+          "related_party_designation": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "related_party_designation": {
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "designation": {
+                            "not": {
+                              "const": "ShareHolder"
+                            }
+                          },
+                          "customer_designation": {
+                            "not": {
+                              "enum": ["Organization", "Individual"]
+                            }
+                          }
+                        },
+                        "required": ["designation", "customer_designation"]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "#/definitions/individual"
+                }
+              },
+
+              {
+                "if": {
+                  "properties": {
+                    "related_party_designation": {
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "designation": {
+                            "const": "ShareHolder"
+                          },
+                          "customer_designation": {
+                            "not": {
+                              "const": "Organization"
+                            }
+                          },
+                          "shares": {
+                            "minimum": 15
+                          }
+                        },
+                        "required": [
+                          "designation",
+                          "customer_designation",
+                          "shares"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "#/definitions/individual"
+                }
+              },
+
+              {
+                "if": {
+                  "properties": {
+                    "related_party_designation": {
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "designation": {
+                            "const": "ShareHolder"
+                          },
+                          "customer_designation": {
+                            "const": "Organization"
+                          },
+                          "shares": {
+                            "minimum": 15
+                          }
+                        },
+                        "required": [
+                          "designation",
+                          "customer_designation",
+                          "shares"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "#/definitions/organization"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "individual": {
+      "required": [
+        "pep",
+        "pep_declaration",
+        "family_pep_declaration",
+        "adverse_media",
+        "loan_status",
+        "is_blacklisted",
+        "crime_in_past",
+        "residential_permit",
+        "is_us_person",
+        "ac_with_other_bank",
+        "customer_introduce_by",
+        "met_in_person"
+      ],
+
+      "properties": {
+        "is_minor": {
+          "type": "boolean",
+          "title": "Is Minor?",
+          "group": "Information",
+          "width": 4,
+          "default": false
+        },
+
+        "pep": {
+          "type": "string",
+          "title": "Politically Exposed Person (PEP) ?",
+          "group": "AccountLevelInformation",
+          "enum": ["Yes", "No"]
+        },
+
+        "pep_declaration": {
+          "type": "string",
+          "title": "Customer self declares as a PEP is correct ?",
+          "group": "AccountLevelInformation",
+          "enum": ["Yes", "No"]
+        },
+        "family_pep_declaration": {
+          "type": "string",
+          "title": "Customer declares family member as PEP or as associate PEP ?",
+          "group": "AccountLevelInformation",
+          "enum": ["Yes", "No"]
+        },
+        "adverse_media": {
+          "type": "string",
+          "title": "Adverse Media",
+          "group": "AccountLevelInformation",
+          "enum": ["Yes", "No"]
+        },
+
+        "crime_in_past": {
+          "type": "string",
+          "title": "Declaration of Convicted for any crime in past",
+          "group": "AccountLevelInformation",
+          "enum": ["Yes", "No"]
+        },
+
+        "residential_permit": {
+          "type": "string",
+          "enum": ["Yes", "No"],
+          "title": "Do You Hold Residential Permit of foreign country?",
+          "group": "AccountLevelInformation"
+        },
+
+        "is_us_person": {
+          "type": "string",
+          "title": "FATCA Declaration",
+          "group": "AccountLevelInformation",
+          "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
+          "default": "None"
+        },
+
+        "ac_with_other_bank": {
+          "type": "string",
+          "enum": ["Yes", "No"],
+          "title": "Account with other bank or financial institutions (BFIs)",
+          "group": "AccountLevelInformation"
+        },
+
+        "loan_status": {
+          "type": "string",
+          "enum": ["Yes", "No"],
+          "title": "Has the customer taken any loan with us in the past ?",
+          "group": "statusOfClient"
+        },
+        "is_blacklisted": {
+          "type": "string",
+          "enum": ["Yes", "No"],
+          "title": "Has the customer being blacklisted by us ?",
+          "group": "statusOfClient"
+        },
+        "customer_introduce_by": {
+          "type": "string",
+          "title": "Introducer Name",
+          "group": "statusOfClient",
+          "enum": [
+            "Bank Staff",
+            "Other Account Holder",
+            "Walk-in Customer",
+            "Local Government Bodies"
+          ]
+        },
+
+        "met_in_person": {
+          "type": "string",
+          "enum": ["Yes", "No"],
+          "title": "Has the customer been met in-person (face-to-face) ?",
+          "group": "statusOfClient"
+        },
+        "calculate_risk": {
+          "type": "string",
+          "title": "Calculate Risk",
+          "group": "Risk"
+        },
+        "risk_level": {
+          "type": "string",
+          "group": "Risk",
+          "title": "Risk Level",
+          "enum": ["Low Risk", "Medium Risk", "High Risk"],
+          "readOnly": true
+        },
+        "risk_score": {
+          "type": "number",
+          "title": "Risk Score",
+          "group": "Risk",
+          "readOnly": true
+        }
+      },
+
+      "dependencies": {
+        "is_minor": {
+          "if": {
+            "properties": {
+              "is_minor": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "first_name",
+              "last_name",
+              "father_name",
+              "date_of_birth_ad",
+              "date_of_birth_bs",
+              "dedup_identification",
+              "dedup_id_number",
+
+              "nationality",
+
+              "occupation_type",
+              "source_of_income",
+              "current_country",
+              "current_spent_day",
+              "declared_anticipated_annual_transaction",
+              "expected_anticipated_annual_transaction",
+              "number_of_transaction",
+              "yearly_income",
+              "transaction_justification",
+              "transaction_fund_details"
+            ],
+
+            "properties": {
+              "cif_data": {
+                "type": "string"
+              },
+
+              "first_name": {
+                "type": "string",
+                "title": "First Name",
+                "group": "Preliminary Screening",
+
+                "pattern": "^[a-zA-Z\\s/]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "middle_name": {
+                "type": "string",
+                "title": "Middle Name",
+                "group": "Preliminary Screening",
+
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "last_name": {
+                "type": "string",
+                "title": "Last Name",
+                "group": "Preliminary Screening",
+                "connect": "last_name_not_available",
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+
+              "last_name_not_available": {
+                "type": "boolean",
+                "title": "Is last name not available ?",
+                "group": "Preliminary Screening"
+              },
+
+              "father_name": {
+                "type": "string",
+                "title": "Father Name",
+                "group": "Preliminary Screening",
+
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "dedup_identification": {
+                "type": "string",
+                "title": "Identification",
+                "group": "Preliminary Screening",
+                "default": "CTZN"
+              },
+              "dedup_id_number": {
+                "type": "string",
+                "title": "Identification Number",
+                "group": "Preliminary Screening"
+              },
+              "date_of_birth_ad": {
+                "type": "string",
+
+                "group": "Preliminary Screening",
+
+                "title": "Date of Birth (A.D.)"
+              },
+              "date_of_birth_bs": {
+                "type": "string",
+                "readOnly": true,
+                "group": "Preliminary Screening",
+                "title": "Date of Birth (B.S.)"
+              },
+
+              "has_cif": {
+                "type": "boolean",
+                "title": "Has CIF Number?",
+                "group": "Information",
+                "width": 4,
+                "readOnly": true,
+                "default": true
+              },
+              "nationality": {
+                "type": "string",
+                "title": "Nationality",
+                "group": "Account Information",
+                "default": "NP"
+              },
+
+              "occupation_type": {
+                "type": "string",
+                "title": "Occupation Type",
+                "group": "Occupation / Profession / Business Details"
+              },
+              "source_of_income": {
+                "type": "string",
+                "title": "Source of Income",
+                "group": "Occupation / Profession / Business Details"
+              },
+
+              "personal_info_screening": {
+                "type": "string",
+                "width": "full",
+                "title": "Screening",
+                "group": ""
+              },
+
+              "personal_screening_data": {
+                "type": "string",
+                "width": "full",
+                "group": "",
+                "additionalProperties": true,
+                "columns": [
+                  { "key": "name", "label": "Name" },
+                  { "key": "father_name", "label": "Father Name" },
+                  { "key": "dob", "label": "Date of Birth" },
+                  {
+                    "key": "citizenship_numbers",
+                    "label": "Citizenship Number"
+                  },
+                  { "key": "match_percentage", "label": "Matching Percentage" }
+                ],
+                "actions": [
+                  {
+                    "label": "View",
+                    "icon": "view",
+                    "tooltip": "View Detail",
+                    "actionKey": "view"
+                  }
+                ]
+              },
+
+              "current_country": {
+                "type": "string",
+                "title": "Current Country",
+                "group": "Current Address",
+                "default": "NP"
+              },
+              "current_spent_day": {
+                "type": "string",
+                "title": "Have you spent 182 days in this year in Nepal?",
+                "group": "Current Address",
+                "enum": ["Yes", "No"]
+              },
+              "declared_anticipated_annual_transaction": {
+                "type": "string",
+                "title": "Anticipated Annual Transaction",
+                "group": "Transaction Details",
+                "pattern": "^[0-9,]+$",
+                "errorMessage": {
+                  "pattern": "Only numbers are allowed"
+                }
+              },
+              "expected_anticipated_annual_transaction": {
+                "type": "string",
+                "title": "Estimated Annual Transaction",
+                "group": "Transaction Details",
+                "pattern": "^[0-9,]+$",
+                "errorMessage": {
+                  "pattern": "Only numbers are allowed"
+                }
+              },
+              "number_of_transaction": {
+                "type": "string",
+                "title": "Number of Transaction",
+                "group": "Transaction Details",
+                "pattern": "^[0-9]{1,3}$",
+                "errorMessage": {
+                  "pattern": "Only 3 numbers are allowed"
+                }
+              },
+              "yearly_income": {
+                "type": "string",
+                "title": "Yearly Income (Gross Income)",
+                "group": "Transaction Details",
+                "pattern": "^[0-9,]+$",
+                "errorMessage": {
+                  "pattern": "Only numbers are allowed"
+                }
+              },
+              "transaction_justification": {
+                "type": "string",
+                "title": "Is transaction amount justified with customer profile?",
+                "group": "Transaction Details",
+                "enum": ["Yes", "No"],
+                "width": 8
+              },
+              "transaction_fund_details": {
+                "type": "string",
+                "title": "Is the source of funds clear and identifiable ?",
+                "group": "Transaction Details",
+                "enum": ["Yes", "No"],
+                "width": 8
+              }
+            },
+
+            "dependencies": {
+              "nationality": {
+                "if": {
+                  "properties": {
+                    "nationality": {
+                      "enum": ["NP"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "permanent_country": {
+                      "type": "string",
+                      "title": "Permanent Country",
+                      "group": "Contact Detail",
+                      "default": "NP",
+                      "readOnly": true
+                    },
+                    "same_as_permanent": {
+                      "type": "boolean",
+                      "title": "Same As Permanent Address",
+                      "group": "Current Address",
+                      "width": "full",
+                      "default": false
+                    }
+                  },
+                  "required": ["permanent_country"],
+                  "dependencies": {
+                    "permanent_country": {
+                      "if": {
+                        "properties": {
+                          "permanent_country": {
+                            "enum": ["NP"]
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "permanent_province": {
+                            "type": "string",
+                            "title": "Permanent Province",
+                            "group": "Contact Detail"
+                          },
+                          "permanent_district": {
+                            "type": "string",
+                            "title": "Permanent District",
+                            "group": "Contact Detail"
+                          },
+                          "permanent_municipality": {
+                            "type": "string",
+                            "title": "Permanent Municipality",
+                            "group": "Contact Detail"
+                          }
+                        },
+                        "required": [
+                          "permanent_province",
+                          "permanent_district",
+                          "permanent_municipality"
+                        ]
+                      },
+                      "else": {
+                        "properties": {
+                          "permanent_outside_town": {
+                            "type": "string",
+                            "title": "Town",
+                            "group": "Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "permanent_outside_street_name": {
+                            "type": "string",
+                            "title": "Tole/Street",
+                            "group": "Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "permanent_postal_code": {
+                            "type": "string",
+                            "title": "Postal Code",
+                            "group": "Contact Detail",
+                            "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                            }
+                          }
+                        },
+                        "required": [
+                          "permanent_outside_town",
+                          "permanent_outside_street_name",
+                          "permanent_postal_code"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "permanent_country": {
+                      "type": "string",
+                      "title": "Permanent Country",
+                      "group": "Contact Detail"
+                    },
+                    "same_as_permanent": {
+                      "type": "boolean",
+                      "title": "Same As Permanent Address",
+                      "group": "Current Address",
+                      "width": "full"
+                    }
+                  },
+                  "dependencies": {
+                    "permanent_country": {
+                      "if": {
+                        "properties": {
+                          "permanent_country": {
+                            "enum": ["NP"]
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "permanent_province": {
+                            "type": "string",
+                            "title": "Permanent Province",
+                            "group": "Contact Detail"
+                          },
+                          "permanent_district": {
+                            "type": "string",
+                            "title": "Permanent District",
+                            "group": "Contact Detail"
+                          },
+                          "permanent_municipality": {
+                            "type": "string",
+                            "title": "Permanent Municipality",
+                            "group": "Contact Detail"
+                          }
+                        },
+                        "required": [
+                          "permanent_province",
+                          "permanent_district",
+                          "permanent_municipality"
+                        ]
+                      },
+                      "else": {
+                        "properties": {
+                          "permanent_outside_town": {
+                            "type": "string",
+                            "title": "Town",
+                            "group": "Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "permanent_outside_street_name": {
+                            "type": "string",
+                            "title": "Tole/Street",
+                            "group": "Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "permanent_postal_code": {
+                            "type": "string",
+                            "title": "Postal Code",
+                            "group": "Contact Detail",
+                            "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                            }
+                          }
+                        },
+                        "required": [
+                          "permanent_outside_town",
+                          "permanent_outside_street_name",
+                          "permanent_postal_code"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["permanent_country"]
+                }
+              },
+
+              "occupation_type": {
+                "if": {
+                  "properties": {
+                    "occupation_type": {
+                      "enum": [
+                        "4a3fa6bb-7580-4a7d-8479-0b44f31f58a6",
+                        "EMP",
+                        "cddfc23d-86b6-44cf-b640-25155cd3e52d",
+                        "BSM",
+                        "d3e087fa-5104-468b-80b7-5a6d6fe431d4"
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "occupation_detail": {
+                      "type": "array",
+                      "title": "Occupation",
+                      "group": "Occupation / Profession / Business Details",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name_of_organization": {
+                            "type": "string",
+                            "title": "Employer Name"
+                          },
+                          "organization_address": {
+                            "type": "string",
+                            "title": "Address"
+                          },
+                          "organization_contact_number": {
+                            "type": "number",
+                            "title": "Contact No.",
+                            "pattern": "^(\\d{7,12})?$",
+                            "errorMessage": {
+                              "pattern": "Mobile number must be 7 to 12 digits."
+                            }
+                          },
+                          "designation": {
+                            "type": "string",
+                            "title": "Designation"
+                          },
+                          "business_type": {
+                            "type": "string",
+                            "title": "Business Type"
+                          }
+                        },
+                        "required": [
+                          "name_of_organization",
+                          "organization_address",
+                          "organization_contact_number",
+                          "designation",
+                          "business_type"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {}
+                }
+              },
+              "pep": {
+                "if": {
+                  "properties": {
+                    "pep": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "pep_category": {
+                      "type": "string",
+                      "enum": [
+                        "Existing PEPs",
+                        "Former PEPs",
+                        "High-ranking officials from neighboring or nearby countries",
+                        "Other foreign PEPs",
+                        "International PEPs"
+                      ],
+                      "title": "Pep Category",
+                      "group": "AccountLevelInformation"
+                    }
+                  },
+                  "required": ["pep_category"]
+                }
+              },
+              "adverse_media": {
+                "if": {
+                  "properties": {
+                    "adverse_media": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "adverse_category": {
+                      "type": "string",
+                      "enum": [
+                        "Money Laundering",
+                        "Terrorist Financing",
+                        "Financial Fraud",
+                        "Organized Crime"
+                      ],
+                      "title": "Category of Adverse",
+                      "group": "AccountLevelInformation"
+                    }
+                  },
+                  "required": ["adverse_category"]
+                }
+              },
+              "customer_introduce_by": {
+                "oneOf": [
+                  {
+                    "properties": {
+                      "customer_introduce_by": {
+                        "enum": ["Bank Staff"]
+                      },
+                      "employee_id": {
+                        "type": "string",
+                        "title": "Bank Staff CIF Number",
+                        "group": "statusOfClient"
+                      }
+                    },
+                    "required": ["employee_id"]
+                  },
+                  {
+                    "properties": {
+                      "customer_introduce_by": {
+                        "enum": ["Other Account Holder"]
+                      },
+                      "introducer_account_number": {
+                        "type": "string",
+                        "title": "Introducer Account Number",
+                        "group": "statusOfClient",
+                        "pattern": "^[0-9]{14}$",
+                        "errorMessage": {
+                          "pattern": "Must be of 14 Digits"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "customer_introduce_by": {
+                        "enum": ["Walk-in Customer", "Local Government Bodies"]
+                      }
+                    }
+                  }
+                ]
+              },
+
+              "current_country": {
+                "oneOf": [
+                  {
+                    "properties": {
+                      "current_country": {
+                        "enum": ["NP"]
+                      },
+                      "current_province": {
+                        "type": "string",
+                        "title": "Current Province",
+                        "masterDataKey": "provinces",
+                        "group": "Current Address",
+                        "hideTitle": true
+                      },
+                      "current_district": {
+                        "type": "string",
+                        "title": "Current District",
+                        "group": "Current Address",
+                        "hideTitle": true,
+                        "masterDataKey": "districts"
+                      },
+                      "current_municipality": {
+                        "type": "string",
+                        "title": "Current Municipality",
+                        "group": "Current Address",
+                        "hideTitle": true,
+                        "masterDataKey": "local_bodies"
+                      }
+                    },
+                    "required": [
+                      "current_country",
+                      "current_province",
+                      "current_district",
+                      "current_municipality"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "current_country": {
+                        "not": {
+                          "enum": ["NP"]
+                        }
+                      },
+                      "current_outside_town": {
+                        "type": "string",
+                        "title": "Outside Town",
+                        "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                        "errorMessage": {
+                          "pattern": "Only alphanumeric characters and spaces are allowed."
+                        },
+                        "group": "Current Address",
+                        "hideTitle": true
+                      },
+                      "current_outside_street_name": {
+                        "type": "string",
+                        "title": "Outside Tole/Street",
+
+                        "group": "Current Address",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                        "errorMessage": {
+                          "pattern": "Only alphanumeric characters and spaces are allowed."
+                        }
+                      },
+                      "current_postal_code": {
+                        "type": "string",
+                        "title": "Postal Code",
+                        "group": "Current Address",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                        "errorMessage": {
+                          "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                        }
+                      }
+                    },
+                    "required": [
+                      "current_outside_town",
+                      "current_outside_street_name",
+                      "current_postal_code"
+                    ]
+                  }
+                ]
+              },
+
+              "last_name_not_available": {
+                "if": {
+                  "properties": {
+                    "last_name_not_available": {
+                      "const": true
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "last_name": {
+                      "readOnly": true
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "last_name": {
+                      "readOnly": false
+                    }
+                  }
+                }
+              },
+              "crime_in_past": {
+                "if": {
+                  "properties": {
+                    "crime_in_past": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "crime_description": {
+                      "type": "string",
+                      "title": "Crime Description",
+                      "group": "AccountLevelInformation"
+                    }
+                  }
+                }
+              },
+              "residential_permit": {
+                "if": {
+                  "properties": {
+                    "residential_permit": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "permit_description": {
+                      "type": "string",
+                      "title": "Permit Description",
+                      "group": "AccountLevelInformation"
+                    }
+                  }
+                }
+              },
+              "ac_with_other_bank": {
+                "if": {
+                  "properties": {
+                    "ac_with_other_bank": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "other_bank_acc": {
+                      "type": "string",
+                      "title": "Name of BFI",
+                      "group": "AccountLevelInformation"
+                    }
+                  }
+                }
+              },
+              "has_cif": {
+                "if": {
+                  "properties": {
+                    "has_cif": {
+                      "const": true
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "cif_number": {
+                      "type": "string",
+                      "title": "CIF Number",
+                      "group": "Information",
+                      "width": 4
+                    },
+                    "cif_enquiry": {
+                      "type": "string",
+                      "title": "Proceed",
+                      "group": "Information",
+                      "width": 4
+                    }
+                  },
+                  "required": ["cif_number"]
+                }
+              }
+            }
+          },
+          "else": {
+            "required": [
+              "first_name",
+              "last_name",
+              "father_name",
+              "date_of_birth_ad",
+              "date_of_birth_bs",
+              "dedup_identification",
+              "dedup_id_number",
+
+              "nationality",
+              "guardian_first_name",
+              "guardian_last_name",
+              "guardian_father_name",
+              "guardian_date_of_birth_ad",
+              "guardian_date_of_birth_bs",
+              "guardian_dedup_identification",
+              "guardian_dedup_id_number",
+
+              "guardian_nationality",
+              "guardian_occupation_type",
+              "guardian_source_of_income",
+              "guardian_declared_anticipated_annual_transaction",
+              "guardian_expected_anticipated_annual_transaction",
+              "guardian_number_of_transaction",
+              "guardian_yearly_income",
+              "guardian_transaction_justification",
+              "guardian_transaction_fund_details",
+              "guardian_related_party_family_account_holder",
+              "guardian_related_party_relation_with_account_holder",
+
+              "pep",
+              "pep_declaration",
+              "family_pep_declaration",
+              "adverse_media",
+              "guardian_crime_in_past",
+              "guardian_residential_permit",
+              "guardian_is_us_person",
+              "loan_status",
+              "is_blacklisted",
+              "customer_introduce_by",
+              "guardian_ac_with_other_bank",
+              "guardian_pep",
+              "guardian_family_pep_declaration",
+              "guardian_customer_introduce_by",
+              "guardian_met_in_person",
+              "guardian_adverse_media",
+              "guardian_loan_status",
+              "guardian_is_blacklisted",
+              "guardian_current_spent_day"
+            ],
+
+            "properties": {
+              "cif_data": {
+                "type": "string"
+              },
+
+              "nationality": {
+                "type": "string",
+                "title": "Nationality",
+                "group": "Account Information",
+                "default": "NP",
+                "readOnly": false
+              },
+              "first_name": {
+                "type": "string",
+                "title": "First Name",
+                "group": "Preliminary Screening",
+
+                "pattern": "^[a-zA-Z\\s/]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "middle_name": {
+                "type": "string",
+                "title": "Middle Name",
+                "group": "Preliminary Screening",
+
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "last_name": {
+                "type": "string",
+                "title": "Last Name",
+                "group": "Preliminary Screening",
+
+                "connect": "last_name_not_available",
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+
+              "last_name_not_available": {
+                "type": "boolean",
+                "title": "Is last name not available ?",
+                "group": "Preliminary Screening"
+              },
+
+              "father_name": {
+                "type": "string",
+                "title": "Father Name",
+                "group": "Preliminary Screening",
+
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "dedup_identification": {
+                "type": "string",
+                "title": "Identification",
+                "group": "Preliminary Screening",
+                "default": "BRTCT"
+              },
+              "dedup_id_number": {
+                "type": "string",
+                "title": "Identification Number",
+                "group": "Preliminary Screening"
+              },
+              "date_of_birth_ad": {
+                "type": "string",
+
+                "group": "Preliminary Screening",
+                "title": "Date of Birth (A.D.)"
+              },
+              "date_of_birth_bs": {
+                "type": "string",
+                "readOnly": true,
+                "group": "Preliminary Screening",
+                "title": "Date of Birth (B.S.)"
+              },
+
+              "has_cif": {
+                "type": "boolean",
+                "title": "Has CIF Number?",
+                "group": "Information",
+                "width": 4,
+                "readOnly": true,
+                "default": true
+              },
+
+              "personal_info_screening": {
+                "type": "string",
+                "width": "full",
+                "title": "Screening",
+                "group": ""
+              },
+
+              "personal_screening_data": {
+                "type": "string",
+                "width": "full",
+                "group": "",
+                "additionalProperties": true,
+                "columns": [
+                  { "key": "name", "label": "Name" },
+                  { "key": "father_name", "label": "Father Name" },
+                  { "key": "dob", "label": "Date of Birth" },
+                  {
+                    "key": "citizenship_numbers",
+                    "label": "Citizenship Number"
+                  },
+                  { "key": "match_percentage", "label": "Matching Percentage" }
+                ],
+                "actions": [
+                  {
+                    "label": "View",
+                    "icon": "view",
+                    "tooltip": "View Detail",
+                    "actionKey": "view"
+                  }
+                ]
+              },
+
+              "guardian_cif_data": {
+                "type": "string"
+              },
+
+              "guardian_related_party_family_account_holder": {
+                "type": "string",
+                "title": "Is s/he family member of account holder?",
+                "enum": ["Yes", "No"],
+                "group": "Guardian Relationship"
+              },
+              "guardian_related_party_relation_with_account_holder": {
+                "type": "string",
+                "title": "Relationship with the Account holder ?",
+                "group": "Guardian Relationship"
+              },
+
+              "guardian_first_name": {
+                "type": "string",
+                "title": "First Name",
+                "group": "Guardian Preliminary Screening",
+                "pattern": "^[a-zA-Z\\s]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "guardian_middle_name": {
+                "type": "string",
+                "title": "Middle Name",
+                "group": "Guardian Preliminary Screening",
+                "pattern": "^[a-zA-Z\\s]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "guardian_last_name": {
+                "type": "string",
+                "title": "Last Name",
+                "group": "Guardian Preliminary Screening",
+                "connect": "guardian_last_name_not_available",
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "guardian_last_name_not_available": {
+                "type": "boolean",
+                "title": "Is last name not available ?",
+                "group": "Guardian Preliminary Screening"
+              },
+              "guardian_father_name": {
+                "type": "string",
+                "title": "Father Name",
+                "group": "Guardian Preliminary Screening",
+                "pattern": "^[a-zA-Z\\s/.]*$",
+                "errorMessage": {
+                  "pattern": "Alphabets and spaces only"
+                }
+              },
+              "guardian_dedup_identification": {
+                "type": "string",
+                "title": "Identification",
+                "group": "Guardian Preliminary Screening",
+                "default": "CTZN"
+              },
+              "guardian_dedup_id_number": {
+                "type": "string",
+                "title": "Identification Number",
+                "group": "Guardian Preliminary Screening"
+              },
+              "guardian_date_of_birth_ad": {
+                "type": "string",
+                "group": "Guardian Preliminary Screening",
+                "title": "Date of Birth (A.D.)"
+              },
+              "guardian_date_of_birth_bs": {
+                "type": "string",
+                "group": "Guardian Preliminary Screening",
+                "readOnly": true,
+                "title": "Date of Birth (B.S.)"
+              },
+
+              "guardian_has_cif": {
+                "type": "boolean",
+                "title": "Has CIF Number?",
+                "group": "Guardian Information",
+                "width": "full",
+                "readOnly": true,
+                "default": true
+              },
+
+              "guardian_nationality": {
+                "type": "string",
+                "title": "Nationality",
+                "group": "Guardian Account Information",
+                "default": "NP",
+                "readOnly": false
+              },
+
+              "guardian_declared_anticipated_annual_transaction": {
+                "type": "string",
+                "title": "Estimated Annual Transaction",
+                "group": "Transaction Details",
+                "pattern": "^[0-9,]+$",
+                "errorMessage": {
+                  "pattern": "Only numbers are allowed"
+                }
+              },
+              "guardian_expected_anticipated_annual_transaction": {
+                "type": "string",
+                "title": "Estimated Annual Transaction",
+                "group": "Transaction Details",
+                "pattern": "^[0-9,]+$",
+                "errorMessage": {
+                  "pattern": "Only numbers are allowed"
+                }
+              },
+              "guardian_number_of_transaction": {
+                "type": "string",
+                "title": "Number of Transaction",
+                "group": "Transaction Details",
+                "pattern": "^[0-9]{1,3}$",
+                "errorMessage": {
+                  "pattern": "Only 3 numbers are allowed"
+                }
+              },
+              "guardian_yearly_income": {
+                "type": "string",
+                "title": "Yearly Income (Gross Income)",
+                "group": "Transaction Details",
+                "pattern": "^[0-9,]+$",
+                "errorMessage": {
+                  "pattern": "Only numbers are allowed"
+                }
+              },
+              "guardian_transaction_justification": {
+                "type": "string",
+                "title": "Is transaction amount justified with customer profile?",
+                "group": "Transaction Details",
+                "enum": ["Yes", "No"],
+                "width": 8
+              },
+              "guardian_transaction_fund_details": {
+                "type": "string",
+                "title": "Is the source of funds clear and identifiable ?",
+                "group": "Transaction Details",
+                "enum": ["Yes", "No"],
+                "width": 8
+              },
+              "guardian_occupation_type": {
+                "type": "string",
+                "title": "Occupation Type",
+                "group": "Guardian Occupation/Profession/Business Details"
+              },
+              "guardian_source_of_income": {
+                "type": "string",
+                "title": "Source of Income",
+                "group": "Guardian Occupation/Profession/Business Details"
+              },
+
+              "guardian_pep": {
+                "type": "string",
+                "title": "Politically Exposed Person (PEP) ?",
+                "group": "Guardian AccountLevelInformation",
+                "enum": ["Yes", "No"]
+              },
+
+              "guardian_family_pep_declaration": {
+                "type": "string",
+                "title": "Customer declares family member as PEP or as associate PEP ?",
+                "group": "Guardian AccountLevelInformation",
+                "enum": ["Yes", "No"],
+                "width": 10
+              },
+              "guardian_crime_in_past": {
+                "type": "string",
+                "title": "Declaration Conviction for any Crime in Past",
+                "group": "Guardian AccountLevelInformation",
+                "enum": ["Yes", "No"]
+              },
+              "guardian_residential_permit": {
+                "type": "string",
+                "enum": ["Yes", "No"],
+                "title": "Holds Residential Permit of Foreign Country?",
+                "group": "Guardian AccountLevelInformation"
+              },
+              "guardian_is_us_person": {
+                "type": "string",
+                "title": "FATCA Account Level Information",
+                "group": "Guardian AccountLevelInformation",
+                "enum": ["Yes", "No"]
+              },
+              "guardian_ac_with_other_bank": {
+                "type": "string",
+                "enum": ["Yes", "No"],
+                "title": "Account with Other Bank or BFIs",
+                "group": "Guardian AccountLevelInformation"
+              },
+              "guardian_customer_introduce_by": {
+                "type": "string",
+                "title": "Introducer Name",
+                "group": "Guardian statusOfClient",
+                "enum": [
+                  "Bank Staff",
+                  "Other Account Holder",
+                  "Walk-in Customer",
+                  "Local Government Bodies"
+                ]
+              },
+
+              "guardian_met_in_person": {
+                "type": "string",
+                "enum": ["Yes", "No"],
+                "title": "Has the customer been met in-person (face-to-face) ?",
+                "group": "Guardian statusOfClient"
+              },
+
+              "guardian_adverse_media": {
+                "type": "string",
+                "title": "Adverse Media",
+                "group": "Guardian AccountLevelInformation",
+                "enum": ["Yes", "No"]
+              },
+
+              "guardian_loan_status": {
+                "type": "string",
+                "title": "Has the customer taken any loan with us in the past ?",
+                "group": "Guardian statusOfClient",
+                "enum": ["Yes", "No"],
+                "width": 8
+              },
+              "guardian_is_blacklisted": {
+                "type": "string",
+                "title": "Has the customer been blacklisted by us ?",
+                "group": "Guardian statusOfClient",
+                "enum": ["Yes", "No"],
+                "width": 8
+              },
+
+              "guardian_current_country": {
+                "type": "string",
+                "title": "Current Country",
+                "group": "Guardian Current",
+                "hideTitle": true,
+                "default": "NP"
+              },
+              "guardian_current_spent_day": {
+                "type": "string",
+                "title": "Have you spent 182 days in this year in Nepal?",
+                "group": "Guardian Current",
+                "enum": ["Yes", "No"]
+              },
+
+              "guardian_calculate_risk": {
+                "type": "string",
+                "title": "Calculate Risk",
+                "group": "Guardian Risk"
+              },
+              "guardian_risk_level": {
+                "type": "string",
+                "group": "Guardian Risk",
+                "title": "Risk Level",
+                "enum": ["Low Risk", "Medium Risk", "High Risk"],
+                "readOnly": true
+              },
+              "guardian_risk_score": {
+                "type": "number",
+                "title": "Risk Score",
+                "group": "Guardian Risk",
+                "readOnly": true
+              }
+            },
+
+            "dependencies": {
+              "last_name_not_available": {
+                "if": {
+                  "properties": {
+                    "last_name_not_available": {
+                      "const": true
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "last_name": {
+                      "readOnly": true
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "last_name": {
+                      "readOnly": false
+                    }
+                  }
+                }
+              },
+              "has_cif": {
+                "if": {
+                  "properties": {
+                    "has_cif": {
+                      "const": true
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "cif_number": {
+                      "type": "string",
+                      "title": "CIF Number",
+                      "group": "Information",
+                      "width": 4
+                    },
+                    "cif_enquiry": {
+                      "type": "string",
+                      "title": "Proceed",
+                      "group": "Information",
+                      "width": 4
+                    }
+                  },
+                  "required": ["cif_number"]
+                }
+              },
+
+              "pep": {
+                "if": {
+                  "properties": {
+                    "pep": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "pep_category": {
+                      "type": "string",
+                      "enum": [
+                        "Existing PEPs",
+                        "Former PEPs",
+                        "High-ranking officials from neighboring or nearby countries",
+                        "Other foreign PEPs",
+                        "International PEPs"
+                      ],
+                      "title": "Pep Category",
+                      "group": "AccountLevelInformation"
+                    }
+                  },
+                  "required": ["pep_category"]
+                }
+              },
+              "adverse_media": {
+                "if": {
+                  "properties": {
+                    "adverse_media": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "adverse_category": {
+                      "type": "string",
+                      "enum": [
+                        "Money Laundering",
+                        "Terrorist Financing",
+                        "Financial Fraud",
+                        "Organized Crime"
+                      ],
+                      "title": "Category of Adverse",
+                      "group": "AccountLevelInformation"
+                    }
+                  },
+                  "required": ["adverse_category"]
+                }
+              },
+              "guardian_customer_introduce_by": {
+                "oneOf": [
+                  {
+                    "properties": {
+                      "guardian_customer_introduce_by": {
+                        "enum": ["Bank Staff"]
+                      },
+                      "guardian_employee_id": {
+                        "type": "string",
+                        "title": "Bank Staff CIF Number",
+                        "group": "Guardian statusOfClient"
+                      }
+                    },
+                    "required": ["guardian_employee_id"]
+                  },
+                  {
+                    "properties": {
+                      "guardian_customer_introduce_by": {
+                        "enum": ["Other Account Holder"]
+                      },
+                      "guardian_introducer_account_number": {
+                        "type": "string",
+                        "title": "Introducer Account Number",
+                        "group": "Guardian statusOfClient",
+                        "pattern": "^[0-9]{14}$",
+                        "errorMessage": {
+                          "pattern": "Must be of 14 Digits"
+                        }
+                      }
+                    },
+                    "required": ["guardian_introducer_account_number"]
+                  },
+                  {
+                    "properties": {
+                      "guardian_customer_introduce_by": {
+                        "enum": ["Walk-in Customer", "Local Government Bodies"]
+                      }
+                    }
+                  }
+                ]
+              },
+              "guardian_occupation_type": {
+                "if": {
+                  "properties": {
+                    "guardian_occupation_type": {
+                      "enum": [
+                        "4a3fa6bb-7580-4a7d-8479-0b44f31f58a6",
+                        "EMP",
+                        "cddfc23d-86b6-44cf-b640-25155cd3e52d",
+                        "BSM",
+                        "d3e087fa-5104-468b-80b7-5a6d6fe431d4"
+                      ]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_occupation_detail": {
+                      "type": "array",
+                      "title": "Occupation",
+                      "group": "Guardian Occupation/Profession/Business Details",
+                      "hideTitle": true,
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "guardian_name_of_organization": {
+                            "type": "string",
+                            "title": "Employer Name"
+                          },
+                          "guardian_organization_address": {
+                            "type": "string",
+                            "title": "Address"
+                          },
+                          "guardian_organization_contact_number": {
+                            "type": "number",
+                            "title": "Contact No.",
+                            "pattern": "^(\\d{7,12})?$",
+                            "errorMessage": {
+                              "pattern": "Mobile number must be 7 to 12 digits."
+                            }
+                          },
+                          "guardian_designation": {
+                            "type": "string",
+                            "title": "Designation"
+                          },
+                          "guardian_business_type": {
+                            "type": "string",
+                            "title": "Business Type"
+                          }
+                        },
+                        "required": [
+                          "guardian_name_of_organization",
+                          "guardian_organization_address",
+                          "guardian_organization_contact_number",
+                          "guardian_designation",
+                          "guardian_business_type"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "guardian_pep": {
+                "if": {
+                  "properties": {
+                    "guardian_pep": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_pep_category": {
+                      "type": "string",
+                      "enum": [
+                        "Existing PEPs",
+                        "Former PEPs",
+                        "High-ranking officials from neighboring or nearby countries",
+                        "Other foreign PEPs",
+                        "International PEPs"
+                      ],
+                      "title": "Pep Category",
+                      "group": "Guardian AccountLevelInformation"
+                    }
+                  },
+                  "required": ["guardian_pep_category"]
+                }
+              },
+
+              "guardian_adverse_media": {
+                "if": {
+                  "properties": {
+                    "guardian_adverse_media": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_adverse_category": {
+                      "type": "string",
+                      "enum": [
+                        "Money Laundering",
+                        "Terrorist Financing",
+                        "Financial Fraud",
+                        "Organized Crime"
+                      ],
+                      "title": "Category of Adverse",
+                      "group": "Guardian AccountLevelInformation"
+                    }
+                  },
+                  "required": ["guardian_adverse_category"]
+                }
+              },
+
+              "guardian_current_country": {
+                "oneOf": [
+                  {
+                    "properties": {
+                      "guardian_current_country": {
+                        "enum": ["NP"]
+                      },
+                      "guardian_current_province": {
+                        "type": "string",
+                        "title": "Current Province",
+                        "masterDataKey": "provinces",
+                        "group": "Guardian Current",
+                        "hideTitle": true
+                      },
+                      "guardian_current_district": {
+                        "type": "string",
+                        "title": "Current District",
+                        "group": "Guardian Current",
+                        "hideTitle": true,
+                        "masterDataKey": "districts"
+                      },
+                      "guardian_current_municipality": {
+                        "type": "string",
+                        "title": "Current Municipality",
+                        "group": "Guardian Current",
+                        "hideTitle": true,
+                        "masterDataKey": "local_bodies"
+                      }
+                    },
+                    "required": [
+                      "guardian_current_country",
+                      "guardian_current_province",
+                      "guardian_current_district",
+                      "guardian_current_municipality"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "guardian_current_country": {
+                        "not": {
+                          "enum": ["NP"]
+                        }
+                      },
+                      "guardian_current_outside_town": {
+                        "type": "string",
+                        "title": "Outside Town",
+                        "group": "Guardian Current",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                        "errorMessage": {
+                          "pattern": "Only alphanumeric characters and spaces are allowed."
+                        }
+                      },
+                      "guardian_current_outside_street_name": {
+                        "type": "string",
+                        "title": "Outside Tole/Street",
+                        "group": "Guardian Current",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                        "errorMessage": {
+                          "pattern": "Only alphanumeric characters and spaces are allowed."
+                        }
+                      },
+                      "guardian_current_postal_code": {
+                        "type": "string",
+                        "title": "Outside Tole/Street",
+                        "group": "Guardian Current",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                        "errorMessage": {
+                          "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                        }
+                      }
+                    },
+                    "required": [
+                      "guardian_current_outside_town",
+                      "guardian_current_outside_street_name",
+                      "guardian_current_postal_code"
+                    ]
+                  }
+                ]
+              },
+
+              "guardian_last_name_not_available": {
+                "if": {
+                  "properties": {
+                    "guardian_last_name_not_available": {
+                      "const": true
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_last_name": {
+                      "readOnly": true
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "guardian_last_name": {
+                      "readOnly": false
+                    }
+                  }
+                }
+              },
+              "guardian_has_cif": {
+                "if": {
+                  "properties": {
+                    "guardian_has_cif": {
+                      "const": true
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_cif_number": {
+                      "type": "string",
+                      "title": "CIF Number",
+                      "group": "Guardian Information",
+                      "width": 4
+                    },
+                    "guardian_cif_enquiry": {
+                      "type": "string",
+                      "title": "Proceed",
+                      "group": "Guardian Information",
+                      "width": 4
+                    }
+                  },
+                  "required": ["guardian_cif_number"]
+                }
+              },
+              "guardian_nationality": {
+                "if": {
+                  "properties": {
+                    "guardian_nationality": {
+                      "enum": ["NP"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_permanent_country": {
+                      "type": "string",
+                      "title": "Permanent Country",
+                      "group": "Guardian Contact Detail",
+                      "default": "NP",
+                      "readOnly": true
+                    },
+                    "guardian_same_as_permanent": {
+                      "type": "boolean",
+                      "title": "Same As Permanent Address",
+                      "group": "Guardian Contact Detail",
+                      "width": "full"
+                    },
+                    "guardian_dedup_identification": {
+                      "readOnly": true
+                    }
+                  },
+                  "dependencies": {
+                    "guardian_permanent_country": {
+                      "if": {
+                        "properties": {
+                          "guardian_permanent_country": {
+                            "enum": ["NP"]
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "guardian_permanent_province": {
+                            "type": "string",
+                            "title": "Permanent Province",
+                            "group": "Guardian Contact Detail"
+                          },
+                          "guardian_permanent_district": {
+                            "type": "string",
+                            "title": "Permanent District",
+                            "group": "Guardian Contact Detail"
+                          },
+                          "guardian_permanent_municipality": {
+                            "type": "string",
+                            "title": "Permanent Municipality",
+                            "group": "Guardian Contact Detail"
+                          }
+                        },
+                        "required": [
+                          "guardian_permanent_province",
+                          "guardian_permanent_district",
+                          "guardian_permanent_municipality"
+                        ]
+                      },
+                      "else": {
+                        "properties": {
+                          "guardian_permanent_outside_town": {
+                            "type": "string",
+                            "title": "Town",
+                            "group": "Guardian Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "guardian_permanent_outside_street_name": {
+                            "type": "string",
+                            "title": "Tole/Street",
+                            "group": "Guardian Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "guardian_permanent_postal_code": {
+                            "type": "string",
+                            "title": "Postal Code",
+                            "group": "Guardian Contact Detail",
+                            "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                            }
+                          }
+                        },
+                        "required": [
+                          "guardian_permanent_outside_town",
+                          "guardian_permanent_outside_street_name",
+                          "guardian_permanent_postal_code"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["guardian_permanent_country"]
+                },
+                "else": {
+                  "properties": {
+                    "guardian_permanent_country": {
+                      "type": "string",
+                      "title": "Permanent Country",
+                      "group": "Guardian Contact Detail"
+                    },
+                    "guardian_same_as_permanent": {
+                      "type": "boolean",
+                      "title": "Same As Permanent Address",
+                      "group": "Guardian Contact Detail",
+                      "width": "full"
+                    }
+                  },
+                  "dependencies": {
+                    "guardian_permanent_country": {
+                      "if": {
+                        "properties": {
+                          "guardian_permanent_country": {
+                            "enum": ["NP"]
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "guardian_permanent_province": {
+                            "type": "string",
+                            "title": "Permanent Province",
+                            "group": "Guardian Contact Detail"
+                          },
+                          "guardian_permanent_district": {
+                            "type": "string",
+                            "title": "Permanent District",
+                            "group": "Guardian Contact Detail"
+                          },
+                          "guardian_permanent_municipality": {
+                            "type": "string",
+                            "title": "Permanent Municipality",
+                            "group": "Guardian Contact Detail"
+                          }
+                        },
+                        "required": [
+                          "guardian_permanent_province",
+                          "guardian_permanent_district",
+                          "guardian_permanent_municipality"
+                        ]
+                      },
+                      "else": {
+                        "properties": {
+                          "guardian_permanent_outside_town": {
+                            "type": "string",
+                            "title": "Town",
+                            "group": "Guardian Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "guardian_permanent_outside_street_name": {
+                            "type": "string",
+                            "title": "Tole/Street",
+                            "group": "Guardian Contact Detail",
+                            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed."
+                            }
+                          },
+                          "guardian_permanent_postal_code": {
+                            "type": "string",
+                            "title": "Postal Code",
+                            "group": "Guardian Contact Detail",
+                            "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                            "errorMessage": {
+                              "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                            }
+                          }
+                        },
+                        "required": [
+                          "guardian_permanent_outside_town",
+                          "guardian_permanent_outside_street_name",
+                          "guardian_permanent_postal_code"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["guardian_permanent_country"]
+                }
+              },
+
+              "guardian_crime_in_past": {
+                "if": {
+                  "properties": {
+                    "guardian_crime_in_past": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_crime_description": {
+                      "type": "string",
+                      "title": "Crime Description",
+                      "group": "Guardian AccountLevelInformation"
+                    }
+                  },
+                  "required": ["guardian_crime_description"]
+                }
+              },
+              "guardian_residential_permit": {
+                "if": {
+                  "properties": {
+                    "guardian_residential_permit": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_permit_description": {
+                      "type": "string",
+                      "title": "Permit Description",
+                      "group": "Guardian AccountLevelInformation"
+                    }
+                  },
+                  "required": ["guardian_permit_description"]
+                }
+              },
+              "guardian_ac_with_other_bank": {
+                "if": {
+                  "properties": {
+                    "guardian_ac_with_other_bank": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_other_bank_acc": {
+                      "type": "string",
+                      "title": "Name of BFI",
+                      "group": "Guardian AccountLevelInformation"
+                    }
+                  }
+                }
+              },
+              "guardian_relation_with_account_holder": {
+                "if": {
+                  "properties": {
+                    "guardian_relation_with_account_holder": {
+                      "enum": ["Yes"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "guardian_account_holder_relationship": {
+                      "type": "string",
+                      "title": "Relationship",
+                      "group": "PowerOfAttorney"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pep": {
+          "if": {
+            "properties": {
+              "pep": {
+                "enum": ["Yes"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "pep_category": {
+                "type": "string",
+                "enum": [
+                  "Existing PEPs",
+                  "Former PEPs",
+                  "High-ranking officials from neighboring or nearby countries",
+                  "Other foreign PEPs",
+                  "International PEPs"
+                ],
+                "title": "Pep Category",
+                "group": "AccountLevelInformation"
+              }
+            },
+            "required": ["pep_category"]
+          }
+        },
+        "adverse_media": {
+          "if": {
+            "properties": {
+              "adverse_media": {
+                "enum": ["Yes"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "adverse_category": {
+                "type": "string",
+                "enum": [
+                  "Money Laundering",
+                  "Terrorist Financing",
+                  "Financial Fraud",
+                  "Organized Crime"
+                ],
+                "title": "Category of Adverse",
+                "group": "AccountLevelInformation"
+              }
+            },
+            "required": ["adverse_category"]
+          }
+        },
+        "customer_introduce_by": {
+          "oneOf": [
+            {
+              "properties": {
+                "customer_introduce_by": {
+                  "enum": ["Bank Staff"]
+                },
+                "employee_id": {
+                  "type": "string",
+                  "title": "Bank Staff CIF Number",
+                  "group": "statusOfClient"
+                }
+              },
+              "required": ["employee_id"]
+            },
+            {
+              "properties": {
+                "customer_introduce_by": {
+                  "enum": ["Other Account Holder"]
+                },
+                "introducer_account_number": {
+                  "type": "string",
+                  "title": "Introducer Account Number",
+                  "group": "statusOfClient",
+                  "pattern": "^[0-9]{14}$",
+                  "errorMessage": {
+                    "pattern": "Must be of 14 Digits"
+                  }
+                }
+              },
+              "required": ["introducer_account_number"]
+            },
+            {
+              "properties": {
+                "customer_introduce_by": {
+                  "enum": ["Walk-in Customer", "Local Government Bodies"]
+                }
+              }
+            }
+          ]
+        },
+
+        "current_country": {
+          "oneOf": [
+            {
+              "properties": {
+                "current_country": {
+                  "enum": ["NP"]
+                },
+                "current_province": {
+                  "type": "string",
+                  "title": "Current Province",
+                  "masterDataKey": "provinces",
+                  "group": "Current Address",
+                  "hideTitle": true
+                },
+                "current_district": {
+                  "type": "string",
+                  "title": "Current District",
+                  "group": "Current Address",
+                  "hideTitle": true,
+                  "masterDataKey": "districts"
+                },
+                "current_municipality": {
+                  "type": "string",
+                  "title": "Current Municipality",
+                  "group": "Current Address",
+                  "hideTitle": true,
+                  "masterDataKey": "local_bodies"
+                }
+              },
+              "required": [
+                "current_country",
+                "current_province",
+                "current_district",
+                "current_municipality"
+              ]
+            },
+            {
+              "properties": {
+                "current_country": {
+                  "not": {
+                    "enum": ["NP"]
+                  }
+                },
+                "current_outside_town": {
+                  "type": "string",
+                  "title": "Outside Town",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "group": "Current Address",
+                  "hideTitle": true
+                },
+                "current_outside_street_name": {
+                  "type": "string",
+                  "title": "Outside Tole/Street",
+                  "group": "Current Address",
+                  "hideTitle": true,
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "current_postal_code": {
+                  "type": "string",
+                  "title": "Postal Code",
+                  "group": "Current Address",
+                  "hideTitle": true,
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  }
+                }
+              },
+              "required": [
+                "current_outside_town",
+                "current_outside_street_name",
+                "current_postal_code"
+              ]
+            }
+          ]
+        },
+
+        "last_name_not_available": {
+          "if": {
+            "properties": {
+              "last_name_not_available": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "last_name": {
+                "readOnly": true
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "last_name": {
+                "readOnly": false
+              }
+            }
+          }
+        },
+        "crime_in_past": {
+          "if": {
+            "properties": {
+              "crime_in_past": {
+                "enum": ["Yes"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "crime_description": {
+                "type": "string",
+                "title": "Crime Description",
+                "group": "AccountLevelInformation"
+              }
+            },
+            "required": ["crime_description"]
+          }
+        },
+        "residential_permit": {
+          "if": {
+            "properties": {
+              "residential_permit": {
+                "enum": ["Yes"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "permit_description": {
+                "type": "string",
+                "title": "Permit Description",
+                "group": "AccountLevelInformation"
+              }
+            },
+            "required": ["permit_description"]
+          }
+        },
+        "ac_with_other_bank": {
+          "if": {
+            "properties": {
+              "ac_with_other_bank": {
+                "enum": ["Yes"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "other_bank_acc": {
+                "type": "string",
+                "title": "Name of BFI",
+                "group": "AccountLevelInformation"
+              }
+            },
+            "required": ["other_bank_acc"]
+          }
+        },
+        "has_cif": {
+          "if": {
+            "properties": {
+              "has_cif": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "cif_number": {
+                "type": "string",
+                "title": "CIF Number",
+                "group": "Information",
+                "width": 4
+              },
+              "cif_enquiry": {
+                "type": "string",
+                "title": "Proceed",
+                "group": "Information",
+                "width": 4
+              }
+            },
+            "required": ["cif_number"]
+          }
+        }
+      }
+    },
+    "organization": {
+      "properties": {
+        "dedup_corporate_name": {
+          "type": "string",
+          "title": "Corporate Name",
+          "group": "Preliminary Screening",
+          "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+          "errorMessage": {
+            "pattern": "Invalid Input"
+          }
+        },
+        "dedup_corporate_registration_number": {
+          "type": "string",
+          "title": "Registration number.",
+          "group": "Preliminary Screening",
+          "pattern": "^[a-zA-Z0-9s/,-]+$",
+          "errorMessage": {
+            "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+          }
+        },
+        "dedup_corporate_pan_number": {
+          "type": "number",
+          "title": "PAN Number",
+          "group": "Preliminary Screening",
+          "pattern": "^\\d{9}$",
+          "errorMessage": {
+            "pattern": "Can only have 9 digit numbers"
+          }
+        },
+
+        "has_cif": {
+          "type": "boolean",
+          "title": "Organization Has CIF Number?",
+          "group": "Information",
+          "width": "full",
+          "hideTitle": true,
+          "default": true,
+          "readOnly": true
+        },
+        "name": {
+          "type": "string",
+          "title": "Name as per registration document",
+          "group": "institutionDetails",
+          "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+          "errorMessage": {
+            "pattern": "Invalid Input"
+          }
+        },
+        "alias": {
+          "type": "string",
+          "title": "Alias",
+          "group": "institutionDetails",
+          "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+          "errorMessage": {
+            "pattern": "Invalid Input"
+          }
+        },
+        "legal_entity_type": {
+          "type": "string",
+          "title": "Legal Entity Type",
+          "group": "institutionDetails"
+        },
+        "business_type_id": {
+          "type": "string",
+          "title": "Business Type",
+          "group": "institutionDetails"
+        },
+
+        "entity_class": {
+          "type": "string",
+          "title": "Entity Class",
+          "group": "institutionDetails"
+        },
+        "sectors": {
+          "type": "string",
+          "title": "Sector",
+          "group": "institutionDetails"
+        },
+
+        "sub_sectors": {
+          "type": "string",
+          "title": "Sub Sector",
+          "group": "institutionDetails"
+        },
+        "account_purpose": {
+          "type": "string",
+          "title": "Purpose of Account Open",
+          "group": "accountInformation"
+        },
+        "type_of_transaction": {
+          "type": "string",
+          "title": "Type of Transaction",
+          "group": "accountInformation",
+          "readOnly": true
+        },
+        "registration_number": {
+          "type": "string",
+          "title": "Registration number.",
+          "group": "registration details",
+          "pattern": "^[a-zA-Z0-9s/,-]+$",
+          "errorMessage": {
+            "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+          }
+        },
+        "registration_date_ad": {
+          "type": "string",
+
+          "title": "Registration Date(A.D)",
+          "group": "registration details"
+        },
+        "registration_date_bs": {
+          "type": "string",
+          "readOnly": true,
+          "title": "Registration Date(B.S)",
+          "group": "registration details"
+        },
+        "registration_authority": {
+          "type": "string",
+          "title": "Registration Authority",
+          "group": "registration details"
+        },
+
+        "country_of_incorporation": {
+          "type": "string",
+          "title": "Country of Incorporation",
+          "group": "registration details",
+          "default": "NP"
+        },
+        "number_of_branches": {
+          "type": "number",
+          "title": "Number of Branches/Offices",
+          "group": "registration details",
+          "pattern": "^\\d+$",
+          "errorMessage": {
+            "pattern": "Numbers only"
+          }
+        },
+
+        "registration_expiry_date_ad": {
+          "type": "string",
+
+          "title": "Registration Expire Date(A.D)",
+          "group": "registration details"
+        },
+        "registration_expiry_date_bs": {
+          "type": "string",
+          "readOnly": true,
+          "title": "Registration Expire Date(B.S)",
+          "group": "registration details"
+        },
+        "has_license": {
+          "type": "boolean",
+          "title": "License Required ?",
+          "group": "registration details",
+          "width": "full"
+        },
+
+        "registration_country": {
+          "type": "string",
+          "title": "Country",
+          "group": "registrationAddress",
+          "default": "NP"
+        },
+
+        "same_as_registered_address": {
+          "type": "boolean",
+          "title": "Same as Registered Address",
+          "group": "mailingAddress",
+          "default": false,
+          "width": "full"
+        },
+        "mailing_country": {
+          "type": "string",
+          "title": "Mailing Country",
+          "group": "mailingAddress",
+          "default": "NP",
+          "readOnly": true
+        },
+        "contact_details": {
+          "type": "array",
+          "minItems": 1,
+          "title": "Contact Details",
+          "group": "Contact Details",
+          "items": {
+            "type": "object",
+            "required": ["email", "key_contact_person"],
+            "properties": {
+              "key_contact_person": {
+                "type": "string",
+                "title": "Contact Person Name"
+              },
+              "email": {
+                "type": "string",
+                "title": "Email Address",
+
+                "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                "errorMessage": {
+                  "pattern": "Invalid email address"
+                }
+              }
+            },
+            "dependencies": {}
+          }
+        },
+        "most_recent_audit_report": {
+          "type": "string",
+          "title": "Most Recent Audit Report (Fiscal Year)",
+          "enum": ["Audited", "Management prepared"],
+          "group": "Transaction Details"
+        },
+
+        "fund_source": {
+          "type": "string",
+          "title": "Fund Source",
+          "group": "Transaction Details",
+          "pattern": "^[a-zA-Z0-9\\s]+$",
+          "errorMessage": {
+            "pattern": "Only numbers and letters allowed"
+          }
+        },
+
+        "income_year": {
+          "type": "string",
+          "title": "Year (BS)",
+          "group": "Transaction Details"
+        },
+
+        "declared_anticipated_annual_transaction": {
+          "type": "string",
+          "title": "Anticipated Annual Transaction",
+          "group": "Transaction Details",
+          "pattern": "^[0-9,]+$",
+          "errorMessage": {
+            "pattern": "Only numbers are allowed"
+          }
+        },
+        "expected_anticipated_annual_transaction": {
+          "type": "string",
+          "title": "Estimated Annual Transaction",
+          "group": "Transaction Details",
+          "pattern": "^[0-9,]+$",
+          "errorMessage": {
+            "pattern": "Only numbers are allowed"
+          }
+        },
+        "number_of_transaction": {
+          "type": "string",
+          "title": "Number of Transaction",
+          "group": "Transaction Details",
+          "pattern": "^[0-9]{1,4}$",
+          "errorMessage": {
+            "pattern": "Only 4 numbers are allowed"
+          }
+        },
+        "yearly_income": {
+          "type": "string",
+          "title": "Yearly Income (Gross Income)",
+          "group": "Transaction Details",
+          "pattern": "^[0-9,]+$",
+          "errorMessage": {
+            "pattern": "Only numbers are allowed"
+          }
+        },
+        "transaction_justification": {
+          "type": "string",
+          "title": "Is transaction amount justified with customer profile?",
+          "group": "Transaction Details",
+          "enum": ["Yes", "No"],
+          "width": 8
+        },
+        "transaction_fund_details": {
+          "type": "string",
+          "title": "Is the source of funds clear and identifiable ?",
+          "group": "Transaction Details",
+          "enum": ["Yes", "No"],
+          "width": 8
+        },
+
+        "screening": {
+          "type": "string",
+          "width": "full",
+          "title": "Screening",
+          "group": ""
+        },
+        "screening_card": {
+          "type": "string",
+          "width": "full",
+          "group": "",
+          "additionalProperties": true,
+          "columns": [
+            {
+              "key": "name",
+              "label": "Name"
+            },
+            {
+              "key": "score",
+              "label": "Score"
+            }
+          ],
+          "actions": [
+            {
+              "label": "View",
+              "icon": "view",
+              "tooltip": "View Detail",
+              "actionKey": "view"
+            }
+          ]
+        },
+
+        "loan_status": {
+          "type": "string",
+          "title": "Has the customer organization taken any loan with us in the past ?",
+          "group": "statusOfClient",
+          "enum": ["Yes", "No"],
+          "width": 8
+        },
+        "is_blacklisted": {
+          "type": "string",
+          "title": "Has the organization being blacklisted by us ?",
+          "group": "statusOfClient",
+          "enum": ["Yes", "No"],
+          "width": 8
+        },
+        "met_in_person": {
+          "type": "string",
+          "title": "Has the organization customer been met in-person (face-to-face) ?",
+          "group": "statusOfClient",
+          "enum": ["Yes", "No"],
+          "width": 8
+        },
+        "calculate_risk": {
+          "type": "string",
+          "title": "Calculate Risk",
+          "group": "Risk"
+        },
+        "risk_level": {
+          "type": "string",
+          "group": "Risk",
+          "title": "Risk Level",
+          "enum": ["Low Risk", "Medium Risk", "High Risk"],
+          "readOnly": true
+        },
+        "risk_score": {
+          "type": "number",
+          "title": "Risk Score",
+          "group": "Risk",
+          "readOnly": true
+        }
+      },
+      "dependencies": {
+        "country_of_incorporation": {
+          "if": {
+            "properties": {
+              "country_of_incorporation": {
+                "enum": ["NP"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "jurisdiction": {
+                "type": "string",
+                "title": "Jurisdiction",
+                "group": "registration details"
+              },
+              "registration_country": {
+                "type": "string",
+                "title": "Country",
+                "group": "registrationAddress",
+                "default": "NP",
+                "readOnly": true
+              },
+              "registration_place": {
+                "type": "string",
+                "title": "Registration Place (Province & District)",
+                "group": "registration details"
+              }
+            },
+            "required": [
+              "jurisdiction",
+              "registration_place",
+              "registration_country"
+            ]
+          },
+          "else": {
+            "properties": {
+              "jurisdiction_country": {
+                "type": "string",
+                "title": "Jurisdiction",
+                "group": "registration details",
+                "readOnly": true
+              },
+              "registration_country": {
+                "type": "string",
+                "title": "Country",
+                "group": "registrationAddress"
+              },
+              "registration_place_country": {
+                "type": "string",
+                "title": "Registration Place",
+                "group": "registration details",
+                "readOnly": true
+              }
+            },
+            "required": [
+              "jurisdiction_country",
+              "registration_country",
+              "registration_place_country"
+            ]
+          }
+        },
+
+        "has_license": {
+          "if": {
+            "properties": {
+              "has_license": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "license_details": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 2,
+                "title": "License Details",
+                "group": "license details",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "license_purpose": {
+                      "type": "string",
+                      "title": "Purpose of License",
+                      "enum": ["Medical", "FCY", "Membership", "Education"]
+                    },
+                    "license_number": {
+                      "type": "string",
+                      "title": "License/Certificate number.",
+                      "pattern": "^[a-zA-Z0-9\\s@#$]+$",
+                      "errorMessage": {
+                        "pattern": "Alphanumeric and symbol only"
+                      }
+                    },
+                    "license_issuing_authority": {
+                      "type": "string",
+                      "title": "Issuing Authority",
+                      "default": "IRD",
+                      "readOnly": true
+                    },
+                    "license_issuing_date_ad": {
+                      "type": "string",
+
+                      "title": "License Issuing Date(A.D)"
+                    },
+                    "license_issuing_date_bs": {
+                      "type": "string",
+                      "readOnly": true,
+                      "title": "License Issuing Date(B.S)"
+                    },
+                    "license_expiry_date_ad": {
+                      "type": "string",
+
+                      "title": "License Expiry Date(A.D)"
+                    },
+                    "license_expiry_date_bs": {
+                      "type": "string",
+                      "readOnly": true,
+                      "title": "License Expiry Date(B.S)"
+                    },
+                    "has_no_expiry_date": {
+                      "type": "boolean",
+                      "title": "Has no expiry date",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "license_purpose",
+                    "license_number",
+                    "license_issuing_authority",
+                    "license_issuing_date_ad",
+                    "license_issuing_date_bs"
+                  ],
+                  "dependencies": {
+                    "has_no_expiry_date": {
+                      "if": {
+                        "properties": {
+                          "has_no_expiry_date": {
+                            "const": true
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "license_expiry_date_ad": {
+                            "readOnly": true
+                          },
+                          "license_expiry_date_bs": {
+                            "readOnly": true
+                          }
+                        },
+                        "required": []
+                      },
+                      "else": {
+                        "properties": {},
+                        "required": [
+                          "license_expiry_date_ad",
+                          "license_expiry_date_bs"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {}
+          }
+        },
+
+        "has_cif": {
+          "if": {
+            "properties": {
+              "has_cif": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "cif_number": {
+                "type": "string",
+                "title": "Organization CIF Number",
+                "group": "Information",
+                "hideTitle": true
+              },
+              "cif_enquiry": {
+                "type": "string",
+                "width": "half",
+                "title": "Organization CIF Enquiry",
+                "hideTitle": true,
+                "group": "Information"
+              }
+            }
+          }
+        },
+        "registration_country": {
+          "if": {
+            "properties": {
+              "registration_country": {
+                "enum": ["NP"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "registration_province": {
+                "type": "string",
+                "title": "State/Province",
+                "group": "registrationAddress"
+              },
+              "registration_district": {
+                "type": "string",
+                "title": "District",
+                "group": "registrationAddress"
+              },
+              "registration_municipality": {
+                "type": "string",
+                "title": "Municipality/VDC",
+                "group": "registrationAddress"
+              }
+            },
+            "required": [
+              "registration_province",
+              "registration_district",
+              "registration_municipality"
+            ]
+          },
+          "else": {
+            "required": [
+              "registration_town",
+              "registration_street",
+              "registration_postal_code"
+            ],
+            "properties": {
+              "registration_town": {
+                "type": "string",
+                "title": "Town",
+                "group": "registrationAddress",
+                "pattern": "^[a-zA-Z]+$",
+                "errorMessage": {
+                  "pattern": "Only alphabet and spaces are allowed."
+                }
+              },
+              "registration_street": {
+                "type": "string",
+                "title": "Street Name",
+                "group": "registrationAddress"
+              },
+              "registration_postal_code": {
+                "type": "string",
+                "title": "Postal Code",
+                "group": "registrationAddress"
+              }
+            }
+          }
+        },
+
+        "mailing_country": {
+          "if": {
+            "properties": {
+              "mailing_country": {
+                "enum": ["NP"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "mailing_province": {
+                "type": "string",
+                "title": "State/Province",
+                "group": "mailingAddress"
+              },
+              "mailing_district": {
+                "type": "string",
+                "title": "District",
+                "group": "mailingAddress"
+              },
+              "mailing_municipality": {
+                "type": "string",
+                "title": "Municipality/VDC",
+                "group": "mailingAddress"
+              }
+            },
+            "required": [
+              "mailing_province",
+              "mailing_district",
+              "mailing_municipality"
+            ]
+          },
+          "else": {
+            "required": [
+              "mailing_town",
+              "mailing_street",
+              "mailing_postal_code"
+            ],
+            "properties": {
+              "mailing_town": {
+                "type": "string",
+                "title": "Town",
+                "group": "mailingAddress",
+                "pattern": "^[a-zA-Z]+$",
+                "errorMessage": {
+                  "pattern": "Only alphabet and spaces are allowed."
+                }
+              },
+              "mailing_street": {
+                "type": "string",
+                "title": "Street Name",
+                "group": "mailingAddress"
+              },
+              "mailing_postal_code": {
+                "type": "string",
+                "title": "Postal Code",
+                "group": "mailingAddress"
+              }
+            }
+          }
+        },
+        "legal_entity_type": {
+          "if": {
+            "properties": {
+              "legal_entity_type": {
+                "enum": [
+                  "cb9b167b-7611-4537-a19c-1ce2eec6e0c6",
+                  "438d9ff2-fadb-49e5-a15c-d6f8ac6eb215",
+                  "a04b3c9b-682c-4ef5-ba21-8902da5d8e04",
+                  "f1724b09-17f8-4e9c-b153-06b8de5ee1ec",
+                  "7de0ddfb-359d-4336-b07a-c34350c3b2f9",
+                  "a1a7ca82-504e-48ff-bf81-99a1f9d25a06"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {},
+            "required": ["dedup_corporate_pan_number"]
+          },
+          "else": {
+            "properties": {},
+            "required": []
+          }
+        }
+      },
+      "required": [
+        "dedup_corporate_name",
+        "dedup_corporate_registration_number",
+        "name",
+        "account_purpose",
+        "type_of_transaction",
+        "registration_number",
+        "registration_date_ad",
+        "registration_date_bs",
+        "registration_authority",
+        "country_of_incorporation",
+        "number_of_branches",
+        "registration_country",
+        "mailing_country",
+        "most_recent_audit_report",
+        "declared_anticipated_annual_transaction",
+        "expected_anticipated_annual_transaction",
+        "number_of_transaction",
+        "yearly_income",
+        "transaction_justification",
+        "transaction_fund_details",
+        "legal_entity_type",
+        "business_type_id",
+        "entity_class",
+        "income_year",
+        "loan_status",
+        "is_blacklisted",
+        "fund_source",
+        "met_in_person",
+        "sectors",
+        "sub_sectors"
+      ]
+    }
+  }
+}

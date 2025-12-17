@@ -1,0 +1,388 @@
+{
+  "type": "object",
+  "hasStep": true,
+  "form_title": "personal_info",
+  "isDisabled": false,
+  "required": [
+    "branch",
+    "account_type_id",
+    "account_scheme_id",
+    "nationality",
+    "currency",
+    "account_purpose",
+    "customer_type_id",
+    "customer_status",
+
+    "salutation",
+    "first_name",
+    "last_name",
+    "father_name",
+    "date_of_birth_ad",
+    "date_of_birth_bs",
+    "dedup_identification",
+    "dedup_id_number",
+    "gender",
+    "marital_status",
+    "email",
+    "family_information",
+    "literacy",
+    "religion",
+    "is_nrn",
+    "is_refugee",
+    "is_bank_staff",
+    "is_us_person"
+  ],
+
+  "properties": {
+    "branch": {
+      "type": "string",
+      "title": "Branch",
+      "group": "Account Information",
+      "readOnly": true
+    },
+    "account_purpose": {
+      "type": "string",
+      "title": "Purpose of Account",
+      "group": "Account Information",
+      "default": "SAVIN"
+    },
+
+    "customer_type_id": {
+      "type": "string",
+      "title": "Customer Type",
+      "group": "Account Information"
+    },
+    "customer_status": {
+      "type": "string",
+      "title": "Customer Status",
+      "group": "Account Information",
+      "enum": ["Good", "Bad", "Doubtful"],
+      "default": "Good"
+    },
+    "literacy": {
+      "type": "string",
+      "title": "Literacy",
+      "group": "Personal Information"
+    },
+
+    "first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "Personal Information",
+      "connect": "last_name_not_available",
+      "pattern": "^[a-zA-Z\\s.()/]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+
+    "last_name_not_available": {
+      "type": "boolean",
+      "title": "Is last name not available ?",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "father_name": {
+      "type": "string",
+      "title": "Father Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "dedup_identification": {
+      "type": "string",
+      "title": "Identification",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "dedup_id_number": {
+      "type": "string",
+      "title": "Identification Number",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "date_of_birth_ad": {
+      "type": "string",
+      "group": "Personal Information",
+      "title": "Date of Birth (A.D.)",
+      "readOnly": true
+    },
+    "date_of_birth_bs": {
+      "type": "string",
+      "group": "Personal Information",
+      "readOnly": true,
+      "title": "Date of Birth (B.S.)"
+    },
+
+    "has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "Primary Account Information",
+      "hideTitle": true,
+      "readOnly": true,
+      "width": "full"
+    },
+
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true
+    },
+    "account_type_id": {
+      "type": "string",
+      "title": "Account Type",
+      "group": "Account Information"
+    },
+    "account_scheme_id": {
+      "type": "string",
+      "title": "Product Scheme",
+      "group": "Account Information"
+    },
+    "currency": {
+      "type": "string",
+      "title": "Currency of Account",
+      "group": "Account Information"
+    },
+    "is_nrn": {
+      "type": "string",
+      "title": "NRN",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
+      "readOnly": true
+    },
+    "is_refugee": {
+      "type": "string",
+      "title": "Refugee",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
+      "readOnly": true
+    },
+    "is_bank_staff": {
+      "type": "string",
+      "title": "Bank Staff",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+    "nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Personal Information",
+      "default": "NP",
+      "readOnly": true
+    },
+    "marital_status": {
+      "type": "string",
+      "title": "Marital Status",
+      "group": "Personal Information"
+    },
+
+    "salutation": {
+      "type": "string",
+      "title": "Salutation",
+      "width": "full",
+      "group": "Personal Information"
+    },
+
+    "gender": {
+      "type": "string",
+      "title": "Gender",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+
+    "email_not_available": {
+      "type": "boolean",
+      "title": "If email not available?",
+      "group": "Personal Information"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email",
+      "group": "Personal Information",
+      "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
+      "errorMessage": {
+        "pattern": "Invalid Email Address"
+      }
+    },
+    "religion": {
+      "type": "string",
+      "title": "Religion",
+      "group": "Personal Information"
+    },
+
+    "family_information": {
+      "type": "array",
+      "title": "Family Information",
+      "group": "Family Information",
+      "default": [
+        {
+          "family_member_relation": "FATHE",
+          "family_member_full_name": ""
+        },
+        {
+          "family_member_relation": "MOTHE",
+          "family_member_full_name": ""
+        },
+        {
+          "family_member_relation": "GRANF",
+          "family_member_full_name": ""
+        }
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "family_member_relation": {
+            "type": "string",
+            "title": "Relationship"
+          },
+          "family_member_full_name": {
+            "type": "string",
+            "title": "Full Name",
+            "pattern": "^[a-zA-Z\\s.()]*$",
+            "errorMessage": {
+              "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+            }
+          },
+          "is_family_name_not_available": {
+            "type": "boolean",
+            "title": "Member not available?"
+          }
+        },
+        "required": ["family_member_full_name"]
+      }
+    },
+    "is_us_person": {
+      "type": "string",
+      "title": "FATCA Declaration",
+      "group": "Personal Information",
+      "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
+      "default": "None"
+    }
+  },
+
+  "dependencies": {
+    "has_cif": {
+      "if": {
+        "properties": {
+          "has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "Primary Account Information",
+            "hideTitle": true,
+            "readOnly": true
+          },
+          "cif_enquiry": {
+            "type": "string",
+            "title": "Proceed",
+            "hideTitle": true,
+            "group": "Primary Account Information"
+          }
+        },
+        "required": ["cif_number"]
+      }
+    },
+    "email_not_available": {
+      "if": {
+        "properties": {
+          "email_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "email": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "email": {
+            "readOnly": false
+          }
+        }
+      }
+    },
+    "is_bank_staff": {
+      "if": {
+        "properties": {
+          "is_bank_staff": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "staff_id": {
+            "type": "string",
+            "title": "Staff ID",
+            "group": "Personal Information",
+            "pattern": "^[a-zA-Z0-9\\s.()]*$",
+            "errorMessage": {
+              "pattern": "Alphanumeric, spaces, brackets ( ), and dot (.) only allowed"
+            }
+          }
+        },
+        "required": ["staff_id"]
+      }
+    },
+    "literacy": {
+      "if": {
+        "properties": {
+          "literacy": {
+            "enum": ["4", "5"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "educational_qualification": {
+            "type": "string",
+            "title": "Education Qualification",
+            "group": "Personal Information"
+          }
+        },
+        "required": ["educational_qualification"]
+      },
+      "else": {
+        "properties": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,393 @@
+{
+  "type": "object",
+  "hasStep": true,
+  "form_title": "personal_info",
+  "isDisabled": false,
+  "required": [
+    "occupation_type",
+    "source_of_income",
+    "has_nominee",
+    "beneficial_owner",
+    "collect",
+    "statement_collection_frequency",
+    "statement_calendar_type",
+    "need_check_book",
+    "need_mobile_banking",
+    "need_internet_banking"
+  ],
+
+  "properties": {
+    "occupation_type": {
+      "type": "string",
+      "title": "Occupation Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "source_of_income": {
+      "type": "string",
+      "title": "Source of Income",
+      "group": "Occupation / Profession / Business Details"
+    },
+
+    "has_nominee": {
+      "type": "string",
+      "enum": ["Yes", "No"],
+      "title": "Has Nominee",
+      "group": "Nominee Detail",
+      "default": "No"
+    },
+
+    "beneficial_owner": {
+      "type": "string",
+      "title": "Any Beneficial Owner?",
+      "enum": ["Yes", "No"],
+      "group": "Beneficial Owner Information",
+      "default": "No"
+    },
+
+    "collect": {
+      "type": "string",
+      "title": "Statement Collect",
+      "group": "Ancillary Service"
+    },
+    "statement_collection_frequency": {
+      "type": "string",
+      "title": "Statement Collection Frequency",
+      "group": "Ancillary Service",
+      "enum": ["Monthly", "Quarterly", "Half Yearly", "Yearly"]
+    },
+    "statement_calendar_type": {
+      "type": "string",
+      "title": "Statement Calendar Type",
+      "group": "Ancillary Service",
+      "enum": ["English Calendar", "Nepali Calendar"]
+    },
+
+    "need_check_book": {
+      "type": "string",
+      "title": "Cheque Requisition",
+      "group": "Ancillary Service",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+    "ecom": {
+      "type": "string",
+      "enum": ["Yes", "No"],
+      "title": "Visa/Debit Card",
+      "group": "Ancillary Service"
+    },
+    "dmat": {
+      "type": "string",
+      "enum": ["Yes", "No"],
+      "title": "DEMAT",
+      "group": "Ancillary Service"
+    },
+    "mero_share": {
+      "type": "string",
+      "enum": ["Yes", "No"],
+      "title": "Mero Share",
+      "group": "Ancillary Service"
+    },
+
+    "need_locker": {
+      "type": "string",
+      "enum": ["Yes", "No"],
+      "title": "Locker",
+      "group": "Ancillary Service",
+      "default": "No"
+    },
+    "need_mobile_banking": {
+      "type": "string",
+      "title": "Mobile Banking",
+      "group": "Ancillary Service",
+      "enum": ["Yes", "No"]
+    },
+    "need_internet_banking": {
+      "type": "string",
+      "title": "E-Banking",
+      "group": "Ancillary Service",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+
+    "first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "personalInformation",
+      "readOnly": true,
+      "hideTitle": true
+    },
+    "middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "personalInformation",
+
+      "readOnly": true
+    },
+    "last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "personalInformation",
+      "connect": "last_name_not_available",
+
+      "readOnly": true
+    },
+
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true,
+      "hideTitle": true
+    }
+  },
+
+  "dependencies": {
+    "need_mobile_banking": {
+      "if": {
+        "properties": {
+          "need_mobile_banking": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "channel": {
+            "type": "string",
+            "title": "Channel",
+            "enum": ["Both", "Web", "App"],
+            "group": "Ancillary Service"
+          },
+          "profile_type": {
+            "type": "string",
+            "enum": ["Enquiry", "Transaction"],
+            "title": "Profile Type",
+            "group": "Ancillary Service"
+          },
+          "profile": {
+            "type": "string",
+            "title": "Profile",
+            "group": "Ancillary Service",
+            "readOnly": true
+          }
+        },
+        "required": ["channel", "profile_type", "profile"]
+      }
+    },
+    "need_internet_banking": {
+      "if": {
+        "properties": {
+          "need_internet_banking": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "internet_banking_service_type": {
+            "type": "string",
+            "title": "Internet Banking Service Type",
+            "group": "Ancillary Service",
+            "enum": ["Viewing Only", "Viewing and Transacting"]
+          }
+        }
+      }
+    },
+
+    "occupation_type": {
+      "if": {
+        "properties": {
+          "occupation_type": {
+            "enum": [
+              "4a3fa6bb-7580-4a7d-8479-0b44f31f58a6",
+              "EMP",
+              "cddfc23d-86b6-44cf-b640-25155cd3e52d",
+              "BSM",
+              "d3e087fa-5104-468b-80b7-5a6d6fe431d4"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": ["occupation_detail"],
+        "properties": {
+          "occupation_detail": {
+            "type": "array",
+            "title": "Occupation",
+            "group": "Occupation / Profession / Business Details",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name_of_organization": {
+                  "type": "string",
+                  "title": "Employer Name"
+                },
+                "organization_address": {
+                  "type": "string",
+                  "title": "Address"
+                },
+                "organization_contact_number": {
+                  "type": "number",
+                  "title": "Contact No.",
+                  "pattern": "^(\\d{7,12})?$",
+                  "errorMessage": {
+                    "pattern": "Mobile number must be 7 to 12 digits."
+                  }
+                },
+                "designation": {
+                  "type": "string",
+                  "title": "Designation"
+                },
+                "business_type": {
+                  "type": "string",
+                  "title": "Business Type"
+                }
+              },
+              "required": [
+                "name_of_organization",
+                "organization_address",
+                "organization_contact_number",
+                "designation",
+                "business_type"
+              ]
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+
+    "beneficial_owner": {
+      "if": {
+        "properties": {
+          "beneficial_owner": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "beneficial_name": {
+            "type": "string",
+            "title": "Name of Beneficial Owner",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_relationship": {
+            "type": "string",
+            "title": "Beneficial Owner Relationship with You",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_number": {
+            "type": "string",
+            "title": "Beneficial Owner ID Number",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_issuing_authority": {
+            "type": "string",
+            "title": "Beneficial Owner ID Issuing Authority",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_issue_date_ad": {
+            "type": "string",
+            "title": "Beneficial Owner ID Issue Date (AD)",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_issue_date_bs": {
+            "type": "string",
+            "title": "Beneficial Owner ID Issue Date (BS)",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_address": {
+            "type": "string",
+            "title": "Beneficial Owner Address",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_contact_number": {
+            "type": "number",
+            "title": "Beneficial Owner Contact Number",
+            "group": "Beneficial Owner Information"
+          }
+        },
+        "required": ["beneficial_name", "beneficial_relationship"]
+      }
+    },
+
+    "has_nominee": {
+      "if": {
+        "properties": {
+          "has_nominee": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "nominee_full_name": {
+            "type": "string",
+            "title": "Nominee Full Name",
+            "group": "Nominee Detail"
+          },
+          "relation_to_nominee": {
+            "type": "string",
+            "title": "Relation to Nominee",
+            "group": "Nominee Detail"
+          },
+          "nominee_father_name": {
+            "type": "string",
+            "title": "Nominee Father Name",
+            "group": "Nominee Detail"
+          },
+          "nominee_grandfather_name": {
+            "type": "string",
+            "title": "Nominee Grandfather Name",
+            "group": "Nominee Detail"
+          },
+          "nominee_contact_number": {
+            "type": "string",
+            "title": "Nominee Contact No.",
+            "group": "Nominee Detail",
+            "pattern": "^(\\d{7,12})?$",
+            "errorMessage": {
+              "pattern": "Mobile number must be 7 to 12 digits."
+            }
+          },
+          "nominee_address": {
+            "type": "string",
+            "title": "Nominee Address",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_number": {
+            "type": "string",
+            "title": "Nominee Citizenship/ ID No",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_issuing_authority": {
+            "type": "string",
+            "title": "Nominee ID Issuing Authority",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_issue_date_ad": {
+            "type": "string",
+            "title": "Nominee ID Issue Date (AD)",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_issue_date_bs": {
+            "type": "string",
+            "title": "Nominee ID Issue Date (BS)",
+            "group": "Nominee Detail"
+          }
+        },
+        "required": [
+          "nominee_full_name",
+          "relation_to_nominee",
+          "nominee_father_name",
+          "nominee_grandfather_name"
+        ]
+      },
+      "else": {}
+    }
+  }
+}

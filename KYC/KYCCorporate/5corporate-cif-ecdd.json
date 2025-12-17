@@ -1,0 +1,518 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "hasStep": false,
+  "form_title": "corporate_ecdd_info",
+  "submissionHidden": false,
+  "required": [
+    "entity_expired",
+    "adverse_media",
+    "pep",
+    "business_type",
+    "area_of_business",
+    "is_latest_audit_report_submitted",
+    "other_income_source",
+    "address_verification",
+    "is_identified_as_beneficiary_owner",
+    "screening_result_matched_adverse_media",
+    "single_entity_not_family_or_owner",
+    "approval_status",
+    "approval_remarks"
+  ],
+  "properties": {
+    "entity_expired": {
+      "type": "string",
+      "title": "Is entity registration expired or not? ",
+      "group": "Entity Information",
+      "enum": ["Yes", "No"]
+    },
+    "adverse_media": {
+      "type": "string",
+      "title": "Is customer matched in adverse media?",
+      "group": "Screening Result",
+      "enum": ["Yes", "No"]
+    },
+    "pep": {
+      "type": "string",
+      "title": "Is the related person identified as PEP?",
+      "group": "Related Person - Pep Details",
+      "enum": ["Yes", "No"]
+    },
+    "business_type": {
+      "type": "string",
+      "title": "Business Type",
+      "enum": ["Art and Antique Dealer", "Business", "N/A"],
+      "group": "Business Details"
+    },
+    "area_of_business": {
+      "type": "string",
+      "title": "Area of Business",
+      "group": "Business Details"
+    },
+    "is_latest_audit_report_submitted": {
+      "type": "string",
+      "title": "Is Latest audit report submitted ? ",
+      "group": "Business Details",
+      "enum": ["Yes", "No"]
+    },
+    "other_income_source": {
+      "type": "string",
+      "title": "If other source of income, Please specify",
+      "group": "Business Details"
+    },
+
+    "address_verification": {
+      "type": "string",
+      "title": "Address verification has been made through",
+      "group": "Address Verification",
+      "enum": [
+        "address matched with identification document",
+        "utility bill",
+        "physical verification by the bank official",
+        "Government employee ID received",
+        "Not verified"
+      ]
+    },
+    "is_identified_as_beneficiary_owner": {
+      "type": "string",
+      "title": "Is beneficial owner has been identified in this account? ",
+      "enum": ["Yes", "No"],
+      "group": "Beneficiary Owner"
+    },
+    "screening_result_matched_adverse_media": {
+      "type": "string",
+      "title": "If screening result matched with adverse media?",
+      "enum": ["Yes", "No"],
+      "group": "Screening - Adverse Media"
+    },
+    "single_entity_not_family_or_owner": {
+      "type": "string",
+      "title": "Entity account operated by single person (mandatee) who is not the owner or family members of the owner.",
+      "group": "Other Information",
+      "enum": ["Yes", "No"]
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": ["Approve", "Reject", "Revert"],
+      "width": "half",
+      "title": "Approval Status",
+      "group": "Approval",
+      "hideTitle": true
+    },
+    "approval_remarks": {
+      "type": "string",
+      "width": "half",
+      "title": "Approval Remarks",
+      "group": "Approval",
+      "hideTitle": true
+    }
+  },
+  "dependencies": {
+    "entity_expired": {
+      "if": {
+        "properties": {
+          "entity_expired": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "reason_to_proceed": {
+            "type": "string",
+            "title": "Reason to proceed",
+            "group": "Entity Information"
+          },
+          "major_source_of_income": {
+            "type": "string",
+            "title": "Major Source of Income",
+            "group": "Entity Information",
+            "enum": ["Business", "Donation", "Domestic AID"]
+          },
+          "entity_require_permits": {
+            "type": "string",
+            "title": "Does Entity require licenses and permits ?",
+            "group": "Entity Information",
+            "enum": ["Yes", "No"]
+          },
+          "is_entity_has_complex_shareholding_pattern": {
+            "type": "string",
+            "title": "Is entity has complex shareholding pattern ? ",
+            "group": "Entity Information",
+            "enum": ["Yes", "No"]
+          }
+        },
+        "required": [
+          "reason_to_proceed",
+          "major_source_of_income",
+          "entity_require_permits",
+          "is_entity_has_complex_shareholding_pattern"
+        ],
+        "dependencies": {
+          "entity_require_permits": {
+            "if": {
+              "properties": {
+                "entity_require_permits": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "is_license_valid": {
+                  "type": "string",
+                  "title": "Is valid license has been obtained?",
+                  "group": "Entity Information",
+                  "enum": ["Yes", "No"]
+                }
+              },
+              "required": ["is_license_valid"]
+            },
+            "else": {
+              "properties": {
+                "specify_reason_for_valid_liscense": {
+                  "type": "string",
+                  "title": "Please specify the reason for not updating the valid license",
+                  "group": "Entity Information"
+                }
+              },
+              "required": ["specify_reason_for_valid_liscense"]
+            }
+          },
+          "is_entity_has_complex_shareholding_pattern": {
+            "if": {
+              "properties": {
+                "is_entity_has_complex_shareholding_pattern": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "layers_identified": {
+                  "type": "string",
+                  "title": "How many layers has been identified?",
+                  "group": "Entity Information"
+                }
+              },
+              "required": ["layers_identified"]
+            }
+          }
+        }
+      }
+    },
+    "adverse_media": {
+      "if": {
+        "properties": {
+          "adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime "
+            ],
+            "title": "Category of Adverse",
+            "group": "Screening Result"
+          },
+          "status_adverse_match": {
+            "type": "string",
+            "enum": ["Allegation", "Investigation", "Charged", "Conviction"],
+            "title": "Status of Adverse Match",
+            "group": "Screening Result"
+          }
+        },
+        "required": ["adverse_category", "status_adverse_match"]
+      }
+    },
+    "pep": {
+      "if": {
+        "properties": {
+          "pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Related Person - Pep Details"
+          },
+          "pep_classification": {
+            "type": "string",
+            "title": "Classification of PEP",
+            "group": "Related Person - Pep Details",
+            "enum": ["Self", "Family Member", "Associate PEP"]
+          },
+          "pep_name_involvement": {
+            "type": "string",
+            "title": "Name of PEP involvement",
+            "group": "Related Person - Pep Details"
+          },
+
+          "related_party": {
+            "type": "array",
+            "minItems": 1,
+            "group": "Related Party",
+            "width": "full",
+            "items": {
+              "type": "object",
+              "properties": {
+                "related_party_role": {
+                  "type": "string",
+                  "enum": ["Beneficial Owner", "CEO", "Shareholder"],
+                  "title": "Pep Category",
+                  "group": "Related Person - Pep Details"
+                }
+              },
+              "dependencies": {
+                "related_party_role": {
+                  "if": {
+                    "properties": {
+                      "related_party_role": {
+                        "enum": ["Beneficial Owner", "Shareholder"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "identify_share_holdings": {
+                        "type": "string",
+                        "title": "Identify Share Holding (%)",
+                        "group": "Related Person - Pep Details"
+                      }
+                    },
+                    "required": ["identify_share_holdings"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "pep_category",
+          "pep_classification",
+          "pep_name_involvement",
+          "related_party"
+        ]
+      },
+      "dependencies": {
+        "pep_category": {
+          "if": {
+            "properties": {
+              "pep_category": {
+                "enum": ["Former PEPs"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "pep_retirement_date_ad": {
+                "type": "string",
+
+                "title": "Date of Retirement (PEP) (A.D)",
+                "group": "Related Person - Pep Details"
+              },
+              "pep_retirement_date_bs": {
+                "type": "string",
+
+                "title": "Date of Retirement (PEP) (B.S)",
+                "group": "Related Person - Pep Details"
+              }
+            },
+            "required": ["pep_retirement_date_ad", "pep_retirement_date_bs"]
+          }
+        }
+      }
+    },
+    "is_latest_audit_report_submitted": {
+      "if": {
+        "properties": {
+          "is_latest_audit_report_submitted": {
+            "enum": ["No"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "is_tax_clearance_obtained": {
+            "type": "string",
+            "title": "Is tax clearance has been obtained? ",
+            "group": "Business Details",
+            "enum": ["Yes", "No"]
+          },
+          "reason_for_not_receiving_audit": {
+            "type": "string",
+            "title": "Estimated Annual Income",
+            "group": "Business Details"
+          }
+        },
+        "required": [
+          "is_tax_clearance_obtained",
+          "reason_for_not_receiving_audit"
+        ]
+      },
+      "else": {
+        "properties": {
+          "transaction_volume_match_audit_and_tax": {
+            "type": "string",
+            "title": "Is transaction volumn matches with audit report and tax clearance certficate? ",
+            "group": "Business Details",
+            "width": "half",
+            "enum": ["Yes", "No"]
+          }
+        },
+        "required": ["transaction_volume_match_audit_and_tax"]
+      }
+    },
+    "address_verification": {
+      "if": {
+        "properties": {
+          "address_verification": {
+            "enum": ["physical verification by the bank official"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "employee_id": {
+            "type": "string",
+            "title": "Employee ID of the staff",
+            "group": "Address Verification"
+          },
+          "employee_name": {
+            "type": "string",
+            "title": "Name of staff",
+            "group": "Address Verification"
+          },
+          "employee_address_verification_date_ad": {
+            "type": "string",
+
+            "title": "Address Verification Date (A.D)",
+            "group": "Address Verification"
+          },
+          "employee_address_verification_date_bs": {
+            "type": "string",
+            "title": "Address Verification Date (B.S)",
+            "group": "Address Verification"
+          }
+        },
+        "required": [
+          "employee_id",
+          "employee_name",
+          "employee_address_verification_date_ad",
+          "employee_address_verification_date_bs"
+        ]
+      }
+    },
+    "is_identified_as_beneficiary_owner": {
+      "if": {
+        "properties": {
+          "is_identified_as_beneficiary_owner": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "beneficiary_owner_has_kyc": {
+            "type": "string",
+            "title": "KYC of Beneficial Owner has been obtained",
+            "group": "Beneficiary Owner",
+            "enum": ["Yes", "No"]
+          },
+          "beneficiary_owner_has_id": {
+            "type": "string",
+            "title": "ID of the Beneficial Owner has been obtained",
+            "group": "Beneficiary Owner",
+            "enum": ["Yes", "No"]
+          },
+          "beneficiary_owner_has_screening": {
+            "type": "string",
+            "title": "Screening has been done",
+            "group": "Beneficiary Owner",
+            "enum": ["Yes", "No"]
+          }
+        },
+        "required": [
+          "beneficiary_owner_has_kyc",
+          "beneficiary_owner_has_id",
+          "beneficiary_owner_has_screening"
+        ]
+      }
+    },
+    "screening_result_matched_adverse_media": {
+      "if": {
+        "properties": {
+          "screening_result_matched_adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money laundering",
+              "Banking fraud",
+              "Bribery and corruption",
+              "Organized crime",
+              "Drug trafficking",
+              "Human trafficking",
+              "Wildlife trafficking",
+              "Proliferation and proliferation financing",
+              "Tax evasion"
+            ],
+            "title": "Category of Adverse",
+            "group": "Screening - Adverse Media"
+          },
+          "adverse_status": {
+            "type": "string",
+            "enum": ["Allegation", "Investigation", "Charged", "Conviction"],
+            "title": "Category of Adverse",
+            "group": "Screening - Adverse Media"
+          }
+        },
+        "required": ["adverse_category", "adverse_status"]
+      }
+    },
+    "single_entity_not_family_or_owner": {
+      "if": {
+        "single_entity_not_family_or_owner": {
+          "nationality": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "purpose_to_operate_single_person": {
+            "type": "string",
+            "title": "please specify the intended purpose to assign the single person (mandatee) to operate the acccount",
+            "group": "Other Information",
+            "width": "half"
+          }
+        },
+        "required": ["purpose_to_operate_single_person"]
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "submissionHidden": true,
+  "hideLogTable": true,
+  "properties": {
+    "document_preview": {
+      "type": "string",
+      "width": "full",
+      "title": "Document",
+      "group": ""
+    }
+  },
+  "required": []
+}

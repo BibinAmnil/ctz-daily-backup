@@ -1,0 +1,16 @@
+{
+  "accountInfo": [
+    {
+      "account_type": "MINOR",
+      "step_slug": "individual-cif-screening"
+    },
+    {
+      "account_type": "INDIVIDUAL",
+      "step_slug": "individual-cif-screening"
+    },
+    {
+      "account_type": "CORPORATE",
+      "step_slug": "corporate-cif-screening"
+    }
+  ]
+}

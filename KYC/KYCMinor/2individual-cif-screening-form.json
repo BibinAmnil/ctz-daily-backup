@@ -1,0 +1,1384 @@
+{
+  "type": "object",
+  "hasStep": true,
+  "form_title": "minor_info",
+  "isDisabled": false,
+  "required": [
+    "first_name",
+    "last_name",
+    "father_name",
+    "date_of_birth_ad",
+    "date_of_birth_bs",
+    "dedup_identification",
+    "dedup_id_number",
+    "family_information",
+    "account_info",
+    "currency",
+    "salutation",
+    "gender",
+    "marital_status",
+    "email",
+    "nationality",
+    "contact_type",
+    "customer_type_id",
+    "customer_status",
+    "literacy",
+    "religion",
+    "is_nrn",
+    "is_refugee",
+    "current_country",
+    "residential_status",
+    "occupation_type",
+    "source_of_income",
+    "is_us_person"
+  ],
+
+  "properties": {
+    "literacy": {
+      "type": "string",
+      "title": "Literacy",
+      "group": "Personal Information"
+    },
+    "cif_data": {
+      "type": "string"
+    },
+
+    "source": {
+      "type": "string"
+    },
+
+    "customer_type_id": {
+      "type": "string",
+      "title": "Customer Type",
+      "group": "Account Information"
+    },
+    "customer_status": {
+      "type": "string",
+      "title": "Customer Status",
+      "group": "Account Information",
+      "enum": ["Good", "Bad", "Doubtful"],
+      "default": "Good"
+    },
+    "first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "Personal Information",
+      "connect": "last_name_not_available",
+      "readOnly": true
+    },
+
+    "last_name_not_available": {
+      "type": "boolean",
+      "title": "Is last name not available ?",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "father_name": {
+      "type": "string",
+      "title": "Father Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "dedup_identification": {
+      "type": "string",
+      "title": "Identification",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "dedup_id_number": {
+      "type": "string",
+      "title": "Identification Number",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "date_of_birth_ad": {
+      "type": "string",
+      "group": "Personal Information",
+      "title": "Date of Birth (A.D.)",
+      "readOnly": true
+    },
+    "date_of_birth_bs": {
+      "type": "string",
+      "group": "Personal Information",
+      "title": "Date of Birth (B.S.)",
+      "readOnly": true
+    },
+
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true
+    },
+
+    "currency": {
+      "type": "string",
+      "title": "CIF Currency",
+      "group": "Account Information"
+    },
+    "is_nrn": {
+      "type": "string",
+      "title": "NRN",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
+      "readOnly": true
+    },
+    "is_refugee": {
+      "type": "string",
+      "title": "Refugee",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
+      "readOnly": true
+    },
+
+    "nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "marital_status": {
+      "type": "string",
+      "title": "Marital Status",
+      "group": "Personal Information",
+      "readOnly": true,
+      "default": "UNMAR"
+    },
+
+    "salutation": {
+      "type": "string",
+      "title": "Salutation",
+      "width": "full",
+      "group": "Personal Information"
+    },
+
+    "gender": {
+      "type": "string",
+      "title": "Gender",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+
+    "contact_type": {
+      "type": "string",
+      "title": "Contact Number Type",
+      "group": "Contact Detail",
+
+      "enum": [
+        "No Contact Detail",
+        "Mobile Number",
+        "Phone Number",
+        "Both Contact Detail"
+      ]
+    },
+
+    "religion": {
+      "type": "string",
+      "title": "Religion",
+      "group": "Personal Information",
+      "enum": ["Hindu", "Buddhist", "Christian", "Other"]
+    },
+
+    "email_not_available": {
+      "type": "boolean",
+      "title": "If email not available?",
+      "group": "Personal Information"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email",
+      "group": "Personal Information",
+      "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
+      "errorMessage": {
+        "pattern": "Invalid Email Address"
+      }
+    },
+
+    "id_type_details": {
+      "type": "array",
+      "title": "Identification Detail",
+      "group": "Identification Detail",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id_type_id": {
+            "type": "string",
+            "title": "Identification",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          },
+
+          "disable": {
+            "type": "boolean",
+            "title": "Disable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          },
+          "removable": {
+            "type": "boolean",
+            "title": "Removable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          }
+        },
+        "required": ["id_type_id"],
+        "dependencies": {
+          "id_type_id": {
+            "properties": {
+              "id_type_id": {
+                "type": "string"
+              },
+              "issuing_authority": {
+                "type": "string",
+                "title": "Issuing Authority",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+              "identification_number": {
+                "type": "string",
+                "title": "Identity Number",
+                "hideTitle": true,
+                "group": "Identification Detail",
+                "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
+                "errorMessage": {
+                  "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+                }
+              },
+              "issue_country": {
+                "type": "string",
+                "title": "Country Of Issue",
+                "group": "Identification Detail",
+                "default": "NP",
+                "hideTitle": true
+              },
+              "issued_district": {
+                "type": "string",
+                "title": "Place Of Issue",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+
+              "id_issued_date_ad": {
+                "type": "string",
+                "title": "Issued Date (A.D)",
+                "hideTitle": true,
+                "group": "Identification Detail"
+              },
+              "id_issued_date_bs": {
+                "type": "string",
+                "title": "Issued Date (B.S)",
+                "hideTitle": true,
+                "group": "Identification Detail"
+              }
+            },
+            "required": [
+              "identification_number",
+              "issue_country",
+              "issued_district",
+              "issuing_authority",
+              "id_issued_date_ad",
+              "id_issued_date_bs"
+            ],
+            "dependencies": {
+              "id_type_id": {
+                "if": {
+                  "properties": {
+                    "id_type_id": {
+                      "enum": ["DL", "PP", "SSC", "VOT", "WPN", "VISA", "NRN"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "id_expiry_date_ad": {
+                      "type": "string",
+                      "title": "Expiry Date (A.D)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    },
+                    "id_expiry_date_bs": {
+                      "type": "string",
+                      "title": "Expiry Date (B.S)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    }
+                  },
+                  "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "family_information": {
+      "type": "array",
+      "title": "Family Information",
+      "group": "Family Information",
+      "default": [
+        {
+          "family_member_relation": "FATHE",
+          "family_member_full_name": ""
+        },
+        {
+          "family_member_relation": "MOTHE",
+          "family_member_full_name": ""
+        },
+        {
+          "family_member_relation": "GRANF",
+          "family_member_full_name": ""
+        }
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "family_member_relation": {
+            "type": "string",
+            "title": "Relationship"
+          },
+          "family_member_full_name": {
+            "type": "string",
+            "title": "Full Name",
+            "pattern": "^[a-zA-Z\\s.()]*$",
+            "errorMessage": {
+              "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+            }
+          },
+          "is_family_name_not_available": {
+            "type": "boolean",
+            "title": "Member not available?"
+          }
+        },
+        "required": ["family_member_full_name", "family_member_relation"]
+      },
+      "dependencies": {
+        "family_member_relation": {
+          "if": {
+            "properties": {
+              "family_member_relation": {
+                "enum": ["SPOUS"]
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "occupation_type": {
+      "type": "string",
+      "title": "Occupation Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "source_of_income": {
+      "type": "string",
+      "title": "Source of Income",
+      "group": "Occupation / Profession / Business Details"
+    },
+
+    "personal_info_screening": {
+      "type": "string",
+      "title": "Screening",
+      "group": ""
+    },
+    "residential_status": {
+      "type": "string",
+      "title": "Residential Status",
+      "group": "Permanent Address",
+      "enum": ["Yes", "No"],
+      "default": "Yes"
+    },
+    "is_us_person": {
+      "type": "string",
+      "title": "FATCA Declaration",
+      "group": "Personal Information",
+      "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
+      "default": "None"
+    }
+  },
+
+  "dependencies": {
+    "literacy": {
+      "if": {
+        "properties": {
+          "literacy": {
+            "enum": ["4", "5"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "educational_qualification": {
+            "type": "string",
+            "title": "Education Qualification",
+            "group": "Personal Information"
+          }
+        },
+        "required": ["educational_qualification"]
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+
+    "nationality": {
+      "if": {
+        "properties": {
+          "nationality": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Permanent Address",
+            "default": "NP",
+            "readOnly": true
+          },
+          "same_as_permanent": {
+            "type": "boolean",
+            "title": "Same As Permanent Address",
+            "group": "Current Address",
+            "width": "full",
+            "default": false
+          },
+          "current_country": {
+            "type": "string",
+            "title": "Current Country",
+            "group": "Current Address",
+            "default": "NP"
+          },
+          "national_id_number": {
+            "type": "string",
+            "title": "National ID Number",
+            "group": "National ID Details"
+          },
+          "national_id_issue_date_ad": {
+            "type": "string",
+
+            "title": "National Id Issue Date(A.D)",
+            "group": "National ID Details"
+          },
+          "national_id_issue_date_bs": {
+            "type": "string",
+
+            "title": "National Id Issue Date(B.S)",
+            "group": "National ID Details"
+          },
+          "national_id_issue_place": {
+            "type": "string",
+            "title": "National Id Issue Place",
+            "group": "National ID Details"
+          },
+          "national_id_issuing_authority": {
+            "type": "string",
+            "title": "Issuing Authority",
+            "group": "National ID Details",
+            "default": "DONICR",
+            "readOnly": true
+          },
+          "nid_verified": {
+            "type": "string",
+            "title": "NID Verified",
+            "group": "National ID Details",
+            "enum": ["Yes", "No"]
+          },
+          "nid_verify": {
+            "type": "string",
+            "title": "Verify NID",
+            "group": "National ID Details",
+            "width": 4,
+            "url": "https://citizenportal.donidcr.gov.np/ne/check-national-id-number"
+          }
+        },
+        "dependencies": {
+          "permanent_country": {
+            "if": {
+              "properties": {
+                "permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Permanent Address"
+                },
+                "permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Permanent Address"
+                },
+                "permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Permanent Address"
+                },
+                "permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Permanent Address",
+                  "enum": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33"
+                  ]
+                },
+                "permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                }
+              },
+              "required": [
+                "permanent_province",
+                "permanent_district",
+                "permanent_municipality",
+                "permanent_ward_number",
+                "permanent_street_name",
+                "permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_postal_code": {
+                  "type": "string",
+                  "title": "",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  }
+                }
+              },
+              "required": [
+                "permanent_outside_town",
+                "permanent_outside_street_name",
+                "permanent_postal_code"
+              ]
+            }
+          }
+        },
+        "required": ["permanent_country"]
+      },
+      "else": {
+        "properties": {
+          "permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Permanent Address"
+          },
+          "same_as_permanent": {
+            "type": "boolean",
+            "title": "Same As Permanent Address",
+            "group": "Current Address",
+            "width": "full"
+          },
+          "current_country": {
+            "type": "string",
+            "title": "Current Country",
+            "group": "Current Address",
+            "default": "NP"
+          }
+        },
+        "dependencies": {
+          "permanent_country": {
+            "if": {
+              "properties": {
+                "permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Permanent Address"
+                },
+                "permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Permanent Address"
+                },
+                "permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Permanent Address"
+                },
+                "permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Permanent Address",
+                  "enum": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33"
+                  ]
+                },
+                "permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                }
+              },
+              "required": [
+                "permanent_province",
+                "permanent_district",
+                "permanent_municipality",
+                "permanent_ward_number",
+                "permanent_street_name",
+                "permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_postal_code": {
+                  "type": "string",
+                  "title": "",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  }
+                }
+              },
+              "required": [
+                "permanent_outside_town",
+                "permanent_outside_street_name",
+                "permanent_postal_code"
+              ]
+            }
+          }
+        },
+        "required": ["permanent_country"]
+      }
+    },
+    "current_country": {
+      "oneOf": [
+        {
+          "properties": {
+            "current_country": {
+              "enum": ["NP"]
+            },
+            "same_as_permanent": {
+              "type": "boolean",
+              "title": "Same As Permanent Address",
+              "group": "Current Address",
+              "width": "full"
+            },
+            "current_province": {
+              "type": "string",
+              "title": "Current Province",
+              "group": "Current Address",
+              "masterDataKey": "provinces"
+            },
+            "current_district": {
+              "type": "string",
+              "title": "Current District",
+              "group": "Current Address",
+              "masterDataKey": "districts"
+            },
+            "current_municipality": {
+              "type": "string",
+              "title": "Current Municipality",
+              "group": "Current Address",
+              "masterDataKey": "local_bodies"
+            },
+            "current_ward_number": {
+              "type": "string",
+              "title": "Ward No",
+              "group": "Current Address",
+              "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29",
+                "30",
+                "31",
+                "32",
+                "33"
+              ]
+            },
+            "current_street_name": {
+              "type": "string",
+              "title": "Tole/Street",
+              "group": "Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "current_town": {
+              "type": "string",
+              "title": "Town",
+              "group": "Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "current_house_number": {
+              "type": "string",
+              "title": "House No",
+              "group": "Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            }
+          },
+          "dependencies": {
+            "same_as_permanent": {
+              "if": {
+                "properties": {
+                  "same_as_permanent": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "current_country": {
+                    "readOnly": true
+                  },
+                  "current_province": {
+                    "readOnly": true
+                  },
+                  "current_district": {
+                    "readOnly": true
+                  },
+                  "current_municipality": {
+                    "readOnly": true
+                  },
+
+                  "current_ward_number": {
+                    "readOnly": true
+                  },
+                  "current_street_name": {
+                    "readOnly": true
+                  },
+                  "current_town": {
+                    "readOnly": true
+                  },
+                  "current_house_number": {
+                    "readOnly": true
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "current_province",
+            "current_district",
+            "current_municipality",
+            "current_ward_number",
+            "current_street_name",
+            "current_town"
+          ]
+        },
+        {
+          "properties": {
+            "current_country": {
+              "not": {
+                "enum": ["NP"]
+              }
+            },
+            "same_as_permanent": {
+              "type": "boolean",
+              "title": "Same As Permanent Address",
+              "group": "Current Address",
+              "width": "full"
+            },
+            "current_outside_town": {
+              "type": "string",
+              "title": "Outside Town",
+              "group": "Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "current_outside_street_name": {
+              "type": "string",
+              "title": "Outside Tole/Street",
+              "group": "Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "current_postal_code": {
+              "type": "string",
+              "title": "Postal Code",
+              "group": "Current Address",
+              "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+              }
+            }
+          },
+          "required": [
+            "current_outside_town",
+            "current_outside_street_name",
+            "current_postal_code"
+          ],
+          "dependencies": {
+            "same_as_permanent": {
+              "if": {
+                "properties": {
+                  "same_as_permanent": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "current_country": {
+                    "readOnly": true
+                  },
+
+                  "current_outside_town": {
+                    "readOnly": true
+                  },
+                  "current_outside_street_name": {
+                    "readOnly": true
+                  },
+                  "current_postal_code": {
+                    "readOnly": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    "occupation_type": {
+      "if": {
+        "properties": {
+          "occupation_type": {
+            "enum": ["AEX", "AC", "SEM", "BUSIN", "EMPLO", "SELFE"]
+          }
+        }
+      },
+      "then": {
+        "required": ["occupation_detail"],
+        "properties": {
+          "occupation_detail": {
+            "type": "array",
+            "title": "Occupation",
+            "group": "Occupation / Profession / Business Details",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name_of_organization": {
+                  "type": "string",
+                  "title": "Employer Name"
+                },
+                "organization_address": {
+                  "type": "string",
+                  "title": "Address"
+                },
+                "organization_contact_number": {
+                  "type": "number",
+                  "title": "Contact No.",
+                  "pattern": "^[0-9]{7,12}$",
+                  "errorMessage": {
+                    "pattern": "Mobile number must be 7 to 12 digits."
+                  }
+                },
+                "designation": {
+                  "type": "string",
+                  "title": "Designation"
+                },
+                "business_type": {
+                  "type": "string",
+                  "title": "Business Type"
+                }
+              },
+              "required": [
+                "name_of_organization",
+                "organization_address",
+                "organization_contact_number",
+                "designation",
+                "business_type"
+              ]
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+    "pep": {
+      "if": {
+        "properties": {
+          "pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighbouring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["pep_category"]
+      }
+    },
+    "adverse_media": {
+      "if": {
+        "properties": {
+          "adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["adverse_category"]
+      }
+    },
+
+    "contact_type": {
+      "oneOf": [
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["Phone Number"]
+            },
+            "phone_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            },
+            "phone_number": {
+              "type": "number",
+              "title": "Phone Number",
+              "group": "Contact Detail",
+              "pattern": "^(\\d{7,12})?$",
+              "width": 5,
+              "errorMessage": {
+                "pattern": "Mobile number must be 7 to 12 digits."
+              }
+            }
+          },
+          "required": ["phone_country_code", "phone_number"]
+        },
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["Mobile Number"]
+            },
+            "mobile_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            }
+          },
+          "dependencies": {
+            "mobile_country_code": {
+              "if": {
+                "properties": {
+                  "mobile_country_code": {
+                    "enum": ["NEPAL"]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "width": 5,
+                    "pattern": "^(\\d{10})?$",
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 10 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              },
+              "else": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "pattern": "^(\\d{7,12})?$",
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 7 to 12 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              }
+            }
+          },
+          "required": ["mobile_country_code"]
+        },
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["Both Contact Detail"]
+            },
+            "phone_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            },
+            "phone_number": {
+              "type": "number",
+              "title": "Phone Number",
+              "group": "Contact Detail",
+              "pattern": "^(\\d{7,12})?$",
+              "width": 5,
+              "errorMessage": {
+                "pattern": "Mobile number must be 7 to 12 digits."
+              }
+            },
+            "mobile_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            }
+          },
+          "required": [
+            "phone_country_code",
+            "phone_number",
+            "mobile_country_code"
+          ],
+          "dependencies": {
+            "mobile_country_code": {
+              "if": {
+                "properties": {
+                  "mobile_country_code": {
+                    "enum": ["NEPAL"]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "pattern": "^(\\d{10})?$",
+                    "width": 5,
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 10 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              },
+              "else": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "pattern": "^(\\d{7,12})?$",
+                    "width": 5,
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 7 to 12 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["No Contact Detail"]
+            }
+          }
+        }
+      ]
+    },
+
+    "email_not_available": {
+      "if": {
+        "properties": {
+          "email_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "email": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "email": {
+            "readOnly": false
+          }
+        }
+      }
+    },
+    "last_name_not_available": {
+      "if": {
+        "properties": {
+          "last_name_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "last_name": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "last_name": {
+            "readOnly": false
+          }
+        }
+      }
+    }
+  }
+}

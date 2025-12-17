@@ -1,0 +1,1736 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "submissionHidden": false,
+  "form_title": "joint_secondary",
+  "hasStep": true,
+  "required": ["joint_account_name"],
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "Personal Information",
+      "hideTitle": true,
+      "pattern": "^[a-zA-Z/.-]*$",
+      "errorMessage": {
+        "pattern": "Alphabets and . only"
+      }
+    },
+    "middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "Personal Information",
+      "hideTitle": true,
+      "pattern": "^[a-zA-Z\\s]*$",
+      "errorMessage": {
+        "pattern": "Alphabets and spaces only"
+      }
+    },
+
+    "last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "Personal Information",
+      "hideTitle": true,
+      "pattern": "^[a-zA-Z\\s/.]*$",
+      "errorMessage": {
+        "pattern": "Alphabets and spaces only"
+      }
+    },
+    "joint_account_name": {
+      "type": "string",
+      "title": "Joint Account Name",
+      "width": "half",
+      "group": "Joint",
+      "readOnly": true,
+      "hideTitle": true
+    },
+    "account_info": {
+      "type": "string",
+      "title": "Joint Account Name",
+      "width": "half",
+      "group": "Joint",
+      "readOnly": true,
+      "hideTitle": true
+    },
+    "is_minor_account": {
+      "type": "boolean",
+      "group": "Joint",
+      "readOnly": true,
+      "hideTitle": true
+    },
+    "joint_details": {
+      "type": "array",
+      "minItems": 1,
+      "group": "Secondary Account Joint Information",
+      "width": "full",
+      "buttonWidth": "full",
+      "items": {
+        "type": "object",
+        "required": [
+          "first_name",
+          "last_name",
+          "father_name",
+          "date_of_birth_ad",
+          "date_of_birth_bs",
+          "dedup_identification",
+          "dedup_id_number",
+          "family_account_holder",
+          "relation_with_account_holder",
+          "gender",
+          "pep",
+          "family_pep_declaration",
+          "adverse_media",
+          "loan_status",
+          "personal_info_screening",
+          "is_blacklisted",
+          "customer_type_id",
+          "customer_introduce_by",
+          "met_in_person"
+        ],
+
+        "properties": {
+          "cif_data": {
+            "type": "string"
+          },
+          "customer_type_id": {
+            "type": "string",
+            "title": "Customer Type",
+            "group": "Account Information"
+          },
+
+          "nationality": {
+            "type": "string",
+            "title": "Nationality",
+            "group": "Account Information",
+            "default": "NP"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "group": "Personal Information",
+            "pattern": "^[a-zA-Z/.-]*$",
+            "errorMessage": {
+              "pattern": "Alphabets and . only"
+            }
+          },
+          "middle_name": {
+            "type": "string",
+            "title": "Middle Name",
+            "group": "Personal Information",
+            "pattern": "^[a-zA-Z]*$",
+            "errorMessage": {
+              "pattern": "Alphabets and spaces only"
+            }
+          },
+          "id_type_details": {
+            "type": "array",
+            "title": "Identification Detail",
+            "group": "Identification Detail",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id_type_id": {
+                  "type": "string",
+                  "title": "Identification",
+                  "hideTitle": true,
+                  "group": "Identification Detail"
+                },
+
+                "disable": {
+                  "type": "boolean",
+                  "title": "Disable",
+                  "hideTitle": true,
+                  "group": "Identification Detail"
+                },
+                "removable": {
+                  "type": "boolean",
+                  "title": "Removable",
+                  "hideTitle": true,
+                  "group": "Identification Detail"
+                }
+              },
+              "required": ["id_type_id"],
+              "dependencies": {
+                "id_type_id": {
+                  "properties": {
+                    "id_type_id": {
+                      "type": "string"
+                    },
+                    "identification_number": {
+                      "type": "string",
+                      "title": "Identity Number",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    },
+                    "issue_country": {
+                      "type": "string",
+                      "title": "Country Of Issue",
+                      "group": "Identification Detail",
+                      "hideTitle": true
+                    },
+                    "issuing_authority": {
+                      "type": "string",
+                      "title": "Issuing Authority",
+                      "group": "Identification Detail",
+                      "hideTitle": true
+                    },
+                    "id_issued_date_ad": {
+                      "type": "string",
+                      "title": "Issued Date (A.D)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    },
+                    "id_issued_date_bs": {
+                      "type": "string",
+                      "title": "Issued Date (B.S)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    }
+                  },
+                  "required": [
+                    "identification_number",
+                    "issue_country",
+                    "issuing_authority",
+                    "id_issued_date_ad",
+                    "id_issued_date_bs"
+                  ],
+                  "dependencies": {
+                    "id_type_id": {
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["CTZN"]
+                            },
+                            "issuing_authority": {
+                              "default": "DAO",
+                              "readOnly": true
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["PP", "TRDOC"]
+                            },
+                            "issuing_authority": {
+                              "default": "85bdeca6-4cb1-435e-a81c-e65a04a910f4",
+                              "readOnly": true
+                            },
+                            "id_expiry_date_ad": {
+                              "type": "string",
+                              "title": "Expiry Date (A.D)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            },
+                            "id_expiry_date_bs": {
+                              "type": "string",
+                              "title": "Expiry Date (B.S)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            }
+                          },
+                          "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["LCNSE"]
+                            },
+                            "issuing_authority": {
+                              "default": "NA",
+                              "readOnly": true
+                            },
+                            "id_expiry_date_ad": {
+                              "type": "string",
+                              "title": "Expiry Date (A.D)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            },
+                            "id_expiry_date_bs": {
+                              "type": "string",
+                              "title": "Expiry Date (B.S)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            }
+                          },
+                          "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["VOTER"]
+                            },
+                            "issuing_authority": {
+                              "default": "50a4ae2f-02c5-4a3c-be9b-28dea96aaf46",
+                              "readOnly": true
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["NID"]
+                            },
+                            "issuing_authority": {
+                              "default": "DONICR",
+                              "readOnly": true
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["BRTCT"]
+                            },
+                            "issuing_authority": {
+                              "default": "VDCO",
+                              "readOnly": true
+                            },
+                            "id_expiry_date_ad": {
+                              "type": "string",
+                              "title": "Expiry Date (A.D)",
+                              "hideTitle": true,
+                              "group": "Identification Detail",
+                              "readOnly": true
+                            },
+                            "id_expiry_date_bs": {
+                              "type": "string",
+                              "title": "Expiry Date (B.S)",
+                              "hideTitle": true,
+                              "group": "Identification Detail",
+                              "readOnly": true
+                            }
+                          },
+                          "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["MICRD"]
+                            },
+                            "issuing_authority": {
+                              "default": "VDCO"
+                            },
+                            "id_expiry_date_ad": {
+                              "type": "string",
+                              "title": "Expiry Date (A.D)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            },
+                            "id_expiry_date_bs": {
+                              "type": "string",
+                              "title": "Expiry Date (B.S)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["EMBSY"]
+                            },
+                            "issuing_authority": {
+                              "default": "5db16d6d-63ea-4ff1-a8d3-0ffdf38a2773",
+                              "readOnly": true
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "enum": ["WPERM"]
+                            },
+                            "id_expiry_date_ad": {
+                              "type": "string",
+                              "title": "Expiry Date (A.D)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            },
+                            "id_expiry_date_bs": {
+                              "type": "string",
+                              "title": "Expiry Date (B.S)",
+                              "hideTitle": true,
+                              "group": "Identification Detail"
+                            }
+                          },
+                          "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                        },
+                        {
+                          "properties": {
+                            "id_type_id": {
+                              "not": {
+                                "enum": [
+                                  "CTZN",
+                                  "PP",
+                                  "TRDOC",
+                                  "LCNSE",
+                                  "VOTER",
+                                  "NID",
+                                  "BRTCT",
+                                  "MICRD",
+                                  "WPERM",
+                                  "EMBSY"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    },
+
+                    "issue_country": {
+                      "if": {
+                        "properties": {
+                          "issue_country": {
+                            "enum": ["NP"]
+                          }
+                        }
+                      },
+                      "then": {
+                        "properties": {
+                          "issued_district": {
+                            "type": "string",
+                            "title": "Place Of Issue",
+                            "group": "Identification Detail",
+                            "hideTitle": true
+                          }
+                        },
+                        "required": ["issued_district"]
+                      },
+                      "else": {
+                        "properties": {
+                          "issued_district_text": {
+                            "type": "string",
+                            "title": "Place Of Issue",
+                            "group": "Identification Detail",
+                            "hideTitle": true
+                          }
+                        },
+                        "required": ["issued_district_text"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "group": "Personal Information",
+
+            "connect": "last_name_not_available",
+            "pattern": "^[a-zA-Z\\s/.-]*$",
+            "errorMessage": {
+              "pattern": "Alphabets and spaces only"
+            }
+          },
+
+          "last_name_not_available": {
+            "type": "boolean",
+            "title": "Is last name not available ?",
+            "group": "Personal Information"
+          },
+          "salutation": {
+            "type": "string",
+            "title": "Salutation",
+            "width": "full",
+            "group": "Personal Information"
+          },
+          "father_name": {
+            "type": "string",
+            "title": "Father Name",
+            "group": "Personal Information",
+
+            "pattern": "^[a-zA-Z\\s/.]*$",
+            "errorMessage": {
+              "pattern": "Alphabets and spaces only"
+            }
+          },
+          "dedup_identification": {
+            "type": "string",
+            "title": "Identification",
+            "group": "Personal Information"
+          },
+          "dedup_id_number": {
+            "type": "string",
+            "title": "Identification Number",
+            "group": "Personal Information"
+          },
+          "date_of_birth_ad": {
+            "type": "string",
+            "group": "Personal Information",
+            "title": "Date of Birth (A.D.)"
+          },
+          "date_of_birth_bs": {
+            "type": "string",
+            "group": "Personal Information",
+            "title": "Date of Birth (B.S.)"
+          },
+
+          "dedup_check": {
+            "type": "string",
+            "title": "Preliminary Screening",
+            "group": "Personal Information",
+            "width": "full"
+          },
+          "dedup_module_data": {
+            "type": "string",
+            "width": "full",
+            "group": "Personal Information",
+            "additionalProperties": true,
+            "columns": [
+              { "key": "full_name", "label": "Name" },
+              { "key": "cif_number", "label": "Cif Number" },
+              { "key": "date_of_birth_ad", "label": "Date of Birth" },
+              {
+                "key": "identification_number",
+                "label": "Citizenship Number"
+              },
+              {
+                "key": "branch",
+                "label": "Branch"
+              },
+              {
+                "key": "case_status",
+                "label": "Case Status"
+              }
+            ],
+            "actions": [
+              {
+                "label": "Match",
+                "icon": "match",
+                "tooltip": "Matched Detail",
+                "actionKey": "match"
+              }
+            ]
+          },
+          "is_minor_account": {
+            "type": "boolean",
+            "title": "Is Minor Account?",
+            "group": " Joint Account Information",
+
+            "width": 4,
+            "default": false,
+            "hideTitle": true
+          },
+          "has_cif": {
+            "type": "boolean",
+            "title": "Has CIF Number?",
+            "group": " Joint Account Information",
+            "width": 20,
+            "readOnly": true,
+            "default": true,
+            "hideTitle": true
+          },
+
+          "gender": {
+            "type": "string",
+            "title": "Gender",
+            "group": "Personal Information"
+          },
+
+          "family_account_holder": {
+            "type": "string",
+            "title": "Is s/he family member of the account holder ?",
+            "group": "Relation with Account Holder",
+            "hideTitle": true
+          },
+
+          "relation_with_account_holder": {
+            "type": "string",
+            "title": "Relationship with the accoutholder ?",
+            "group": "Relation with Account Holder",
+            "hideTitle": true
+          },
+          "pep": {
+            "type": "string",
+            "title": "Politically Exposed Person (PEP) ?",
+            "group": "Declaration",
+            "enum": ["Yes", "No"]
+          },
+
+          "family_pep_declaration": {
+            "type": "string",
+            "title": "Customer declares family member as PEP or as associate PEP ?",
+            "group": "Declaration",
+            "enum": ["Yes", "No"],
+            "width": 10
+          },
+          "adverse_media": {
+            "type": "string",
+            "title": "Adverse Media",
+            "group": "Declaration",
+            "enum": ["Yes", "No"]
+          },
+
+          "loan_status": {
+            "type": "string",
+            "title": "Has the customer taken any loan with us in the past ?",
+            "group": "statusOfClient",
+            "enum": ["Yes", "No"],
+            "width": 8
+          },
+          "is_blacklisted": {
+            "type": "string",
+            "title": "Has the customer being blacklisted by us ?",
+            "group": "statusOfClient",
+            "enum": ["Yes", "No"],
+            "width": 8
+          },
+
+          "family_information": {
+            "type": "array",
+            "title": "Family Information",
+            "minItems": 3,
+            "maxItems": 3,
+            "default": [
+              {
+                "family_member_relation": "FATHE",
+                "family_member_full_name": ""
+              },
+              {
+                "family_member_relation": "MOTHE",
+                "family_member_full_name": ""
+              },
+              {
+                "family_member_relation": "GRANF",
+                "family_member_full_name": ""
+              }
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "family_member_relation": {
+                  "type": "string",
+                  "title": "Relationship"
+                },
+                "family_member_full_name": {
+                  "type": "string",
+                  "title": "Full Name"
+                },
+                "is_family_name_not_available": {
+                  "type": "boolean",
+                  "title": "Member not available?"
+                }
+              }
+            },
+            "group": "Family Information"
+          },
+
+          "personal_info_screening": {
+            "type": "string",
+            "title": "Screening",
+            "group": "",
+            "default": "true"
+          },
+
+          "personal_screening_data": {
+            "type": "string",
+            "width": "full",
+            "group": "",
+            "additionalProperties": true,
+            "columns": [
+              { "key": "matchedInfo", "label": "Name" },
+              { "key": "rank", "label": "Matching Percentage" }
+            ],
+            "actions": [
+              {
+                "label": "View",
+                "icon": "view",
+                "tooltip": "View Detail",
+                "actionKey": "view"
+              }
+            ]
+          },
+          "calculate_risk": {
+            "type": "string",
+            "title": "Calculate Risk",
+            "group": "Risk"
+          },
+          "risk_level": {
+            "type": "string",
+            "group": "Risk",
+            "title": "Risk Level",
+            "enum": ["Low Risk", "Medium Risk", "High Risk"],
+            "readOnly": true
+          },
+          "risk_score": {
+            "type": "number",
+            "title": "Risk Score",
+            "group": "Risk",
+            "readOnly": true
+          },
+
+          "customer_introduce_by": {
+            "type": "string",
+            "title": "Introducer Name",
+            "group": "statusOfClient",
+            "enum": [
+              "Bank Staff",
+              "Other Account Holder",
+              "Walk-in Customer",
+              "Local Government Bodies"
+            ],
+            "width": 8
+          },
+
+          "met_in_person": {
+            "type": "string",
+            "title": "Has the customer been met in-person (face-to-face) ?",
+            "group": "statusOfClient",
+            "enum": ["Yes", "No"],
+            "width": 8
+          }
+        },
+
+        "dependencies": {
+          "is_minor_account": {
+            "if": {
+              "properties": {
+                "is_minor_account": {
+                  "const": false
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "dedup_identification": {
+                  "default": "CTZN"
+                },
+                "marital_status": {
+                  "type": "string",
+                  "title": "Marital Status",
+                  "group": "Personal Information"
+                },
+                "contact_type": {
+                  "type": "string",
+                  "title": "Contact Number Type",
+                  "group": "Contact Detail",
+                  "enum": [
+                    "No Contact Detail",
+                    "Mobile Number",
+                    "Phone Number",
+                    "Both Contact Detail"
+                  ]
+                },
+
+                "nationality": {
+                  "type": "string",
+                  "title": "Nationality",
+                  "group": "Account Information",
+                  "default": "NP"
+                },
+                "email_not_available": {
+                  "type": "boolean",
+                  "title": "If email not available?",
+                  "group": "Personal Information"
+                },
+                "email": {
+                  "type": "string",
+                  "title": "Email",
+                  "group": "Personal Information",
+                  "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
+                  "errorMessage": {
+                    "pattern": "Invalid Email Address"
+                  }
+                },
+
+                "current_country": {
+                  "type": "string",
+                  "title": "Current Country",
+                  "group": "Current",
+                  "hideTitle": true,
+                  "default": "NP"
+                },
+
+                "occupation_type": {
+                  "type": "string",
+                  "title": "Occupation Type",
+                  "group": "Occupation / Profession / Business Details"
+                },
+                "source_of_income": {
+                  "type": "string",
+                  "title": "Source of Income",
+                  "group": "Occupation / Profession / Business Details"
+                }
+              },
+              "dependencies": {
+                "occupation_type": {
+                  "if": {
+                    "properties": {
+                      "occupation_type": {
+                        "enum": ["BUSIN", "EMPLO", "SELFE"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["occupation_detail"],
+                    "properties": {
+                      "occupation_detail": {
+                        "type": "array",
+                        "title": "Occupation",
+                        "group": "Occupation / Profession / Business Details",
+                        "minItems": 1,
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name_of_organization": {
+                              "type": "string",
+                              "title": "Employer Name"
+                            },
+                            "organization_address": {
+                              "type": "string",
+                              "title": "Address"
+                            },
+                            "organization_contact_number": {
+                              "type": "number",
+                              "title": "Contact No.",
+                              "pattern": "^(\\d{7,12})?$",
+                              "errorMessage": {
+                                "pattern": "Mobile number must be 7 to 12 digits."
+                              }
+                            },
+                            "designation": {
+                              "type": "string",
+                              "title": "Designation"
+                            },
+                            "business_type": {
+                              "type": "string",
+                              "title": "Business Type"
+                            }
+                          },
+                          "required": [
+                            "name_of_organization",
+                            "organization_address",
+                            "organization_contact_number",
+                            "designation",
+                            "business_type"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "else": {
+                    "properties": {}
+                  }
+                },
+
+                "current_country": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "current_country": {
+                          "enum": ["NP"]
+                        },
+                        "current_province": {
+                          "type": "string",
+                          "title": "Current Province",
+                          "masterDataKey": "provinces",
+                          "group": "Current",
+                          "hideTitle": true
+                        },
+                        "current_district": {
+                          "type": "string",
+                          "title": "Current District",
+                          "group": "Current",
+                          "hideTitle": true,
+                          "masterDataKey": "districts"
+                        },
+                        "current_municipality": {
+                          "type": "string",
+                          "title": "Current Municipality",
+                          "group": "Current",
+                          "hideTitle": true,
+                          "masterDataKey": "local_bodies"
+                        },
+                        "current_ward_number": {
+                          "type": "string",
+                          "title": "Ward No",
+                          "pattern": "^[0-9]{1,2}$",
+                          "group": "Current",
+                          "hideTitle": true,
+                          "errorMessage": {
+                            "pattern": "Allowed 2 numbers only"
+                          }
+                        },
+                        "current_street_name": {
+                          "type": "string",
+                          "title": "Tole/Street",
+                          "group": "Current",
+                          "hideTitle": true,
+                          "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                          "errorMessage": {
+                            "pattern": "Only alphanumeric characters and spaces are allowed."
+                          }
+                        },
+                        "current_town": {
+                          "type": "string",
+                          "title": "Town",
+
+                          "group": "Current",
+                          "hideTitle": true,
+                          "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                          "errorMessage": {
+                            "pattern": "Only alphanumeric characters and spaces are allowed."
+                          }
+                        },
+                        "current_house_number": {
+                          "type": "string",
+                          "title": "House No",
+                          "group": "Current",
+                          "hideTitle": true,
+                          "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                          "errorMessage": {
+                            "pattern": "Only alphanumeric characters and spaces are allowed."
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "current_country": {
+                          "not": {
+                            "enum": ["NP"]
+                          }
+                        },
+                        "current_outside_town": {
+                          "type": "string",
+                          "title": "Outside Town",
+                          "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                          "errorMessage": {
+                            "pattern": "Only alphanumeric characters and spaces are allowed."
+                          },
+                          "group": "Current",
+                          "hideTitle": true
+                        },
+                        "current_outside_street_name": {
+                          "type": "string",
+                          "title": "Outside Tole/Street",
+
+                          "group": "Current",
+                          "hideTitle": true,
+                          "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                          "errorMessage": {
+                            "pattern": "Only alphanumeric characters and spaces are allowed."
+                          }
+                        },
+                        "current_postal_code": {
+                          "type": "string",
+                          "title": "Postal Code",
+                          "group": "Current",
+                          "hideTitle": true,
+                          "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                          "errorMessage": {
+                            "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "contact_type": {
+                  "oneOf": [
+                    {
+                      "properties": {
+                        "contact_type": {
+                          "enum": ["Phone Number"]
+                        },
+                        "phone_country_code": {
+                          "type": "string",
+                          "title": "Code",
+                          "group": "Contact Detail",
+                          "width": 4,
+                          "default": "NEPAL"
+                        },
+                        "phone_number": {
+                          "type": "number",
+                          "title": "Phone Number",
+                          "group": "Contact Detail",
+                          "pattern": "^(\\d{7,12})?$",
+                          "width": 5,
+                          "errorMessage": {
+                            "pattern": "Mobile number must be 7 to 12 digits."
+                          }
+                        }
+                      },
+                      "required": ["phone_country_code", "phone_number"]
+                    },
+                    {
+                      "properties": {
+                        "contact_type": {
+                          "enum": ["Mobile Number"]
+                        },
+                        "mobile_country_code": {
+                          "type": "string",
+                          "title": "Code",
+                          "group": "Contact Detail",
+                          "width": 4,
+                          "default": "NEPAL"
+                        }
+                      },
+                      "dependencies": {
+                        "mobile_country_code": {
+                          "if": {
+                            "properties": {
+                              "mobile_country_code": {
+                                "enum": ["NEPAL"]
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "mobile_number": {
+                                "type": "number",
+                                "title": "Mobile Number",
+                                "group": "Contact Detail",
+                                "pattern": "^(\\d{10})?$",
+                                "width": 5,
+                                "errorMessage": {
+                                  "pattern": "Mobile number must be 10 digits."
+                                }
+                              }
+                            },
+                            "required": ["mobile_number"]
+                          },
+                          "else": {
+                            "properties": {
+                              "mobile_number": {
+                                "type": "number",
+                                "title": "Mobile Number",
+                                "group": "Contact Detail",
+                                "pattern": "^(\\d{7,12})?$",
+                                "errorMessage": {
+                                  "pattern": "Mobile number must be 7 to 12 digits."
+                                }
+                              }
+                            },
+                            "required": ["mobile_number"]
+                          }
+                        }
+                      },
+                      "required": ["mobile_country_code"]
+                    },
+                    {
+                      "properties": {
+                        "contact_type": {
+                          "enum": ["Both Contact Detail"]
+                        },
+                        "phone_country_code": {
+                          "type": "string",
+                          "title": "Code",
+                          "group": "Contact Detail",
+                          "width": 4,
+                          "default": "NEPAL"
+                        },
+                        "phone_number": {
+                          "type": "number",
+                          "title": "Phone Number",
+                          "group": "Contact Detail",
+                          "pattern": "^(\\d{7,12})?$",
+                          "width": 5,
+                          "errorMessage": {
+                            "pattern": "Mobile number must be 7 to 12 digits."
+                          }
+                        },
+                        "mobile_country_code": {
+                          "type": "string",
+                          "title": "Code",
+                          "group": "Contact Detail",
+                          "width": 4,
+                          "default": "NEPAL"
+                        }
+                      },
+                      "required": [
+                        "phone_country_code",
+                        "phone_number",
+                        "mobile_country_code"
+                      ],
+                      "dependencies": {
+                        "mobile_country_code": {
+                          "if": {
+                            "properties": {
+                              "mobile_country_code": {
+                                "enum": ["NEPAL"]
+                              }
+                            }
+                          },
+                          "then": {
+                            "properties": {
+                              "mobile_number": {
+                                "type": "number",
+                                "title": "Mobile Number",
+                                "group": "Contact Detail",
+                                "pattern": "^(\\d{10})?$",
+                                "width": 5,
+                                "errorMessage": {
+                                  "pattern": "Mobile number must be 10 digits."
+                                }
+                              }
+                            },
+                            "required": ["mobile_number"]
+                          },
+                          "else": {
+                            "properties": {
+                              "mobile_number": {
+                                "type": "number",
+                                "title": "Mobile Number",
+                                "group": "Contact Detail",
+                                "pattern": "^(\\d{7,12})?$",
+                                "width": 5,
+                                "errorMessage": {
+                                  "pattern": "Mobile number must be 7 to 12 digits."
+                                }
+                              }
+                            },
+                            "required": ["mobile_number"]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "properties": {
+                        "contact_type": {
+                          "enum": ["No Contact Detail"]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "nationality": {
+                  "if": {
+                    "properties": {
+                      "nationality": {
+                        "enum": ["NP"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "permanent_country": {
+                        "type": "string",
+                        "title": "Permanent Country",
+                        "group": "Contact Detail",
+                        "default": "NP",
+                        "readOnly": true
+                      },
+
+                      "is_customer_disabled": {
+                        "type": "boolean",
+                        "title": "Is Customer Disabled or Senior Citizen?",
+                        "group": "NationalIDDetail",
+                        "default": false,
+                        "width": "full"
+                      },
+                      "national_id_number": {
+                        "type": "string",
+                        "title": "National ID Number",
+                        "group": "NationalIDDetail"
+                      },
+                      "national_id_issue_date_ad": {
+                        "type": "string",
+
+                        "title": "National Id Issue Date(A.D)",
+                        "group": "NationalIDDetail"
+                      },
+                      "national_id_issue_date_bs": {
+                        "type": "string",
+                        "title": "National Id Issue Date(B.S)",
+                        "group": "NationalIDDetail"
+                      },
+                      "national_id_issue_place": {
+                        "type": "string",
+                        "title": "National Id Issue Place",
+                        "group": "NationalIDDetail"
+                      },
+                      "national_id_issuing_authority": {
+                        "type": "string",
+                        "title": "Issuing Authority",
+                        "group": "NationalIDDetail",
+                        "default": "DONICR",
+                        "readOnly": true
+                      },
+                      "nid_verified": {
+                        "type": "string",
+                        "title": "NID Verified",
+                        "group": "NationalIDDetail",
+                        "enum": ["Yes", "No"],
+                        "readOnly": true
+                      },
+                      "nid_verify": {
+                        "type": "string",
+                        "title": "Verify",
+                        "group": "NationalIDDetail",
+                        "width": 2
+                      },
+                      "nid_reset": {
+                        "type": "string",
+                        "title": "Reset",
+                        "group": "NationalIDDetail",
+                        "width": 2
+                      }
+                    },
+                    "dependencies": {
+                      "is_customer_disabled": {
+                        "if": {
+                          "properties": {
+                            "is_customer_disabled": {
+                              "const": true
+                            }
+                          }
+                        },
+                        "then": {},
+                        "else": {
+                          "properties": {},
+                          "required": [
+                            "national_id_number",
+                            "national_id_issue_date_ad",
+                            "national_id_issue_date_bs",
+                            "national_id_issue_place",
+                            "national_id_issuing_authority",
+                            "nid_verified"
+                          ]
+                        }
+                      },
+                      "permanent_country": {
+                        "if": {
+                          "properties": {
+                            "permanent_country": {
+                              "enum": ["NP"]
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "permanent_province": {
+                              "type": "string",
+                              "title": "Permanent Province",
+                              "group": "Contact Detail"
+                            },
+                            "permanent_district": {
+                              "type": "string",
+                              "title": "Permanent District",
+                              "group": "Contact Detail"
+                            },
+                            "permanent_municipality": {
+                              "type": "string",
+                              "title": "Permanent Municipality",
+                              "group": "Contact Detail"
+                            },
+                            "permanent_ward_number": {
+                              "type": "string",
+                              "title": "Ward No",
+                              "group": "Contact Detail",
+                              "pattern": "^[0-9]{1,2}$",
+                              "errorMessage": {
+                                "pattern": "Allowed 2 number only"
+                              }
+                            },
+                            "permanent_street_name": {
+                              "type": "string",
+                              "title": "Tole/Street",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_town": {
+                              "type": "string",
+                              "title": "Town",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_house_number": {
+                              "type": "string",
+                              "title": "House No",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            }
+                          },
+                          "required": [
+                            "permanent_province",
+                            "permanent_district",
+                            "permanent_municipality",
+                            "permanent_ward_number",
+                            "permanent_street_name",
+                            "permanent_town"
+                          ]
+                        },
+                        "else": {
+                          "properties": {
+                            "permanent_outside_town": {
+                              "type": "string",
+                              "title": "Town",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_outside_street_name": {
+                              "type": "string",
+                              "title": "Tole/Street",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_postal_code": {
+                              "type": "string",
+                              "title": "Postal Code",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                              }
+                            }
+                          },
+                          "required": [
+                            "permanent_outside_town",
+                            "permanent_outside_street_name",
+                            "permanent_postal_code"
+                          ]
+                        }
+                      }
+                    },
+                    "required": []
+                  },
+                  "else": {
+                    "properties": {
+                      "permanent_country": {
+                        "type": "string",
+                        "title": "Permanent Country",
+                        "group": "Contact Detail"
+                      }
+                    },
+                    "dependencies": {
+                      "permanent_country": {
+                        "if": {
+                          "properties": {
+                            "permanent_country": {
+                              "enum": ["NP"]
+                            }
+                          }
+                        },
+                        "then": {
+                          "properties": {
+                            "permanent_province": {
+                              "type": "string",
+                              "title": "Permanent Province",
+                              "group": "Contact Detail"
+                            },
+                            "permanent_district": {
+                              "type": "string",
+                              "title": "Permanent District",
+                              "group": "Contact Detail"
+                            },
+                            "permanent_municipality": {
+                              "type": "string",
+                              "title": "Permanent Municipality",
+                              "group": "Contact Detail"
+                            },
+                            "permanent_ward_number": {
+                              "type": "string",
+                              "title": "Ward No",
+                              "group": "Contact Detail",
+                              "pattern": "^[0-9]{1,2}$",
+                              "errorMessage": {
+                                "pattern": "Allowed 2 number only"
+                              }
+                            },
+                            "permanent_street_name": {
+                              "type": "string",
+                              "title": "Tole/Street",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_town": {
+                              "type": "string",
+                              "title": "Town",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_house_number": {
+                              "type": "string",
+                              "title": "House No",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            }
+                          },
+                          "required": [
+                            "permanent_province",
+                            "permanent_district",
+                            "permanent_municipality",
+                            "permanent_ward_number",
+                            "permanent_street_name",
+                            "permanent_town"
+                          ]
+                        },
+                        "else": {
+                          "properties": {
+                            "permanent_outside_town": {
+                              "type": "string",
+                              "title": "Town",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_outside_street_name": {
+                              "type": "string",
+                              "title": "Tole/Street",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed."
+                              }
+                            },
+                            "permanent_postal_code": {
+                              "type": "string",
+                              "title": "Postal Code",
+                              "group": "Contact Detail",
+                              "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                              "errorMessage": {
+                                "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                              }
+                            }
+                          },
+                          "required": [
+                            "permanent_outside_town",
+                            "permanent_outside_street_name",
+                            "permanent_postal_code"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "salutation",
+                "marital_status",
+                "email",
+                "nationality",
+                "contact_type",
+                "occupation_type",
+                "source_of_income"
+              ]
+            },
+            "else": {
+              "properties": {
+                "nationality": {
+                  "type": "string",
+                  "title": "Nationality",
+                  "group": "Account Information",
+                  "default": "NP"
+                },
+
+                "marital_status": {
+                  "type": "string",
+                  "title": "Marital Status",
+                  "group": "Personal Information",
+                  "readOnly": true,
+                  "default": "UNMAR"
+                },
+                "national_id_number": {
+                  "type": "string",
+                  "title": "National ID Number",
+                  "group": "NationalIDDetail"
+                },
+                "national_id_issue_date_ad": {
+                  "type": "string",
+
+                  "title": "National Id Issue Date(A.D)",
+                  "group": "NationalIDDetail"
+                },
+                "national_id_issue_date_bs": {
+                  "type": "string",
+                  "title": "National Id Issue Date(B.S)",
+                  "group": "NationalIDDetail"
+                },
+                "national_id_issue_place": {
+                  "type": "string",
+                  "title": "National Id Issue Place",
+                  "group": "NationalIDDetail"
+                },
+                "national_id_issuing_authority": {
+                  "type": "string",
+                  "title": "Issuing Authority",
+                  "group": "NationalIDDetail",
+                  "default": "DONICR",
+                  "readOnly": true
+                },
+                "nid_verified": {
+                  "type": "string",
+                  "title": "NID Verified",
+                  "group": "NationalIDDetail",
+                  "enum": ["Yes", "No"],
+                  "readOnly": true
+                },
+                "nid_verify": {
+                  "type": "string",
+                  "title": "Verify",
+                  "group": "NationalIDDetail",
+                  "width": 2
+                },
+                "nid_reset": {
+                  "type": "string",
+                  "title": "Reset",
+                  "group": "NationalIDDetail",
+                  "width": 2
+                }
+              },
+              "dependencies": {
+                "national_id_number": {
+                  "if": {
+                    "properties": {
+                      "national_id_number": {
+                        "const": ""
+                      }
+                    }
+                  },
+                  "then": {},
+                  "else": {
+                    "required": [
+                      "national_id_number",
+                      "national_id_issue_date_ad",
+                      "national_id_issue_date_bs",
+                      "national_id_issue_place",
+                      "national_id_issuing_authority",
+                      "nid_verified"
+                    ]
+                  }
+                }
+              },
+              "required": []
+            }
+          },
+
+          "customer_introduce_by": {
+            "oneOf": [
+              {
+                "properties": {
+                  "customer_introduce_by": {
+                    "enum": ["Bank Staff"]
+                  },
+                  "employee_id": {
+                    "type": "string",
+                    "title": "Bank Staff CIF Number",
+                    "group": "statusOfClient",
+                    "width": 8
+                  }
+                },
+                "required": ["employee_id"]
+              },
+              {
+                "properties": {
+                  "customer_introduce_by": {
+                    "enum": ["Other Account Holder"]
+                  },
+                  "introducer_account_number": {
+                    "type": "string",
+                    "title": "Introducer Account Number",
+                    "group": "statusOfClient",
+                    "pattern": "^[0-9]{14}$",
+                    "message": "Must be of 14 Digits",
+                    "width": 8,
+                    "errorMessage": {
+                      "pattern": "Must be of 14 Digits"
+                    }
+                  }
+                },
+                "required": ["introducer_account_number"]
+              },
+              {
+                "properties": {
+                  "customer_introduce_by": {
+                    "enum": ["Walk-in Customer", "Local Government Bodies"]
+                  }
+                },
+                "required": []
+              }
+            ]
+          },
+          "pep": {
+            "if": {
+              "properties": {
+                "pep": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "pep_category": {
+                  "type": "string",
+                  "enum": [
+                    "Existing PEPs",
+                    "Former PEPs",
+                    "High-ranking officials from neighboring or nearby countries",
+                    "Other foreign PEPs",
+                    "International PEPs"
+                  ],
+                  "title": "Pep Category",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["pep_category"]
+            }
+          },
+          "adverse_media": {
+            "if": {
+              "properties": {
+                "adverse_media": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "adverse_category": {
+                  "type": "string",
+                  "enum": [
+                    "Money Laundering",
+                    "Terrorist Financing",
+                    "Financial Fraud",
+                    "Organized Crime"
+                  ],
+                  "title": "Category of Adverse",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["adverse_category"]
+            }
+          },
+
+          "last_name_not_available": {
+            "if": {
+              "properties": {
+                "last_name_not_available": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "last_name": {
+                  "readOnly": true
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "last_name": {
+                  "readOnly": false
+                }
+              }
+            }
+          },
+
+          "has_cif": {
+            "if": {
+              "properties": {
+                "has_cif": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "cif_number": {
+                  "type": "string",
+                  "title": "CIF Number",
+                  "group": " Joint Account Information",
+                  "hideTitle": true
+                },
+                "cif_enquiry": {
+                  "type": "string",
+                  "title": "Proceed",
+                  "group": " Joint Account Information",
+                  "hideTitle": true
+                }
+              },
+              "required": ["cif_number"]
+            }
+          },
+
+          "email_not_available": {
+            "if": {
+              "properties": {
+                "email_not_available": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "email": {
+                  "readOnly": true
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "email": {
+                  "readOnly": false
+                }
+              }
+            }
+          },
+          "account_scheme_id": {
+            "oneOf": [
+              {
+                "properties": {
+                  "account_scheme_id": {
+                    "enum": ["e1d843a7-8062-4190-a26d-846a85b0f4ad"]
+                  },
+                  "gender": {
+                    "readOnly": true
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "account_scheme_id": {
+                    "enum": [
+                      "997eb3f2-3e09-40a1-9a65-b5c88a5c6355",
+                      "0e2c9435-3b11-4cd7-a220-e1a882c45629",
+                      "148a556c-615a-435d-aa0b-6d1f20b6feb9"
+                    ]
+                  },
+                  "nationality": {
+                    "default": "NP",
+                    "readOnly": true
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

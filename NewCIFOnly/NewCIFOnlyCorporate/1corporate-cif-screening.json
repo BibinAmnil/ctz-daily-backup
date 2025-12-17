@@ -1,0 +1,154 @@
+{
+  "type": "object",
+  "title": "Corporate Information Form",
+  "form_title": "corporate_screening",
+  "hasStep": true,
+  "isDisabled": false,
+  "required": ["dedup_corporate_name", "dedup_corporate_registration_number"],
+  "properties": {
+    "account_info": {
+      "type": "string",
+      "width": "full",
+      "readOnly": true 
+    },
+    "has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "width": "full",
+      "hideTitle": true
+    },
+    "cif_data": {
+      "type": "string"
+    },
+    "dedup_corporate_name": {
+      "type": "string",
+      "title": "Corporate Name",
+      "group": "Preliminary Screening",
+      "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+      "errorMessage": {
+        "pattern": "Invalid Input"
+      }
+    },
+    "dedup_corporate_registration_number": {
+      "type": "string",
+      "title": "Registration number",
+      "group": "Preliminary Screening",
+      "pattern": "^[a-zA-Z0-9s/,-]+$",
+      "errorMessage": {
+        "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+      }
+    },
+    "dedup_corporate_pan_number": {
+      "type": "string",
+      "title": "PAN Number",
+      "group": "Preliminary Screening",
+      "pattern": "^\\d{9}$",
+      "errorMessage": {
+        "pattern": "Can only have 9 digit numbers"
+      }
+    },
+    "dedup_check": {
+      "type": "string",
+      "title": "Preliminary Screening",
+      "group": "Preliminary Screening",
+      "width": "full",
+      "additionalProperties": true
+    },
+    "dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "group": "Preliminary Screening",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "full_name", "label": "Name" },
+        { "key": "cif_number", "label": "Cif Number" },
+        { "key": "registration_number", "label": "Registration Number" },
+        {
+          "key": "pan_number",
+          "label": "PAN Number"
+        },
+        {
+          "key": "branch",
+          "label": "Branch"
+        },
+        {
+          "key": "case_status",
+          "label": "Case Status"
+        }
+      ],
+      "actions": [
+        {
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
+        }
+      ]
+    },
+    "name": {
+      "type": "string",
+      "title": "Name as per registration document",
+      "group": "Preliminary Screening",
+      "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+      "errorMessage": {
+        "pattern": "Invalid Input"
+      }
+    },
+
+    "alias": {
+      "type": "string",
+      "title": "Alias",
+      "group": "Preliminary Screening",
+      "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+      "errorMessage": {
+        "pattern": "Invalid Input"
+      }
+    },
+    "registration_number": {
+      "type": "string",
+      "title": "Registration number",
+      "pattern": "^[a-zA-Z0-9s/,-]+$",
+      "errorMessage": {
+        "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+      },
+      "group": "Preliminary Screening"
+    },
+    "pan_number": {
+      "type": "string",
+      "title": "PAN Number",
+      "group": "Preliminary Screening",
+      "pattern": "^\\d{9}$",
+      "errorMessage": {
+        "pattern": "Can only have 9 digit numbers"
+      }
+    }
+  },
+  "dependencies": {
+    "has_cif": {
+      "if": {
+        "properties": {
+          "has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "CIF Enquiry",
+            "hideTitle": true
+          },
+          "cif_enquiry": {
+            "type": "string",
+            "title": "Proceed",
+            "group": "CIF Enquiry",
+            "hideTitle": true
+          }
+        },
+        "required": ["cif_number"]
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "form_title": "additional_documents",
+  "hideDraft": true,
+  "hasStep": false,
+  "progressBar": true,
+  "properties": {
+    "document_preview": {
+      "type": "string",
+      "width": "full",
+      "title": "Document",
+      "group": ""
+    }
+  },
+  "required": []
+}

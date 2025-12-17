@@ -1,0 +1,243 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "hasStep": true,
+  "form_title": "guardian_info",
+  "isDisabled": false,
+  "submissionHidden": false,
+  "required": [],
+
+  "properties": {
+    "account_info": {
+      "type": "string",
+      "width": "full",
+      "group": "Guardian Account Information",
+      "hideTitle": true
+    },
+
+    "is_minor_account": {
+      "type": "boolean",
+      "width": "full",
+      "group": "Guardian Account Information",
+      "default": false,
+      "hideTitle": true
+    },
+
+    "guardian_id_type_details": {
+      "type": "array",
+      "title": "Identification Detail",
+      "group": "Identification Detail",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id_type_id": {
+            "type": "string",
+            "title": "Identification",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          },
+
+          "disable": {
+            "type": "boolean",
+            "title": "Disable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          },
+          "removable": {
+            "type": "boolean",
+            "title": "Removable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          }
+        },
+        "required": ["id_type_id"],
+        "dependencies": {
+          "id_type_id": {
+            "properties": {
+              "id_type_id": {
+                "type": "string"
+              },
+              "issuing_authority": {
+                "type": "string",
+                "title": "Issuing Authority",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+              "identification_number": {
+                "type": "string",
+                "title": "Identity Number",
+                "hideTitle": true,
+                "group": "Identification Detail",
+                "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
+                "errorMessage": {
+                  "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+                }
+              },
+              "issue_country": {
+                "type": "string",
+                "title": "Country Of Issue",
+                "group": "Identification Detail",
+                "default": "NP",
+                "hideTitle": true
+              },
+              "issued_district": {
+                "type": "string",
+                "title": "Place Of Issue",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+
+              "id_issued_date_ad": {
+                "type": "string",
+                "title": "Issued Date (A.D)",
+                "hideTitle": true,
+                "group": "Identification Detail"
+              },
+              "id_issued_date_bs": {
+                "type": "string",
+                "title": "Issued Date (B.S)",
+                "hideTitle": true,
+                "group": "Identification Detail"
+              }
+            },
+            "required": [
+              "identification_number",
+              "issue_country",
+              "issued_district",
+              "issuing_authority",
+              "id_issued_date_ad",
+              "id_issued_date_bs"
+            ],
+            "dependencies": {
+              "id_type_id": {
+                "if": {
+                  "properties": {
+                    "id_type_id": {
+                      "enum": ["DL", "PP", "SSC", "VOT", "WPN", "VISA", "NRN"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "id_expiry_date_ad": {
+                      "type": "string",
+                      "title": "Expiry Date (A.D)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    },
+                    "id_expiry_date_bs": {
+                      "type": "string",
+                      "title": "Expiry Date (B.S)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    }
+                  },
+                  "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "guardian_nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Guardian Account Information",
+      "default": "NP",
+      "readOnly": false
+    }
+  },
+
+  "dependencies": {
+    "guardian_nationality": {
+      "if": {
+        "properties": {
+          "guardian_nationality": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_is_customer_disabled": {
+            "type": "boolean",
+            "title": "Is Customer Disabled or Senior Citizen?",
+            "group": "Guardian National ID Details",
+            "default": false,
+            "width": "full"
+          },
+          "guardian_national_id_number": {
+            "type": "string",
+            "title": "National ID Number",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issue_date_ad": {
+            "type": "string",
+            "title": "National Id Issue Date(A.D)",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issue_date_bs": {
+            "type": "string",
+            "readOnly": true,
+
+            "title": "National Id Issue Date(B.S)",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issue_place": {
+            "type": "string",
+            "title": "National Id Issue Place",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issuing_authority": {
+            "type": "string",
+            "title": "Issuing Authority",
+            "group": "Guardian National ID Details",
+            "default": "DONICR",
+            "readOnly": true
+          },
+          "guardian_nid_verified": {
+            "type": "string",
+            "title": "NID Verified",
+            "group": "Guardian National ID Details",
+            "enum": ["Yes", "No"]
+          },
+          "guardian_nid_verify": {
+            "type": "string",
+            "title": "Verify NID",
+            "group": "Guardian National ID Details",
+            "width": 4,
+            "url": "https://citizenportal.donidcr.gov.np/ne/check-national-id-number"
+          }
+        },
+        "dependencies": {
+          "guardian_is_customer_disabled": {
+            "if": {
+              "properties": {
+                "guardian_is_customer_disabled": {
+                  "const": true
+                }
+              }
+            },
+            "then": {},
+            "else": {
+              "properties": {},
+              "required": [
+                "guardian_national_id_number",
+                "guardian_national_id_issue_date_ad",
+                "guardian_national_id_issue_date_bs",
+                "guardian_national_id_issue_place",
+                "guardian_national_id_issuing_authority",
+                "guardian_nid_verified"
+              ]
+            }
+          }
+        },
+        "required": []
+      }
+    }
+  }
+}

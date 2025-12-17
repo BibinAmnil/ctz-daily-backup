@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "hasStep": true,
+  "form_title": "account_info",
+  "draftHidden": true,
+  "required": ["account_info"],
+  "properties": {
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full"
+    }
+  }
+}

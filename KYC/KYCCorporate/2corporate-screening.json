@@ -1,0 +1,1154 @@
+{
+  "type": "object",
+  "title": "Corporate Information Form",
+  "form_title": "corporate_screening",
+  "hasStep": true,
+  "isDisabled": false,
+  "required": [
+    "dedup_corporate_name",
+    "dedup_corporate_registration_number",
+    "name",
+    "account_purpose",
+    "currency",
+    "account_type_id",
+    "account_scheme_id",
+    "registration_number",
+    "registration_date_ad",
+    "registration_date_bs",
+    "registration_authority",
+    "country_of_incorporation",
+    "number_of_branches",
+    "mailing_country",
+    "most_recent_audit_report",
+    "fund_source",
+    "declared_anticipated_annual_transaction",
+    "number_of_transaction",
+    "yearly_income",
+    "legal_entity_type",
+    "business_type_id",
+    "customer_type_id",
+    "entity_class",
+    "income_year",
+    "contact_details",
+    "sectors",
+    "sub_sectors",
+    "collect"
+  ],
+  "properties": {
+    "cif_data": {
+      "type": "string"
+    },
+    "collect": {
+      "type": "string",
+      "title": "Statement Collect",
+      "group": "Institution Details"
+    },
+    "source": {
+      "type": "string"
+    },
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true
+    },
+    "dedup_corporate_name": {
+      "type": "string",
+      "title": "Corporate Name",
+      "group": "Institution Details",
+      "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+      "errorMessage": {
+        "pattern": "Invalid Input"
+      },
+      "readOnly": true
+    },
+    "dedup_corporate_registration_number": {
+      "type": "string",
+      "title": "Registration number.",
+      "group": "Institution Details",
+      "pattern": "^[a-zA-Z0-9s/,-]+$",
+      "errorMessage": {
+        "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+      },
+      "readOnly": true
+    },
+    "dedup_corporate_pan_number": {
+      "type": "string",
+      "title": "PAN Number",
+      "group": "Institution Details",
+      "pattern": "^\\d{9}$",
+      "errorMessage": {
+        "pattern": "Can only have 9 digit numbers"
+      },
+      "readOnly": true
+    },
+    "dedup_check": {
+      "type": "string",
+      "title": "Institution Details",
+      "group": "Institution Details",
+      "width": "full",
+      "additionalProperties": true
+    },
+    "dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "group": "Institution Details",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "name", "label": "Name" },
+        { "key": "cif_number", "label": "Cif Number" },
+        { "key": "registration_number", "label": "Registration Number" },
+        { "key": "pan_number", "label": "Pan Number" }
+      ],
+      "actions": [
+        {
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
+        }
+      ]
+    },
+    "has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "CIF Enquire",
+      "width": "full",
+      "readOnly": true,
+      "hideTitle": true
+    },
+    "name": {
+      "type": "string",
+      "title": "Name as per registration document",
+      "group": "Institution Details",
+      "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+      "errorMessage": {
+        "pattern": "Invalid Input"
+      }
+    },
+
+    "alias": {
+      "type": "string",
+      "title": "Alias",
+      "group": "Institution Details",
+      "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+      "errorMessage": {
+        "pattern": "Invalid Input"
+      }
+    },
+
+    "legal_entity_type": {
+      "type": "string",
+      "title": "Legal Entity Type",
+      "group": "Institution Details"
+    },
+    "business_type_id": {
+      "type": "string",
+      "title": "Business Type",
+      "group": "Institution Details"
+    },
+    "customer_type_id": {
+      "type": "string",
+      "title": "Customer Type",
+      "group": "Institution Details"
+    },
+
+    "entity_class": {
+      "type": "string",
+      "title": "Entity Class",
+      "group": "Institution Details"
+    },
+
+    "sectors": {
+      "type": "string",
+      "title": "Sector",
+      "group": "Institution Details"
+    },
+
+    "sub_sectors": {
+      "type": "string",
+      "title": "Sub Sector",
+      "group": "Institution Details"
+    },
+
+    "account_purpose": {
+      "type": "string",
+      "title": "Purpose of Account Open",
+      "group": "Account Information"
+    },
+    "currency": {
+      "type": "string",
+      "title": "Currency of Account",
+      "enum": ["NPR", "USD", "GBP", "EUR", "AUD"],
+      "group": "Account Information"
+    },
+    "account_type_id": {
+      "type": "string",
+      "title": "Account Type",
+      "group": "Account Information"
+    },
+    "account_scheme_id": {
+      "type": "string",
+      "title": "Product Scheme",
+      "group": "Account Information"
+    },
+    "type_of_transaction": {
+      "type": "string",
+      "title": "Type of Transaction",
+      "group": "Account Information",
+      "readOnly": true
+    },
+    "registration_number": {
+      "type": "string",
+      "title": "Registration number.",
+      "pattern": "^[a-zA-Z0-9s/,-]+$",
+      "errorMessage": {
+        "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+      },
+      "group": "registration details"
+    },
+    "registration_authority": {
+      "type": "string",
+      "title": "Registration Authority",
+      "group": "registration details"
+    },
+    "country_of_incorporation": {
+      "type": "string",
+      "title": "Country of Incorporation",
+      "group": "registration details",
+      "default": "NP"
+    },
+    "number_of_branches": {
+      "type": "number",
+      "title": "Number of Branches/Offices",
+      "group": "registration details",
+      "pattern": "^\\d+$",
+      "errorMessage": {
+        "pattern": "Numbers only"
+      }
+    },
+
+    "registration_date_ad": {
+      "type": "string",
+
+      "title": "Registration Date(A.D)",
+      "group": "registration details"
+    },
+    "registration_date_bs": {
+      "type": "string",
+      "readOnly": true,
+      "title": "Registration Date(B.S)",
+      "group": "registration details"
+    },
+    "registration_expiry_date_ad": {
+      "type": "string",
+
+      "title": "Registration Expire Date(A.D)",
+      "group": "registration details"
+    },
+    "registration_expiry_date_bs": {
+      "type": "string",
+      "readOnly": true,
+      "title": "Registration Expire Date(B.S)",
+      "group": "registration details"
+    },
+
+    "has_license": {
+      "type": "boolean",
+      "title": "License Required ?",
+      "group": "registration details",
+      "width": "full"
+    },
+
+    "pan_number": {
+      "type": "string",
+      "title": "PAN Number",
+      "group": "permanentAccountNumber(PAN)",
+      "pattern": "^\\d{9}$",
+      "errorMessage": {
+        "pattern": "Can only have 9 digit numbers"
+      }
+    },
+    "pan_issue_date_ad": {
+      "type": "string",
+
+      "title": " Pan Date of Issue(A.D)",
+      "group": "permanentAccountNumber(PAN)"
+    },
+    "pan_issue_date_bs": {
+      "type": "string",
+      "readOnly": true,
+      "title": " Pan Date of Issue(B.S)",
+      "group": "permanentAccountNumber(PAN)"
+    },
+    "pan_issue_place": {
+      "type": "string",
+      "title": "Place of Issue",
+      "group": "permanentAccountNumber(PAN)"
+    },
+    "pan_issuing_authority": {
+      "type": "string",
+      "title": "Issuing Authority",
+      "group": "permanentAccountNumber(PAN)",
+      "default": "IRD",
+      "readOnly": true
+    },
+
+    "same_as_registered_address": {
+      "type": "boolean",
+      "title": "Same as Registered Address",
+      "group": "mailingAddress",
+      "default": false,
+      "width": "full"
+    },
+    "mailing_country": {
+      "type": "string",
+      "title": "Mailing Country",
+      "group": "mailingAddress",
+      "default": "NP",
+      "readOnly": true
+    },
+    "contact_details": {
+      "type": "array",
+      "minItems": 1,
+      "title": "Contact Details",
+      "group": "Contact Details",
+      "items": {
+        "type": "object",
+        "required": ["key_contact_person", "email", "contact_type"],
+        "properties": {
+          "key_contact_person": {
+            "type": "string",
+            "title": "Contact Person Name"
+          },
+
+          "email": {
+            "type": "string",
+            "title": "Email Address",
+
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "errorMessage": {
+              "pattern": "Invalid email address"
+            }
+          },
+          "contact_type": {
+            "type": "string",
+            "title": "Contact Number Type",
+
+            "enum": ["Phone Number", "Mobile Number", "Both Contact Detail"]
+          }
+        },
+        "dependencies": {
+          "contact_type": {
+            "oneOf": [
+              {
+                "properties": {
+                  "contact_type": {
+                    "enum": ["Phone Number"]
+                  },
+                  "phone_country_code": {
+                    "type": "string",
+                    "title": "Code",
+                    "width": 4,
+                    "default": "NEPAL"
+                  },
+                  "phone_number": {
+                    "type": "number",
+                    "title": "Phone Number",
+                    "width": 5,
+                    "pattern": "^(\\d{1,9})?$",
+                    "errorMessage": {
+                      "pattern": "Phone number must be 9 digits."
+                    }
+                  }
+                },
+                "required": ["phone_country_code", "phone_number"]
+              },
+              {
+                "properties": {
+                  "contact_type": {
+                    "enum": ["Both Contact Detail"]
+                  },
+                  "phone_country_code": {
+                    "type": "string",
+                    "title": "Code",
+
+                    "width": 4,
+                    "default": "NEPAL"
+                  },
+                  "phone_number": {
+                    "type": "number",
+                    "title": "Phone Number",
+                    "width": 5,
+                    "pattern": "^(\\d{1,9})?$",
+                    "errorMessage": {
+                      "pattern": "Phone number must be 9 digits."
+                    }
+                  },
+                  "mobile_country_code": {
+                    "type": "string",
+                    "title": "Code",
+                    "width": 4,
+                    "default": "NEPAL"
+                  }
+                },
+                "required": [
+                  "phone_country_code",
+                  "phone_number",
+                  "mobile_country_code"
+                ],
+                "dependencies": {
+                  "mobile_country_code": {
+                    "if": {
+                      "properties": {
+                        "mobile_country_code": {
+                          "enum": ["NEPAL"]
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "mobile_number": {
+                          "type": "number",
+                          "title": "Mobile Number",
+                          "pattern": "^(\\d{10})?$",
+                          "errorMessage": {
+                            "pattern": "Mobile number must be 10 digits."
+                          },
+                          "width": 5
+                        }
+                      },
+                      "required": ["mobile_number"]
+                    },
+                    "else": {
+                      "properties": {
+                        "mobile_number": {
+                          "type": "number",
+                          "title": "Mobile Number",
+                          "pattern": "^(\\d{9,12})?$",
+                          "errorMessage": {
+                            "pattern": "Mobile number must be 9 to 12 digits."
+                          },
+                          "width": 5
+                        }
+                      },
+                      "required": ["mobile_number"]
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "contact_type": {
+                    "enum": ["Mobile Number"]
+                  },
+                  "mobile_country_code": {
+                    "type": "string",
+                    "title": "Code",
+                    "width": 4,
+                    "default": "NEPAL"
+                  }
+                },
+                "dependencies": {
+                  "mobile_country_code": {
+                    "if": {
+                      "properties": {
+                        "mobile_country_code": {
+                          "enum": ["NEPAL"]
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "mobile_number": {
+                          "type": "number",
+                          "title": "Mobile Number",
+                          "pattern": "^(\\d{10})?$",
+                          "width": 5,
+                          "errorMessage": {
+                            "pattern": "Mobile number must be 10 digits."
+                          }
+                        }
+                      },
+                      "required": ["mobile_number"]
+                    },
+                    "else": {
+                      "properties": {
+                        "mobile_number": {
+                          "type": "number",
+                          "title": "Mobile Number",
+                          "pattern": "^(\\d{9,12})?$",
+                          "errorMessage": {
+                            "pattern": "Mobile number must be 9 to 12 digits."
+                          },
+                          "width": 5
+                        }
+                      },
+                      "required": ["mobile_number"]
+                    }
+                  }
+                },
+                "required": ["mobile_country_code"]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "most_recent_audit_report": {
+      "type": "string",
+      "title": "Most Recent Audit Report (Fiscal Year)",
+      "enum": ["Audited", "Management prepared"],
+      "group": "Transaction Details"
+    },
+    "fund_source": {
+      "type": "string",
+      "title": "Fund Source",
+      "group": "Transaction Details"
+    },
+    "declared_anticipated_annual_transaction": {
+      "type": "string",
+      "title": "Anticipated Annual Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+    "number_of_transaction": {
+      "type": "string",
+      "title": "Number of Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,4}$",
+      "errorMessage": {
+        "pattern": "Only 4 numbers are allowed"
+      }
+    },
+    "yearly_income": {
+      "type": "string",
+      "title": "Yearly Income (Gross Income)",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+    "income_year": {
+      "type": "string",
+      "title": "Year (BS)",
+      "group": "Transaction Details"
+    },
+
+    "screening": {
+      "type": "string",
+      "width": "full",
+      "title": "Screening",
+      "group": ""
+    },
+    "screening_card": {
+      "type": "string",
+      "width": "full",
+      "group": "",
+      "additionalProperties": true,
+      "columns": [
+        {
+          "key": "name",
+          "label": "Name"
+        },
+        {
+          "key": "score",
+          "label": "Score"
+        }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+    "id_type_details": {
+      "type": "array",
+      "title": "Identification Detail",
+      "group": "Identification Detail",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id_type_id": {
+            "type": "string",
+            "title": "Identification",
+            "hideTitle": true,
+            "group": "Identification Detail",
+            "default": "PERNM",
+            "readOnly": true
+          },
+
+          "disable": {
+            "type": "boolean",
+            "title": "Disable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          },
+          "removable": {
+            "type": "boolean",
+            "title": "Removable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          }
+        },
+        "required": [],
+        "dependencies": {
+          "id_type_id": {
+            "properties": {
+              "id_type_id": {
+                "type": "string"
+              },
+              "identification_number": {
+                "type": "string",
+                "title": "Identity Number",
+                "hideTitle": true,
+                "group": "Identification Detail",
+                "pattern": "^[a-zA-Z0-9s/,-]+$",
+                "errorMessage": {
+                  "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+                }
+              },
+              "issue_country": {
+                "type": "string",
+                "title": "Country Of Issue",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+              "issuing_authority": {
+                "type": "string",
+                "title": "Issuing Authority",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+              "id_issued_date_ad": {
+                "type": "string",
+                "title": "Issued Date (A.D)",
+                "hideTitle": true,
+                "group": "Identification Detail"
+              },
+              "id_issued_date_bs": {
+                "type": "string",
+                "title": "Issued Date (B.S)",
+                "hideTitle": true,
+                "readOnly": true,
+                "group": "Identification Detail"
+              }
+            },
+
+            "dependencies": {
+              "id_type_id": {
+                "oneOf": [
+                  {
+                    "properties": {
+                      "id_type_id": {
+                        "enum": ["LICNM", "PERNM", "REGNM", "VATNM"]
+                      },
+                      "id_expiry_date_ad": {
+                        "type": "string",
+                        "title": "Expiry Date (A.D)",
+                        "hideTitle": true,
+                        "group": "Identification Detail"
+                      },
+                      "id_expiry_date_bs": {
+                        "type": "string",
+                        "title": "Expiry Date (B.S)",
+                        "hideTitle": true,
+                        "readOnly": true,
+                        "group": "Identification Detail"
+                      }
+                    },
+                    "required": []
+                  }
+                ]
+              },
+
+              "issue_country": {
+                "if": {
+                  "properties": {
+                    "issue_country": {
+                      "enum": ["NP"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "issued_district": {
+                      "type": "string",
+                      "title": "Place Of Issue",
+                      "group": "Identification Detail",
+                      "hideTitle": true
+                    }
+                  }
+                },
+                "else": {
+                  "properties": {
+                    "issued_district_text": {
+                      "type": "string",
+                      "title": "Place Of Issue",
+                      "group": "Identification Detail",
+                      "hideTitle": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "keys": [
+    "formData.registration_date_ad",
+    "formData.registration_date_bs",
+    "formData.registration_expiry_date_ad",
+    "formData.registration_expiry_date_bs",
+    "formData.license_issuing_date_ad",
+    "formData.license_issuing_date_bs",
+    "formData.license_expiry_date_ad",
+    "formData.license_expiry_date_bs",
+    "formData.pan_issue_date_ad",
+    "formData.pan_issue_date_bs",
+    "formData.same_as_registered_address"
+  ],
+  "dependencies": {
+    "country_of_incorporation": {
+      "if": {
+        "properties": {
+          "country_of_incorporation": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "jurisdiction": {
+            "type": "string",
+            "title": "Jurisdiction",
+            "group": "registration details"
+          },
+          "registration_country": {
+            "type": "string",
+            "title": "Country",
+            "group": "registrationAddress",
+            "default": "NP",
+            "readOnly": true
+          },
+          "registration_place": {
+            "type": "string",
+            "title": "Registration Place (Province & District)",
+            "group": "registration details"
+          }
+        },
+        "required": [
+          "jurisdiction",
+          "registration_place",
+          "registration_country"
+        ]
+      },
+      "else": {
+        "properties": {
+          "jurisdiction_country": {
+            "type": "string",
+            "title": "Jurisdiction",
+            "group": "registration details",
+            "readOnly": true
+          },
+          "registration_country": {
+            "type": "string",
+            "title": "Country",
+            "group": "registrationAddress"
+          },
+          "registration_place_country": {
+            "type": "string",
+            "title": "Registration Place",
+            "group": "registration details",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "jurisdiction_country",
+          "registration_country",
+          "registration_place_country"
+        ]
+      }
+    },
+
+    "has_license": {
+      "if": {
+        "properties": {
+          "has_license": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "license_details": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "title": "License Details",
+            "group": "license details",
+            "items": {
+              "type": "object",
+              "properties": {
+                "license_purpose": {
+                  "type": "string",
+                  "title": "Purpose of License",
+                  "enum": ["Medical", "FCY", "Membership", "Education"]
+                },
+                "license_number": {
+                  "type": "string",
+                  "title": "License/Certificate number.",
+                  "pattern": "^[a-zA-Z0-9s/,-]+$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric, slash (/), comma (,) and dash (-) allowed"
+                  }
+                },
+                "license_issuing_authority": {
+                  "type": "string",
+                  "title": "Issuing Authority",
+                  "default": "IRD",
+                  "readOnly": true
+                },
+                "license_issuing_date_ad": {
+                  "type": "string",
+
+                  "title": "License Issuing Date(A.D)"
+                },
+                "license_issuing_date_bs": {
+                  "type": "string",
+                  "readOnly": true,
+                  "title": "License Issuing Date(B.S)"
+                },
+                "license_expiry_date_ad": {
+                  "type": "string",
+
+                  "title": "License Expiry Date(A.D)"
+                },
+                "license_expiry_date_bs": {
+                  "type": "string",
+                  "readOnly": true,
+                  "title": "License Expiry Date(B.S)"
+                },
+                "has_no_expiry_date": {
+                  "type": "boolean",
+                  "title": "Has no expiry date",
+                  "default": false
+                }
+              },
+              "required": [
+                "license_purpose",
+                "license_number",
+                "license_issuing_authority",
+                "license_issuing_date_ad",
+                "license_issuing_date_bs"
+              ],
+              "dependencies": {
+                "has_no_expiry_date": {
+                  "if": {
+                    "properties": {
+                      "has_no_expiry_date": {
+                        "const": true
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "license_expiry_date_ad": {
+                        "readOnly": true
+                      },
+                      "license_expiry_date_bs": {
+                        "readOnly": true
+                      }
+                    },
+
+                    "required": []
+                  },
+                  "else": {
+                    "properties": {},
+                    "required": [
+                      "license_expiry_date_ad",
+                      "license_expiry_date_bs"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+
+    "has_cif": {
+      "if": {
+        "properties": {
+          "has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "CIF Enquire",
+            "hideTitle": true
+          },
+          "cif_enquiry": {
+            "type": "string",
+            "width": "half",
+            "title": "CIF Enquiry",
+            "group": "CIF Enquire",
+            "hideTitle": true
+          }
+        }
+      }
+    },
+    "registration_country": {
+      "if": {
+        "properties": {
+          "registration_country": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "registration_province": {
+            "type": "string",
+            "title": "State/Province",
+            "group": "registrationAddress"
+          },
+          "registration_district": {
+            "type": "string",
+            "title": "District",
+            "group": "registrationAddress"
+          },
+          "registration_municipality": {
+            "type": "string",
+            "title": "Municipality/VDC",
+            "group": "registrationAddress"
+          },
+          "registration_ward_number": {
+            "type": "number",
+            "title": "Ward number",
+            "group": "registrationAddress",
+            "pattern": "^[0-9]{1,2}$",
+            "errorMessage": {
+              "pattern": "Only numbers up to 2 digits allowed"
+            }
+          },
+          "registration_street": {
+            "type": "string",
+            "title": "Street Name",
+            "group": "registrationAddress"
+          },
+          "registration_town": {
+            "type": "string",
+            "title": "Town",
+            "group": "registrationAddress",
+            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters and spaces are allowed."
+            }
+          },
+          "registration_house_number": {
+            "type": "string",
+            "title": "House number",
+            "group": "registrationAddress",
+            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters and spaces are allowed."
+            }
+          }
+        },
+        "required": [
+          "registration_province",
+          "registration_district",
+          "registration_municipality",
+          "registration_ward_number",
+          "registration_street",
+          "registration_town"
+        ]
+      },
+      "else": {
+        "required": [
+          "registration_street",
+          "registration_town",
+          "registration_postal_code"
+        ],
+        "properties": {
+          "registration_town": {
+            "type": "string",
+            "title": "Town",
+            "group": "registrationAddress",
+            "pattern": "^[a-zA-Z]+$",
+            "errorMessage": {
+              "pattern": "Only alphabet and spaces are allowed."
+            }
+          },
+          "registration_street": {
+            "type": "string",
+            "title": "Street Name",
+            "group": "registrationAddress"
+          },
+          "registration_postal_code": {
+            "type": "string",
+            "title": "Postal Code",
+            "group": "registrationAddress"
+          }
+        }
+      }
+    },
+
+    "mailing_country": {
+      "if": {
+        "properties": {
+          "mailing_country": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "mailing_province": {
+            "type": "string",
+            "title": "State/Province",
+            "group": "mailingAddress"
+          },
+          "mailing_district": {
+            "type": "string",
+            "title": "District",
+            "group": "mailingAddress"
+          },
+          "mailing_municipality": {
+            "type": "string",
+            "title": "Municipality/VDC",
+            "group": "mailingAddress"
+          },
+          "mailing_ward_number": {
+            "type": "number",
+            "title": "Ward number",
+            "group": "mailingAddress",
+            "pattern": "^[0-9]{1,2}$",
+            "errorMessage": {
+              "pattern": "Only numbers up to 2 digits allowed"
+            }
+          },
+          "mailing_street": {
+            "type": "string",
+            "title": "Street Name",
+            "group": "mailingAddress"
+          },
+          "mailing_town": {
+            "type": "string",
+            "title": "Town",
+            "group": "mailingAddress",
+            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters and spaces are allowed."
+            }
+          },
+          "mailing_house_number": {
+            "type": "string",
+            "title": "House number",
+            "group": "mailingAddress",
+            "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters and spaces are allowed."
+            }
+          }
+        },
+        "required": [
+          "mailing_province",
+          "mailing_district",
+          "mailing_municipality",
+          "mailing_ward_number",
+          "mailing_street",
+          "mailing_town"
+        ]
+      },
+      "else": {
+        "required": ["mailing_street", "mailing_town", "mailing_postal_code"],
+        "properties": {
+          "mailing_town": {
+            "type": "string",
+            "title": "Town",
+            "group": "mailingAddress",
+            "pattern": "^[a-zA-Z]+$",
+            "errorMessage": {
+              "pattern": "Only alphabet and spaces are allowed."
+            }
+          },
+          "mailing_street": {
+            "type": "string",
+            "title": "Street Name",
+            "group": "mailingAddress"
+          },
+          "mailing_postal_code": {
+            "type": "string",
+            "title": "Postal Code",
+            "group": "mailingAddress"
+          }
+        }
+      }
+    },
+    "legal_entity_type": {
+      "if": {
+        "properties": {
+          "legal_entity_type": {
+            "enum": [
+              "cb9b167b-7611-4537-a19c-1ce2eec6e0c6",
+              "438d9ff2-fadb-49e5-a15c-d6f8ac6eb215",
+              "a04b3c9b-682c-4ef5-ba21-8902da5d8e04",
+              "f1724b09-17f8-4e9c-b153-06b8de5ee1ec",
+              "7de0ddfb-359d-4336-b07a-c34350c3b2f9",
+              "a1a7ca82-504e-48ff-bf81-99a1f9d25a06"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {},
+        "required": [
+          "pan_number",
+          "pan_issue_date_ad",
+          "pan_issue_date_bs",
+          "pan_issue_place",
+          "pan_issuing_authority"
+        ]
+      },
+      "else": {
+        "properties": {},
+        "required": []
+      }
+    },
+    "pan_number": {
+      "if": {
+        "const": ""
+      },
+      "then": {},
+      "else": {
+        "required": [
+          "pan_issue_date_ad",
+          "pan_issue_date_bs",
+          "pan_issue_place",
+          "pan_issuing_authority"
+        ]
+      }
+    }
+  }
+}

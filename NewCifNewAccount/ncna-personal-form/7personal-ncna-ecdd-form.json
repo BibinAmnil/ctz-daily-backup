@@ -1,0 +1,602 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "hasStep": false,
+  "form_title": "personal_ecdd",
+  "submissionHidden": false,
+  "required": [
+    "high_risk_category",
+    "pep",
+    "occupation_type",
+    "address_verification",
+    "beneficial_owner",
+    "adverse_media",
+    "nationality"
+  ],
+  "properties": {
+    "approval_status": {
+      "type": "string",
+      "enum": ["Approve", "Reject", "Revert"],
+      "width": "half",
+      "group": "Approve",
+      "title": "Approval Status",
+      "hideTitle": true
+    },
+    "approval_remarks": {
+      "type": "string",
+      "width": "half",
+      "group": "Approve",
+      "title": "Approval Remarks",
+      "hideTitle": true
+    },
+    "is_high_risk_account": {
+      "type": "string",
+      "title": "Is high risk account?",
+      "enum": ["Yes", "No"]
+    },
+    "pep": {
+      "type": "string",
+      "title": "Is the customer Politically Exposed Person (PEP) ?",
+      "group": "PEP Section",
+      "enum": ["Yes", "No"],
+      "readOnly": true
+    },
+    "occupation_type": {
+      "type": "string",
+      "title": "Type of occupation",
+      "group": "OccupationProfessionBusinessDetails",
+      "readOnly": true
+    },
+    "source_of_income": {
+      "type": "string",
+      "title": "Type of Income Source",
+      "group": "OccupationProfessionBusinessDetails",
+      "readOnly": true
+    },
+
+    "address_verification": {
+      "type": "string",
+      "title": "Address verification has been made through",
+      "group": "Address Verification",
+      "enum": [
+        "address matched with identification document",
+        "utility bill",
+        "physical verification by the bank official",
+        "Government employee ID received",
+        "Not verified"
+      ]
+    },
+    "beneficial_owner": {
+      "type": "string",
+      "title": "Is beneficial owner has been identified in this account? ",
+      "enum": ["Yes", "No"],
+      "group": "Beneficiary Owner"
+    },
+    "adverse_media": {
+      "type": "string",
+      "title": "If screening result matched with adverse media?",
+      "enum": ["Yes", "No"],
+      "group": "Screening - Adverse Media",
+      "readOnly": true
+    },
+    "nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Other Information",
+      "default": "NP",
+      "readOnly": true
+    },
+    "high_risk_category": {
+      "type": "string",
+      "title": "High Risk Category",
+      "group": "Risk"
+    },
+
+    "annual_volume_of_transactions": {
+      "type": "string",
+      "title": "Annual Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "annual_number_of_transactions": {
+      "type": "string",
+      "title": "Annual Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8
+    },
+
+    "monthly_volume_of_transactions": {
+      "type": "string",
+      "title": "Monthly Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "monthly_number_of_transactions": {
+      "type": "string",
+      "title": "Monthly Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8
+    },
+    "yearly_income": {
+      "type": "string",
+      "title": "Yearly Income (Gross Income)",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    }
+  },
+  "dependencies": {
+    "pep": {
+      "if": {
+        "properties": {
+          "pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pep_category": {
+            "type": "string",
+            "readOnly": true,
+
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "PEP Section"
+          },
+          "pep_classification": {
+            "type": "string",
+            "title": "Classification of PEP",
+            "group": "PEP Section",
+            "enum": ["Self", "Family Member", "Associate PEP"]
+          },
+          "pep_name": {
+            "type": "string",
+            "title": "Name of PEP involvement",
+            "readOnly": true,
+
+            "group": "PEP Section"
+          }
+        },
+        "required": ["pep_category"],
+        "dependencies": {
+          "pep_category": {
+            "if": {
+              "properties": {
+                "pep_category": {
+                  "enum": ["Former PEPs"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "pep_retirement_date_ad": {
+                  "type": "string",
+
+                  "title": "Date of Retirement (PEP) (A.D)",
+                  "group": "PEP Section"
+                },
+                "pep_retirement_date_bs": {
+                  "type": "string",
+
+                  "title": "Date of Retirement (PEP) (B.S)",
+                  "group": "PEP Section"
+                }
+              }
+            }
+          },
+          "pep_family_account_with_bank": {
+            "if": {
+              "properties": {
+                "pep_family_account_with_bank": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "pep_related_member_account_number": {
+                  "type": "string",
+                  "title": "Account Number",
+                  "group": "PEP Section"
+                },
+                "pep_related_member_account_name": {
+                  "type": "string",
+                  "title": "Account Name",
+                  "group": "PEP Section"
+                },
+                "pep_related_member_relationship": {
+                  "type": "string",
+                  "title": "Relation with account holder",
+                  "group": "PEP Section"
+                },
+                "pep_related_member_risk_category": {
+                  "type": "string",
+
+                  "enum": [
+                    "Existing PEPs",
+                    "Former PEPs",
+                    "High-ranking officials from neighboring or nearby countries",
+                    "Other foreign PEPs",
+                    "International PEPs"
+                  ],
+                  "title": "Risk Category",
+                  "group": "PEP Section"
+                },
+                "pep_related_member_recommended_to_change": {
+                  "type": "string",
+
+                  "enum": ["High Risk"],
+                  "title": "Recommended to change Risk Category",
+                  "group": "PEP Section"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "occupation_type": {
+      "if": {
+        "properties": {
+          "occupation_type": {
+            "not": {
+              "enum": ["BUSIN", "EMPLO", "SELFE"]
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {}
+      },
+      "else": {
+        "properties": {
+          "occupation_detail": {
+            "type": "array",
+            "group": "OccupationProfessionBusinessDetails",
+            "title": "Occupation / Profession / Business Details",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name_of_organization": {
+                  "type": "string",
+                  "title": "Name Of Organization",
+                  "readOnly": true
+                },
+                "organization_address": {
+                  "type": "string",
+                  "title": "Organization Full Address",
+                  "readOnly": true
+                },
+                "organization_contact_number": {
+                  "type": "number",
+                  "title": "Contact Numbers",
+                  "pattern": "^[0-9]{7,12}$",
+                  "errorMessage": {
+                    "pattern": "Mobile number must be 7 to 12 digits."
+                  },
+                  "readOnly": true
+                },
+                "business_type": {
+                  "type": "string",
+                  "title": "Nature of Business",
+                  "readOnly": true
+                },
+                "designation": {
+                  "type": "string",
+                  "title": "Designation",
+                  "readOnly": true
+                },
+                "estimated_income": {
+                  "type": "string",
+                  "title": "Estimated Annual Income"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "source_of_income": {
+      "if": {
+        "properties": {
+          "source_of_income": {
+            "enum": ["Family income"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "earner_name": {
+            "type": "string",
+
+            "title": "Name of the person who earns",
+            "group": "OccupationProfessionBusinessDetails",
+            "readOnly": true
+          },
+          "earner_relationship": {
+            "type": "string",
+
+            "title": "Relationship",
+            "group": "OccupationProfessionBusinessDetails",
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "if": {
+          "properties": {
+            "source_of_income": {
+              "enum": ["Remittance"]
+            },
+            "readOnly": true
+          }
+        },
+        "then": {
+          "properties": {
+            "earner_remittance_country": {
+              "type": "string",
+
+              "title": "Remittance Country",
+              "group": "OccupationProfessionBusinessDetails",
+              "readOnly": true
+            },
+            "earner_nature_of_job": {
+              "type": "string",
+
+              "title": "Nature of job of Remitters",
+              "group": "OccupationProfessionBusinessDetails",
+              "readOnly": true
+            },
+            "earner_status": {
+              "type": "string",
+
+              "title": "Status of workers",
+              "group": "OccupationProfessionBusinessDetails",
+              "readOnly": true
+            }
+          }
+        }
+      }
+    },
+    "address_verification": {
+      "if": {
+        "properties": {
+          "address_verification": {
+            "enum": ["physical verification by the bank official"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "employee_id": {
+            "type": "string",
+
+            "title": "Employee ID of the staff",
+            "group": "Address Verification"
+          },
+          "employee_name": {
+            "type": "string",
+
+            "title": "Name of staff",
+            "group": "Address Verification"
+          },
+          "employee_address_verification_date_ad": {
+            "type": "string",
+
+            "title": "Address Verification Date (A.D)",
+            "group": "Address Verification"
+          },
+          "employee_address_verification_date_bs": {
+            "type": "string",
+
+            "title": "Address Verification Date (B.S)",
+            "group": "Address Verification"
+          }
+        }
+      }
+    },
+    "beneficial_owner": {
+      "if": {
+        "properties": {
+          "beneficial_owner": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "beneficiary_owner_has_kyc": {
+            "type": "string",
+            "title": "KYC of Beneficial Owner has been obtained",
+            "group": "Beneficiary Owner",
+
+            "enum": ["Yes", "No"]
+          },
+          "beneficiary_owner_has_id": {
+            "type": "string",
+            "title": "ID of the Beneficial Owner has been obtained",
+            "group": "Beneficiary Owner",
+
+            "enum": ["Yes", "No"]
+          },
+          "beneficiary_owner_has_screening": {
+            "type": "string",
+            "title": "Screening has been done",
+            "group": "Beneficiary Owner",
+
+            "enum": ["Yes", "No"]
+          }
+        }
+      }
+    },
+    "adverse_media": {
+      "if": {
+        "properties": {
+          "adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "readOnly": true,
+
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+
+            "title": "Category of Adverse",
+            "group": "Screening - Adverse Media"
+          },
+          "adverse_status": {
+            "type": "string",
+
+            "enum": ["Allegation", "Investigation", "Charged", "Conviction"],
+
+            "title": "Adverse Status",
+            "group": "Screening - Adverse Media"
+          }
+        },
+        "required": ["adverse_category"]
+      }
+    },
+    "nationality": {
+      "if": {
+        "properties": {
+          "nationality": {
+            "not": {
+              "enum": ["NP"]
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "purpose_of_account_open": {
+            "type": "string",
+            "title": "Purpose of A/C open",
+            "enum": ["Yes", "No"],
+            "group": "Other Information"
+          },
+          "purpose_of_visit": {
+            "type": "string",
+            "title": "Purpose of visit",
+            "group": "Other Information"
+          },
+          "visa_expiry_date_ad": {
+            "type": "string",
+
+            "title": "Visa Expiry Date (A.D)",
+            "group": "Other Information"
+          },
+          "visa_expiry_date_bs": {
+            "type": "string",
+
+            "title": "Visa Expiry Date (B.S)",
+            "group": "Other Information"
+          },
+          "passport_expiry_date_ad": {
+            "type": "string",
+
+            "title": "Passport Expiry Date (A.D)",
+            "group": "Other Information"
+          },
+          "passport_expiry_date_bs": {
+            "type": "string",
+
+            "title": "Passport Expiry Date (B.S)",
+            "group": "Other Information"
+          },
+          "employer_confirmation": {
+            "type": "string",
+            "title": "Confirmation from employer or approval from Nepal Government",
+            "group": "Other Information",
+            "enum": ["Yes", "No"]
+          },
+
+          "mandatee_not_family_member": {
+            "type": "string",
+            "title": "Account operated by mandatee who is not the family member of account holder",
+            "group": "Other Information",
+            "enum": ["Yes", "No"]
+          }
+        },
+        "dependencies": {
+          "mandatee_not_family_member": {
+            "if": {
+              "properties": {
+                "mandatee_not_family_member": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "mandatee_intent_for_account_opening": {
+                  "type": "string",
+                  "width": "full",
+                  "title": "Please specify the intended purpose to assign the mandatee/Power of attorney for account operation",
+                  "group": "Other Information"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "approval_status": {
+      "if": {
+        "properties": {
+          "approval_status": {
+            "enum": ["Revert"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "revert_to": {
+            "type": "string",
+            "group": "Approve",
+            "title": "Revert To",
+            "width": "half"
+          }
+        },
+        "required": ["revert_to"]
+      }
+    }
+  }
+}

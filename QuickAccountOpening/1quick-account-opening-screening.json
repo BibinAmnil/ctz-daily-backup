@@ -1,0 +1,247 @@
+{
+  "type": "object",
+  "hasStep": false,
+  "form_title": "personal_info",
+  "isDisabled": true,
+  "required": [
+    "first_name",
+    "last_name",
+    "father_name",
+    "date_of_birth_ad",
+    "date_of_birth_bs",
+    "dedup_identification",
+    "dedup_id_number",
+    "place_of_issue",
+    "nationality",
+    "current_country",
+    "issuing_authority",
+    "is_nrn",
+    "is_refugee"
+  ],
+
+  "properties": {
+    "account_info": {
+      "type": "string",
+      "title": "Account Category",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true
+    },
+
+    "first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+    "middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+    "last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "Customer Information",
+      "connect": "last_name_not_available",
+      "pattern": "^[a-zA-Z\\s.()/]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+
+    "last_name_not_available": {
+      "type": "boolean",
+      "title": "Is last name not available ?",
+      "group": "Customer Information"
+    },
+    "father_name": {
+      "type": "string",
+      "title": "Father Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+    "is_nrn": {
+      "type": "string",
+      "title": "NRN",
+      "group": "Customer Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+    "is_refugee": {
+      "type": "string",
+      "title": "Refugee",
+      "group": "Customer Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+    "nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Customer Information",
+      "default": "NP"
+    },
+    "current_country": {
+      "type": "string",
+      "title": "Current Country",
+      "group": "Customer Information",
+      "default": "NP"
+    },
+    "dedup_identification": {
+      "type": "string",
+      "title": "Identification",
+      "group": "Customer Information"
+    },
+    "issuing_authority": {
+      "type": "string",
+      "title": "Issuing Authority",
+      "group": "Customer Information"
+    },
+    "dedup_id_number": {
+      "type": "string",
+      "title": "Identification Number",
+      "group": "Customer Information",
+      "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
+      "errorMessage": {
+        "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+      }
+    },
+    "place_of_issue": {
+      "type": "string",
+      "title": "Place of Issue",
+      "group": "Customer Information"
+    },
+    "date_of_birth_ad": {
+      "type": "string",
+      "group": "Customer Information",
+      "title": "Date of Birth (A.D.)"
+    },
+    "date_of_birth_bs": {
+      "type": "string",
+
+      "group": "Customer Information",
+      "title": "Date of Birth (B.S.)"
+    },
+    "dedup_check": {
+      "type": "string",
+      "title": "Preliminary Screening",
+      "group": "Customer Information",
+      "width": "full",
+      "additionalProperties": true
+    },
+
+    "personal_screening_data": {
+      "type": "string",
+      "width": "full",
+      "group": "",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "name", "label": "Name" },
+        { "key": "father_name", "label": "Father Name" },
+        { "key": "similarity", "label": "Similarity" }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+    "screening_ref_code": {
+      "type": "string",
+      "width": "full",
+      "title": "Screening",
+      "group": ""
+    },
+
+    "approval_status": {
+      "type": "string",
+      "enum": ["Approve", "Reject", "Revert"],
+      "width": "half",
+      "title": "Approval Status",
+      "group": ""
+    },
+    "approval_remarks": {
+      "type": "string",
+      "width": "half",
+      "title": "Approval Remarks",
+      "group": ""
+    }
+  },
+
+  "dependencies": {
+    "is_nrn": {
+      "if": {
+        "properties": {
+          "is_nrn": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "is_refugee": {
+            "default": "No",
+            "readOnly": true
+          }
+        }
+      }
+    },
+    "is_refugee": {
+      "if": {
+        "properties": {
+          "is_refugee": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "is_nrn": {
+            "default": "No",
+            "readOnly": true
+          },
+          "dedup_identification": {
+            "readOnly": true
+          }
+        }
+      }
+    },
+
+    "last_name_not_available": {
+      "if": {
+        "properties": {
+          "last_name_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "last_name": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "last_name": {
+            "readOnly": false
+          }
+        }
+      }
+    }
+  }
+}

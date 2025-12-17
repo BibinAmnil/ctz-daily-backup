@@ -1,0 +1,2830 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "submissionHidden": false,
+  "hasStep": true,
+  "form_title": "corporate_related_party",
+  "properties": {
+    "has_related_party": {
+      "type": "string",
+      "title": "Has related parties ?",
+      "enum": ["Yes", "No"],
+      "group": "Corporate Related party"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": ["Approve", "Reject", "Revert"],
+      "width": "half",
+      "title": "Approval Status",
+      "group": ""
+    },
+    "approval_remarks": {
+      "type": "string",
+      "width": "half",
+      "text": "textarea",
+      "title": "Approval Remarks",
+      "group": ""
+    }
+  },
+  "dependencies": {
+    "has_related_party": {
+      "oneOf": [
+        {
+          "properties": {
+            "has_related_party": {
+              "enum": ["Yes"]
+            },
+            "related_party": {
+              "type": "array",
+              "minItems": 1,
+              "group": "Related Party",
+              "width": "full",
+              "items": {
+                "type": "object",
+
+                "properties": {
+                  "related_party_organization_type": {
+                    "type": "string",
+                    "title": "Organization Type",
+                    "group": "Information",
+                    "hideTitle": true,
+                    "width": "half",
+                    "enum": [
+                      "Public Ltd Domestic",
+                      "PVT Ltd",
+                      "Private Firm",
+                      "Govt entity",
+                      "Public Enter-Domestic",
+                      "Partnership",
+                      "Non-profit organization"
+                    ]
+                  },
+                  "related_party_designation": {
+                    "type": "string",
+                    "title": "Designation",
+                    "group": "Information",
+                    "hideTitle": true,
+                    "width": "half",
+                    "enum": [
+                      "Beneficial Owner",
+                      "CEO",
+                      "Director",
+                      "Managing Director",
+                      "Shareholder",
+                      "Joint Signatory",
+                      "Legal Guardian",
+                      "Power of Attorney",
+                      "Primary Signatory",
+                      "Secondary Signatory"
+                    ]
+                  }
+                },
+                "required": [
+                  "related_party_organization_type",
+                  "related_party_designation"
+                ],
+                "dependencies": {
+                  "related_party_has_cif": {
+                    "if": {
+                      "properties": {
+                        "related_party_has_cif": {
+                          "const": true
+                        }
+                      }
+                    },
+                    "then": {
+                      "properties": {
+                        "related_party_cif_number": {
+                          "type": "string",
+                          "title": "CIF Number",
+                          "group": "Information",
+                          "showTitle": false,
+                          "width": "half"
+                        },
+                        "related_party_cif_enquiry": {
+                          "type": "string",
+                          "title": "Proceed",
+                          "group": "Information",
+                          "className": "mt-100"
+                        }
+                      }
+                    }
+                  },
+                  "related_party_designation": {
+                    "oneOf": [
+                      {
+                        "properties": {
+                          "related_party_designation": {
+                            "enum": ["Shareholder", "Beneficial Owner"]
+                          },
+                          "related_party_shareholder_details": {
+                            "type": "array",
+                            "minItems": 1,
+                            "group": "Share Holder Details",
+                            "width": "full",
+                            "items": {
+                              "type": "object",
+
+                              "properties": {
+                                "related_party_full_name": {
+                                  "type": "string",
+                                  "title": "Full Name",
+                                  "group": "Information",
+                                  "hideTitle": true
+                                },
+                                "related_party_type": {
+                                  "type": "string",
+                                  "title": "Type",
+                                  "group": "Information",
+                                  "hideTitle": true,
+                                  "enum": ["Individual", "Organization"]
+                                }
+                              },
+                              "required": [
+                                "related_party_full_name",
+                                "related_party_type"
+                              ],
+                              "dependencies": {
+                                "related_party_type": {
+                                  "if": {
+                                    "properties": {
+                                      "related_party_type": {
+                                        "enum": ["Organization"]
+                                      }
+                                    }
+                                  },
+                                  "then": {
+                                    "properties": {
+                                      "related_party_shares": {
+                                        "type": "integer",
+                                        "title": "Shares",
+                                        "group": "Information",
+                                        "hideTitle": true
+                                      },
+                                      "organization_shareholder_details": {
+                                        "type": "array",
+                                        "minItems": 1,
+                                        "group": "Organization Share Holder Details",
+                                        "width": "full",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "related_party_organization_shareholder_full_name": {
+                                              "type": "string",
+                                              "title": "Full Name",
+                                              "group": "Information",
+                                              "width": "half",
+                                              "hideTitle": true
+                                            },
+                                            "related_party_organization_shareholder_shares": {
+                                              "type": "integer",
+                                              "title": "Shares",
+                                              "group": "Information",
+                                              "hideTitle": true,
+                                              "width": "half"
+                                            }
+                                          },
+                                          "required": [
+                                            "related_party_organization_shareholder_full_name",
+                                            "related_party_organization_shareholder_shares"
+                                          ],
+                                          "dependencies": {
+                                            "related_party_last_name_not_available": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_last_name_not_available": {
+                                                    "enum": ["Yes"]
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_last_name": {
+                                                    "readOnly": true
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "required": ["related_party_shares"]
+                                  },
+                                  "else": {
+                                    "properties": {
+                                      "related_party_shares": {
+                                        "type": "integer",
+                                        "title": "Shares",
+                                        "group": "Information",
+                                        "hideTitle": true
+                                      }
+                                    },
+                                    "required": ["related_party_shares"],
+
+                                    "dependencies": {
+                                      "related_party_shares": {
+                                        "if": {
+                                          "properties": {
+                                            "related_party_shares": {
+                                              "type": "integer",
+                                              "minimum": 15
+                                            }
+                                          }
+                                        },
+                                        "then": {
+                                          "properties": {
+                                            "related_party_has_cif": {
+                                              "type": "boolean",
+                                              "title": "Has CIF Number?",
+                                              "group": "Information",
+                                              "hideTitle": true,
+                                              "width": "full"
+                                            },
+
+                                            "related_party_salutation": {
+                                              "type": "string",
+                                              "title": "Salutation",
+                                              "width": "full",
+                                              "group": "personalInformation",
+                                              "enum": [
+                                                "Ms",
+                                                "Mrs",
+                                                "Miss",
+                                                "Mr",
+                                                "Master"
+                                              ]
+                                            },
+                                            "related_party_first_name": {
+                                              "type": "string",
+                                              "title": "First Name",
+                                              "group": "personalInformation",
+                                              "pattern": "^[a-zA-Z.\\s]*$",
+                                              "errorMessage": {
+                                                "pattern": "Alphabets and spaces only"
+                                              }
+                                            },
+                                            "related_party_middle_name": {
+                                              "type": "string",
+                                              "title": "Middle Name",
+                                              "group": "personalInformation",
+                                              "pattern": "^[a-zA-Z.\\s]*$",
+                                              "errorMessage": {
+                                                "pattern": "Alphabets only"
+                                              }
+                                            },
+                                            "related_party_last_name": {
+                                              "type": "string",
+                                              "title": "Last Name",
+                                              "group": "personalInformation",
+                                              "pattern": "^[a-zA-Z.\\s]*$",
+                                              "errorMessage": {
+                                                "pattern": "Alphabets and spaces only"
+                                              }
+                                            },
+                                            "related_party_last_name_not_available": {
+                                              "type": "string",
+                                              "title": "Is last name not available ?",
+                                              "group": "personalInformation",
+                                              "enum": ["Yes", "No"]
+                                            },
+                                            "related_party_gender": {
+                                              "type": "string",
+                                              "title": "Gender",
+                                              "group": "personalInformation",
+                                              "enum": [
+                                                "Male",
+                                                "Female",
+                                                "Others"
+                                              ]
+                                            },
+                                            "related_party_date_of_birth_ad": {
+                                              "type": "string",
+                                              "format": "date",
+                                              "title": "Date of Birth (A.D)",
+                                              "group": "personalInformation"
+                                            },
+                                            "related_party_date_of_birth_bs": {
+                                              "type": "string",
+                                              "readOnly": true,
+                                              "title": "Date of Birth (B.S)",
+                                              "group": "personalInformation"
+                                            },
+                                            "related_party_nationality": {
+                                              "type": "string",
+                                              "title": "Nationality",
+                                              "group": "personalInformation"
+                                            },
+                                            "related_party_mobile_number": {
+                                              "type": "string",
+                                              "title": "Mobile Number",
+                                              "group": "personalInformation",
+                                              "pattern": "^(\\d{7,12})?$",
+                                              "errorMessage": {
+                                                "pattern": "Mobile number must be 7 to 12 digits."
+                                              }
+                                            },
+                                            "related_party_email": {
+                                              "type": "string",
+                                              "title": "Email",
+                                              "group": "personalInformation",
+                                              "pattern": "^(|[a-zA-Z0-9._%*-]*@[a-zA-Z0-9.-]*\\.[a-zA-Z]{2,})$",
+                                              "errorMessage": {
+                                                "pattern": "Invalid Email Address"
+                                              }
+                                            },
+                                            "related_party_email_not_available": {
+                                              "type": "string",
+                                              "title": "If email not available?",
+                                              "group": "personalInformation",
+                                              "enum": ["Yes", "No"]
+                                            },
+                                            "related_party_permanent_country": {
+                                              "type": "string",
+                                              "title": "Permanent Country",
+                                              "group": "RelatedPartyPermanentAddress",
+                                              "default": "NP"
+                                            },
+                                            "related_party_same_as_permanent": {
+                                              "type": "boolean",
+                                              "title": "Same As Permanent Address",
+                                              "group": "RelatedPartyCurrentAddress",
+                                              "width": "full"
+                                            },
+                                            "related_party_current_country": {
+                                              "type": "string",
+                                              "title": "Current Country",
+                                              "group": "RelatedPartyCurrentAddress",
+                                              "default": "NP"
+                                            },
+
+                                            "related_party_family_information": {
+                                              "type": "array",
+                                              "title": "Family Information",
+
+                                              "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "related_party_family_member_relation": {
+                                                    "type": "string",
+                                                    "title": "Relationship"
+                                                  },
+                                                  "related_party_family_member_full_name": {
+                                                    "type": "string",
+                                                    "title": "Full Name"
+                                                  }
+                                                },
+                                                "dependencies": {
+                                                  "related_party_family_member_relation": {
+                                                    "oneOf": [
+                                                      {
+                                                        "properties": {
+                                                          "related_party_family_member_relation": {
+                                                            "enum": [
+                                                              "FATHE",
+                                                              "MOTHE"
+                                                            ]
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "related_party_family_member_full_name"
+                                                        ]
+                                                      },
+                                                      {
+                                                        "properties": {
+                                                          "related_party_family_member_relation": {
+                                                            "not": {
+                                                              "enum": [
+                                                                "FATHE",
+                                                                "MOTHE"
+                                                              ]
+                                                            }
+                                                          },
+                                                          "related_party_is_family_name_not_available": {
+                                                            "type": "boolean",
+                                                            "title": "Family Not Available?"
+                                                          }
+                                                        },
+                                                        "dependencies": {
+                                                          "related_party_is_family_name_not_available": {
+                                                            "oneOf": [
+                                                              {
+                                                                "properties": {
+                                                                  "related_party_is_family_name_not_available": {
+                                                                    "const": true
+                                                                  },
+                                                                  "related_party_family_member_full_name": {
+                                                                    "readOnly": true
+                                                                  }
+                                                                }
+                                                              }
+                                                            ]
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              },
+                                              "group": "personalInformation"
+                                            },
+                                            "is_related_party_family_account_holder": {
+                                              "type": "string",
+                                              "title": "Is s/he a family member of the account holder ?",
+                                              "enum": ["Yes", "No"],
+                                              "group": "RelatedPartyDeclaration"
+                                            },
+                                            "related_party_relation_with_account_holder": {
+                                              "type": "string",
+                                              "title": "Relationship with the accoutholder ?",
+                                              "group": "RelatedPartyDeclaration"
+                                            },
+
+                                            "related_party_pep_person": {
+                                              "type": "string",
+                                              "title": "IS PEP ?",
+                                              "enum": ["Yes", "No"],
+                                              "group": "RelatedPartyDeclaration"
+                                            },
+                                            "related_party_crime_in_past": {
+                                              "type": "string",
+                                              "enum": ["Yes", "No"],
+                                              "title": "Declaration of Convicted for any crime in past",
+                                              "group": "RelatedPartyDeclaration",
+                                              "width": "half"
+                                            },
+
+                                            "related_party_occupation_type": {
+                                              "type": "string",
+                                              "title": "Occupation Type",
+                                              "group": "OccupationProfessionBusinessDetails"
+                                            },
+                                            "related_party_business_type": {
+                                              "type": "string",
+                                              "title": "Business Type",
+                                              "enum": ["Business"],
+                                              "group": "OccupationProfessionBusinessDetails"
+                                            },
+                                            "related_party_source_of_income": {
+                                              "type": "string",
+                                              "title": "Source of Income",
+                                              "group": "OccupationProfessionBusinessDetails"
+                                            },
+                                            "related_party_work_permit": {
+                                              "type": "string",
+                                              "title": "Enter Permit Number",
+                                              "group": "OccupationProfessionBusinessDetails"
+                                            },
+
+                                            "related_party_screening": {
+                                              "type": "string",
+                                              "width": "full",
+                                              "title": "Screening",
+                                              "group": "",
+                                              "className": "HelloWorld"
+                                            },
+
+                                            "is_block_list": {
+                                              "type": "boolean",
+                                              "default": false
+                                            },
+                                            "is_existing_cif": {
+                                              "type": "boolean",
+                                              "default": false
+                                            },
+
+                                            "scheme_check": {
+                                              "type": "boolean",
+                                              "default": false
+                                            },
+
+                                            "is_cib_list": {
+                                              "type": "boolean",
+                                              "default": false
+                                            },
+
+                                            "is_sanction": {
+                                              "type": "boolean",
+                                              "default": false
+                                            }
+                                          },
+                                          "required": [
+                                            "related_party_salutation",
+                                            "related_party_first_name",
+                                            "related_party_gender",
+                                            "related_party_date_of_birth_ad",
+                                            "related_party_nationality",
+                                            "related_party_pep_person"
+                                          ],
+                                          "dependencies": {
+                                            "related_party_has_cif": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_has_cif": {
+                                                    "const": true
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_cif_number": {
+                                                    "type": "string",
+                                                    "title": "CIF Number",
+                                                    "group": "Information",
+                                                    "showTitle": false,
+                                                    "width": "half"
+                                                  },
+                                                  "related_party_cif_enquiry": {
+                                                    "type": "string",
+                                                    "title": "Proceed",
+                                                    "group": "Information",
+                                                    "className": "mt-100"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "related_party_salutation": {
+                                              "oneOf": [
+                                                {
+                                                  "properties": {
+                                                    "related_party_salutation": {
+                                                      "enum": ["Mr", "Master"]
+                                                    },
+                                                    "related_party_gender": {
+                                                      "enum": ["Male", "Others"]
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "properties": {
+                                                    "related_party_salutation": {
+                                                      "enum": [
+                                                        "Ms",
+                                                        "Mrs",
+                                                        "Miss"
+                                                      ]
+                                                    },
+                                                    "related_party_gender": {
+                                                      "enum": [
+                                                        "Female",
+                                                        "Others"
+                                                      ]
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            "related_party_nationality": {
+                                              "oneOf": [
+                                                {
+                                                  "properties": {
+                                                    "related_party_nationality": {
+                                                      "enum": ["NP"]
+                                                    },
+                                                    "related_party_id_type_id": {
+                                                      "type": "string",
+                                                      "title": "Identification",
+                                                      "group": "personalInformation"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "related_party_id_type_id"
+                                                  ],
+                                                  "dependencies": {
+                                                    "related_party_id_type_id": {
+                                                      "oneOf": [
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": ["CTZN"]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+
+                                                              "default": "DAO"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Issued Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs"
+                                                          ]
+                                                        },
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": [
+                                                                "ce66bc73-158b-42e5-b445-095c193d0137"
+                                                              ]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+
+                                                              "default": "DONICR"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Issued Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs"
+                                                          ]
+                                                        },
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": ["LCNSE"]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+
+                                                              "default": "NA"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Issued Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Expiry Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Expiry Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs",
+                                                            "related_party_id_expiry_date_ad",
+                                                            "related_party_id_expiry_date_bs"
+                                                          ]
+                                                        },
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": ["VOTER"]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts",
+                                                              "default": "ee4a5be8-d4b5-4ecb-94ec-3dc14c7e691a"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+
+                                                              "default": "a4e3fa6d-133d-40da-8996-444207b7f2a2"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Issued Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs"
+                                                          ]
+                                                        },
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": ["PP"]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Issued Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Expiry Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Expiry Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_visa_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Visa Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_visa_expiry_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Visa Expiry Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs",
+                                                            "related_party_id_expiry_date_ad",
+                                                            "related_party_id_expiry_date_bs",
+                                                            "related_party_visa_issued_date_ad",
+                                                            "related_party_visa_expiry_date_ad"
+                                                          ]
+                                                        },
+
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": [
+                                                                "28dfb4b6-3315-4965-b8d6-6e2db2d732ea",
+                                                                "b245253e-fcea-4609-950d-0c8a9b5d07d9"
+                                                              ]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Issued Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs"
+                                                          ]
+                                                        },
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": [
+                                                                "bf99155d-a772-4b30-b646-b0806179499f",
+                                                                "BRTCT"
+                                                              ]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_issued_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Issued Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Expiry Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_bs": {
+                                                              "type": "string",
+                                                              "readOnly": true,
+                                                              "title": "Expiry Date (B.S)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs",
+                                                            "related_party_id_expiry_date_ad",
+                                                            "related_party_id_expiry_date_bs"
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "properties": {
+                                                    "related_party_nationality": {
+                                                      "enum": [
+                                                        "68d05a63-d0f2-4efb-be59-4115b95f31ce"
+                                                      ]
+                                                    },
+                                                    "related_party_id_type_id": {
+                                                      "type": "string",
+                                                      "title": "Identification",
+                                                      "group": "personalInformation"
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "related_party_id_type_id"
+                                                  ],
+                                                  "dependencies": {
+                                                    "related_party_id_type_id": {
+                                                      "oneOf": [
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": ["PP"]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+
+                                                              "default": "85bdeca6-4cb1-435e-a81c-e65a04a910f4"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Expiry Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_visa_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Visa Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_visa_expiry_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Visa Expiry Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs",
+                                                            "related_party_id_expiry_date_ad",
+                                                            "related_party_id_expiry_date_bs",
+                                                            "related_party_visa_issued_date_ad",
+                                                            "related_party_visa_expiry_date_ad"
+                                                          ]
+                                                        },
+                                                        {
+                                                          "properties": {
+                                                            "related_party_id_type_id": {
+                                                              "enum": ["PP"]
+                                                            },
+                                                            "related_party_identification_number": {
+                                                              "type": "string",
+                                                              "title": "Identity Number",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_issue_country": {
+                                                              "type": "string",
+                                                              "title": "Country Of Issue",
+                                                              "group": "personalInformation",
+                                                              "default": "NP"
+                                                            },
+                                                            "related_party_issued_district": {
+                                                              "type": "string",
+                                                              "title": "Place Of Issue",
+                                                              "group": "personalInformation",
+                                                              "masterDataKey": "districts"
+                                                            },
+                                                            "related_party_issuing_authority": {
+                                                              "type": "string",
+                                                              "title": "Issuing Authority",
+
+                                                              "default": "5db16d6d-63ea-4ff1-a8d3-0ffdf38a2773"
+                                                            },
+                                                            "related_party_id_issued_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Issued Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            },
+                                                            "related_party_id_expiry_date_ad": {
+                                                              "type": "string",
+                                                              "format": "date",
+                                                              "title": "Expiry Date (A.D)",
+                                                              "group": "personalInformation"
+                                                            }
+                                                          },
+                                                          "required": [
+                                                            "related_party_identification_number",
+                                                            "related_party_issue_country",
+                                                            "related_party_issued_district",
+                                                            "related_party_issuing_authority",
+                                                            "related_party_id_issued_date_ad",
+                                                            "related_party_id_issued_date_bs",
+                                                            "related_party_id_expiry_date_ad",
+                                                            "related_party_id_expiry_date_bs"
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "properties": {
+                                                    "related_party_nationality": {
+                                                      "not": {
+                                                        "enum": [
+                                                          "NP",
+                                                          "68d05a63-d0f2-4efb-be59-4115b95f31ce"
+                                                        ]
+                                                      }
+                                                    },
+                                                    "related_party_id_type_id": {
+                                                      "type": "string",
+                                                      "title": "Identification",
+
+                                                      "default": "PP"
+                                                    },
+                                                    "related_party_identification_number": {
+                                                      "type": "string",
+                                                      "title": "Identity Number",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_issue_country": {
+                                                      "type": "string",
+                                                      "title": "Country Of Issue",
+                                                      "group": "personalInformation",
+                                                      "default": ""
+                                                    },
+                                                    "related_party_issuing_authority": {
+                                                      "type": "string",
+                                                      "title": "Issuing Authority",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_id_issued_date_ad": {
+                                                      "type": "string",
+                                                      "format": "date",
+                                                      "title": "Issued Date (A.D)",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_id_issued_date_bs": {
+                                                      "type": "string",
+                                                      "readOnly": true,
+                                                      "title": "Issued Date (B.S)",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_id_expiry_date_ad": {
+                                                      "type": "string",
+                                                      "format": "date",
+                                                      "title": "Expiry Date (A.D)",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_id_expiry_date_bs": {
+                                                      "type": "string",
+                                                      "readOnly": true,
+                                                      "title": "Expiry Date (B.S)",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_visa_issued_date_ad": {
+                                                      "type": "string",
+                                                      "format": "date",
+                                                      "title": "Visa Issued Date (A.D)",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_visa_expiry_date_ad": {
+                                                      "type": "string",
+                                                      "format": "date",
+                                                      "title": "Visa Expiry Date (A.D)",
+                                                      "group": "personalInformation"
+                                                    },
+                                                    "related_party_visa_type": {
+                                                      "type": "string",
+                                                      "title": "Visa Type",
+
+                                                      "enum": [
+                                                        "Tourist",
+                                                        "Business",
+                                                        "Working"
+                                                      ]
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "related_party_identification_number",
+                                                    "related_party_issue_country",
+                                                    "related_party_issuing_authority",
+                                                    "related_party_id_issued_date_ad",
+                                                    "related_party_id_issued_date_bs",
+                                                    "related_party_id_expiry_date_ad",
+                                                    "related_party_id_expiry_date_bs",
+                                                    "related_party_visa_issued_date_ad",
+                                                    "related_party_visa_expiry_date_ad",
+                                                    "related_party_visa_type"
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            "related_party_last_name_not_available": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_last_name_not_available": {
+                                                    "enum": ["Yes"]
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_last_name": {
+                                                    "readOnly": true
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "related_party_email_not_available": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_email_not_available": {
+                                                    "enum": ["Yes"]
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_email": {
+                                                    "readOnly": true
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "related_party_permanent_country": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_permanent_country": {
+                                                    "enum": ["NP"]
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_permanent_province": {
+                                                    "type": "string",
+                                                    "title": "Permanent Province",
+                                                    "group": "RelatedPartyPermanentAddress"
+                                                  },
+                                                  "related_party_permanent_district": {
+                                                    "type": "string",
+                                                    "title": "Permanent District",
+                                                    "group": "RelatedPartyPermanentAddress"
+                                                  },
+                                                  "related_party_permanent_municipality": {
+                                                    "type": "string",
+                                                    "title": "Permanent Municipality",
+                                                    "group": "RelatedPartyPermanentAddress"
+                                                  },
+                                                  "related_party_permanent_ward_number": {
+                                                    "type": "string",
+                                                    "title": "Ward No",
+                                                    "group": "RelatedPartyPermanentAddress",
+                                                    "pattern": "^[0-9]{2}$",
+                                                    "errorMessage": {
+                                                      "pattern": "Allowed 2 number only"
+                                                    }
+                                                  },
+                                                  "related_party_permanent_street_name": {
+                                                    "type": "string",
+                                                    "title": "Tole/Street",
+                                                    "group": "RelatedPartyPermanentAddress",
+                                                    "pattern": "^[a-zA-Z0-9 ]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphanumeric characters and spaces are allowed."
+                                                    }
+                                                  },
+                                                  "related_party_permanent_town": {
+                                                    "type": "string",
+                                                    "title": "Town",
+                                                    "group": "RelatedPartyPermanentAddress",
+                                                    "pattern": "^[a-zA-Z]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphabet and spaces are allowed."
+                                                    }
+                                                  },
+                                                  "related_party_permanent_house_number": {
+                                                    "type": "string",
+                                                    "title": "House No",
+                                                    "group": "RelatedPartyPermanentAddress",
+                                                    "pattern": "^[0-9]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only Number is allowed."
+                                                    }
+                                                  }
+                                                },
+                                                "required": [
+                                                  "related_party_permanent_province",
+                                                  "related_party_permanent_district",
+                                                  "related_party_permanent_municipality",
+                                                  "related_party_permanent_ward_number",
+                                                  "related_party_permanent_street_name"
+                                                ]
+                                              },
+                                              "else": {
+                                                "properties": {
+                                                  "related_party_permanent_outside_town": {
+                                                    "type": "string",
+                                                    "title": "Outside Town",
+                                                    "group": "RelatedPartyPermanentAddress",
+                                                    "pattern": "^[a-zA-Z]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphabet and spaces are allowed."
+                                                    }
+                                                  },
+                                                  "related_party_permanent_outside_street_name": {
+                                                    "type": "string",
+                                                    "title": "oustide Tole/Street",
+                                                    "group": "RelatedPartyPermanentAddress",
+                                                    "pattern": "^[a-zA-Z0-9 ]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphanumeric characters and spaces are allowed."
+                                                    }
+                                                  }
+                                                },
+                                                "required": [
+                                                  "related_party_permanent_outside_town",
+                                                  "related_party_permanent_outside_street_name"
+                                                ]
+                                              }
+                                            },
+
+                                            "related_party_current_country": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_current_country": {
+                                                    "enum": ["NP"]
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_current_province": {
+                                                    "type": "string",
+                                                    "title": "Current Province",
+                                                    "group": "RelatedPartyCurrentAddress",
+                                                    "masterDataKey": "provinces"
+                                                  },
+                                                  "related_party_current_district": {
+                                                    "type": "string",
+                                                    "title": "Current District",
+                                                    "group": "RelatedPartyCurrentAddress",
+                                                    "masterDataKey": "districts"
+                                                  },
+                                                  "related_party_current_municipality": {
+                                                    "type": "string",
+                                                    "title": "Current Municipality",
+                                                    "group": "RelatedPartyCurrentAddress",
+                                                    "masterDataKey": "local_bodies"
+                                                  },
+                                                  "related_party_current_ward_number": {
+                                                    "type": "string",
+                                                    "title": "Ward No",
+                                                    "group": "RelatedPartyCurrentAddress",
+                                                    "pattern": "^[0-9]{2}$",
+                                                    "errorMessage": {
+                                                      "pattern": "Allowed 2 numbers only"
+                                                    }
+                                                  },
+                                                  "related_party_current_street_name": {
+                                                    "type": "string",
+                                                    "title": "Tole/Street",
+                                                    "group": "RelatedPartyCurrentAddress",
+                                                    "pattern": "^[a-zA-Z0-9 ]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphanumeric characters and spaces are allowed."
+                                                    }
+                                                  },
+                                                  "related_party_current_town": {
+                                                    "type": "string",
+                                                    "title": "Town",
+                                                    "group": "RelatedPartyCurrentAddress",
+                                                    "pattern": "^[a-zA-Z]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphabet and spaces are allowed."
+                                                    }
+                                                  },
+                                                  "related_party_current_house_number": {
+                                                    "type": "string",
+                                                    "title": "House No",
+                                                    "group": "RelatedPartyCurrentAddress",
+                                                    "pattern": "^[0-9]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only numbers are allowed."
+                                                    }
+                                                  }
+                                                },
+                                                "required": [
+                                                  "related_party_current_province",
+                                                  "related_party_current_district",
+                                                  "related_party_current_municipality",
+                                                  "related_party_current_ward_number",
+                                                  "related_party_current_street_name"
+                                                ]
+                                              },
+                                              "else": {
+                                                "properties": {
+                                                  "related_party_current_outside_town": {
+                                                    "type": "string",
+                                                    "title": "Outside Town",
+                                                    "group": "CurrentAddress",
+                                                    "pattern": "^[a-zA-Z]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphabet and spaces are allowed."
+                                                    }
+                                                  },
+                                                  "related_party_current_outside_street_name": {
+                                                    "type": "string",
+                                                    "title": "Outside Tole/Street",
+                                                    "group": "CurrentAddress",
+                                                    "pattern": "^[a-zA-Z0-9 ]*$",
+                                                    "errorMessage": {
+                                                      "pattern": "Only alphanumeric characters and spaces are allowed."
+                                                    }
+                                                  }
+                                                },
+                                                "required": [
+                                                  "related_party_current_outside_town",
+                                                  "related_party_current_outside_street_name"
+                                                ]
+                                              }
+                                            },
+
+                                            "related_party_pep_person": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_pep_person": {
+                                                    "enum": ["Yes"]
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_pep_name": {
+                                                    "type": "string",
+                                                    "title": "Name of PEP",
+                                                    "group": "RelatedPartyDeclaration",
+                                                    "width": "half"
+                                                  },
+                                                  "related_party_pep_relationsip": {
+                                                    "type": "string",
+                                                    "title": "PEP Relationship With You",
+                                                    "group": "RelatedPartyDeclaration",
+                                                    "width": "half"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            "related_party_crime_in_past": {
+                                              "if": {
+                                                "properties": {
+                                                  "related_party_crime_in_past": {
+                                                    "enum": ["Yes"]
+                                                  }
+                                                }
+                                              },
+                                              "then": {
+                                                "properties": {
+                                                  "related_party_crime_descripition": {
+                                                    "type": "string",
+                                                    "title": "Crime Description",
+                                                    "group": "RelatedPartyDeclaration",
+                                                    "width": "half"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "related_party_designation": {
+                            "not": {
+                              "enum": ["Shareholder", "Beneficial Owner"]
+                            }
+                          },
+                          "related_party_has_cif": {
+                            "type": "boolean",
+                            "title": "Has CIF Number?",
+                            "group": "Information",
+                            "hideTitle": true,
+                            "width": "full"
+                          },
+
+                          "related_party_salutation": {
+                            "type": "string",
+                            "title": "Salutation",
+                            "width": "full",
+                            "group": "personalInformation",
+                            "enum": ["Ms", "Mrs", "Miss", "Mr", "Master"]
+                          },
+                          "related_party_first_name": {
+                            "type": "string",
+                            "title": "First Name",
+                            "group": "personalInformation",
+                            "pattern": "^[a-zA-Z.\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Alphabets and spaces only"
+                            }
+                          },
+                          "related_party_middle_name": {
+                            "type": "string",
+                            "title": "Middle Name",
+                            "group": "personalInformation",
+                            "pattern": "^[a-zA-Z.\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Alphabets only"
+                            }
+                          },
+                          "related_party_last_name": {
+                            "type": "string",
+                            "title": "Last Name",
+                            "group": "personalInformation",
+                            "pattern": "^[a-zA-Z.\\s]*$",
+                            "errorMessage": {
+                              "pattern": "Alphabets and spaces only"
+                            }
+                          },
+                          "related_party_last_name_not_available": {
+                            "type": "string",
+                            "title": "Is last name not available ?",
+                            "group": "personalInformation",
+                            "enum": ["Yes", "No"]
+                          },
+                          "related_party_gender": {
+                            "type": "string",
+                            "title": "Gender",
+                            "group": "personalInformation",
+                            "enum": ["Male", "Female", "Others"]
+                          },
+                          "related_party_date_of_birth_ad": {
+                            "type": "string",
+                            "format": "date",
+                            "title": "Date of Birth (A.D)",
+                            "group": "personalInformation"
+                          },
+                          "related_party_date_of_birth_bs": {
+                            "type": "string",
+                            "readOnly": true,
+                            "title": "Date of Birth (B.S)",
+                            "group": "personalInformation"
+                          },
+                          "related_party_nationality": {
+                            "type": "string",
+                            "title": "Nationality",
+                            "group": "personalInformation"
+                          },
+                          "related_party_mobile_number": {
+                            "type": "string",
+                            "title": "Mobile Number",
+                            "group": "personalInformation",
+                            "pattern": "^(\\d{7,12})?$",
+                            "errorMessage": {
+                              "pattern": "Mobile number must be 7 to 12 digits."
+                            }
+                          },
+                          "related_party_email": {
+                            "type": "string",
+                            "title": "Email",
+                            "group": "personalInformation",
+                            "pattern": "^(|[a-zA-Z0-9._%*-]*@[a-zA-Z0-9.-]*\\.[a-zA-Z]{2,})$",
+                            "errorMessage": {
+                              "pattern": "Invalid Email Address"
+                            }
+                          },
+                          "related_party_email_not_available": {
+                            "type": "string",
+                            "title": "If email not available?",
+                            "group": "personalInformation",
+                            "enum": ["Yes", "No"]
+                          },
+                          "related_party_permanent_country": {
+                            "type": "string",
+                            "title": "Permanent Country",
+                            "group": "RelatedPartyPermanentAddress",
+                            "default": "NP"
+                          },
+                          "related_party_same_as_permanent": {
+                            "type": "boolean",
+                            "title": "Same As Permanent Address",
+                            "group": "RelatedPartyCurrentAddress",
+                            "width": "full"
+                          },
+                          "related_party_current_country": {
+                            "type": "string",
+                            "title": "Current Country",
+                            "group": "RelatedPartyCurrentAddress",
+                            "default": "NP"
+                          },
+
+                          "related_party_family_information": {
+                            "type": "array",
+                            "title": "Family Information",
+
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "related_party_family_member_relation": {
+                                  "type": "string",
+                                  "title": "Relationship"
+                                },
+                                "related_party_family_member_full_name": {
+                                  "type": "string",
+                                  "title": "Full Name"
+                                }
+                              },
+                              "dependencies": {
+                                "related_party_family_member_relation": {
+                                  "oneOf": [
+                                    {
+                                      "properties": {
+                                        "related_party_family_member_relation": {
+                                          "enum": ["FATHE", "MOTHE"]
+                                        }
+                                      },
+                                      "required": [
+                                        "related_party_family_member_full_name"
+                                      ]
+                                    },
+                                    {
+                                      "properties": {
+                                        "related_party_family_member_relation": {
+                                          "not": {
+                                            "enum": ["FATHE", "MOTHE"]
+                                          }
+                                        },
+                                        "related_party_is_family_name_not_available": {
+                                          "type": "boolean",
+                                          "title": "Family Not Available?"
+                                        }
+                                      },
+                                      "dependencies": {
+                                        "related_party_is_family_name_not_available": {
+                                          "oneOf": [
+                                            {
+                                              "properties": {
+                                                "related_party_is_family_name_not_available": {
+                                                  "const": true
+                                                },
+                                                "related_party_family_member_full_name": {
+                                                  "readOnly": true
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
+                            },
+                            "group": "personalInformation"
+                          },
+                          "is_related_party_family_account_holder": {
+                            "type": "string",
+                            "title": "Is s/he a family member of the account holder ?",
+                            "enum": ["Yes", "No"],
+                            "group": "RelatedPartyDeclaration"
+                          },
+                          "related_party_relation_with_account_holder": {
+                            "type": "string",
+                            "title": "Relationship with the accoutholder ?",
+                            "group": "RelatedPartyDeclaration"
+                          },
+                          "related_party_pep_person": {
+                            "type": "string",
+                            "title": "IS PEP ?",
+                            "enum": ["Yes", "No"],
+                            "group": "RelatedPartyDeclaration"
+                          },
+                          "related_party_crime_in_past": {
+                            "type": "string",
+                            "enum": ["Yes", "No"],
+                            "title": "Declaration of Convicted for any crime in past",
+                            "group": "RelatedPartyDeclaration",
+                            "width": "half"
+                          },
+
+                          "related_party_occupation_type": {
+                            "type": "string",
+                            "title": "Occupation Type",
+                            "group": "OccupationProfessionBusinessDetails"
+                          },
+                          "related_party_business_type": {
+                            "type": "string",
+                            "title": "Business Type",
+                            "enum": ["Business"],
+                            "group": "OccupationProfessionBusinessDetails"
+                          },
+                          "related_party_source_of_income": {
+                            "type": "string",
+                            "title": "Source of Income",
+                            "group": "OccupationProfessionBusinessDetails"
+                          },
+                          "related_party_work_permit": {
+                            "type": "string",
+                            "title": "Enter Permit Number",
+                            "group": "OccupationProfessionBusinessDetails"
+                          },
+
+                          "related_party_screening": {
+                            "type": "string",
+                            "width": "full",
+                            "title": "Screening",
+                            "group": "",
+                            "className": "HelloWorld"
+                          },
+
+                          "is_block_list": {
+                            "type": "boolean",
+                            "default": false
+                          },
+                          "is_existing_cif": {
+                            "type": "boolean",
+                            "default": false
+                          },
+
+                          "scheme_check": {
+                            "type": "boolean",
+                            "default": false
+                          },
+
+                          "is_cib_list": {
+                            "type": "boolean",
+                            "default": false
+                          },
+
+                          "is_sanction": {
+                            "type": "boolean",
+                            "default": false
+                          }
+                        },
+                        "required": [
+                          "related_party_salutation",
+                          "related_party_first_name",
+                          "related_party_gender",
+                          "related_party_date_of_birth_ad",
+                          "related_party_nationality",
+                          "related_party_pep_person"
+                        ],
+                        "dependencies": {
+                          "related_party_has_cif": {
+                            "if": {
+                              "properties": {
+                                "related_party_has_cif": {
+                                  "const": true
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "related_party_cif_number": {
+                                  "type": "string",
+                                  "title": "CIF Number",
+                                  "group": "Information",
+                                  "showTitle": false,
+                                  "width": "half"
+                                },
+                                "related_party_cif_enquiry": {
+                                  "type": "string",
+                                  "title": "Proceed",
+                                  "group": "Information",
+                                  "className": "mt-100"
+                                }
+                              }
+                            }
+                          },
+                          "related_party_salutation": {
+                            "oneOf": [
+                              {
+                                "properties": {
+                                  "related_party_salutation": {
+                                    "enum": ["Mr", "Master"]
+                                  },
+                                  "related_party_gender": {
+                                    "enum": ["Male", "Others"]
+                                  }
+                                }
+                              },
+                              {
+                                "properties": {
+                                  "related_party_salutation": {
+                                    "enum": ["Ms", "Mrs", "Miss"]
+                                  },
+                                  "related_party_gender": {
+                                    "enum": ["Female", "Others"]
+                                  }
+                                }
+                              }
+                            ]
+                          },
+                          "related_party_nationality": {
+                            "oneOf": [
+                              {
+                                "properties": {
+                                  "related_party_nationality": {
+                                    "enum": ["NP"]
+                                  },
+                                  "related_party_id_type_id": {
+                                    "type": "string",
+                                    "title": "Identification",
+                                    "group": "personalInformation"
+                                  }
+                                },
+                                "required": ["related_party_id_type_id"],
+                                "dependencies": {
+                                  "related_party_id_type_id": {
+                                    "oneOf": [
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": ["CTZN"]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+
+                                            "default": "DAO"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Issued Date (B.S)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs"
+                                        ]
+                                      },
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": [
+                                              "ce66bc73-158b-42e5-b445-095c193d0137"
+                                            ]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+
+                                            "default": "DONICR"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Issued Date (B.S)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs"
+                                        ]
+                                      },
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": ["LCNSE"]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+
+                                            "default": "NA"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Issued Date (B.S)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Expiry Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Expiry Date (B.S)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs",
+                                          "related_party_id_expiry_date_ad",
+                                          "related_party_id_expiry_date_bs"
+                                        ]
+                                      },
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": ["VOTER"]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts",
+                                            "default": "ee4a5be8-d4b5-4ecb-94ec-3dc14c7e691a"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+
+                                            "default": "a4e3fa6d-133d-40da-8996-444207b7f2a2"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Issued Date (B.S)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs"
+                                        ]
+                                      },
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": ["PP"]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Issued Date (B.S)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Expiry Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Expiry Date (B.S)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_visa_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Visa Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_visa_expiry_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Visa Expiry Date (A.D)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs",
+                                          "related_party_id_expiry_date_ad",
+                                          "related_party_id_expiry_date_bs",
+                                          "related_party_visa_issued_date_ad",
+                                          "related_party_visa_expiry_date_ad"
+                                        ]
+                                      },
+
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": [
+                                              "28dfb4b6-3315-4965-b8d6-6e2db2d732ea",
+                                              "b245253e-fcea-4609-950d-0c8a9b5d07d9"
+                                            ]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Issued Date (B.S)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs"
+                                        ]
+                                      },
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": [
+                                              "bf99155d-a772-4b30-b646-b0806179499f",
+                                              "BRTCT"
+                                            ]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_issued_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Issued Date (B.S)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Expiry Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_bs": {
+                                            "type": "string",
+                                            "readOnly": true,
+                                            "title": "Expiry Date (B.S)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs",
+                                          "related_party_id_expiry_date_ad",
+                                          "related_party_id_expiry_date_bs"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "properties": {
+                                  "related_party_nationality": {
+                                    "enum": [
+                                      "68d05a63-d0f2-4efb-be59-4115b95f31ce"
+                                    ]
+                                  },
+                                  "related_party_id_type_id": {
+                                    "type": "string",
+                                    "title": "Identification",
+                                    "group": "personalInformation"
+                                  }
+                                },
+                                "required": ["related_party_id_type_id"],
+                                "dependencies": {
+                                  "related_party_id_type_id": {
+                                    "oneOf": [
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": ["PP"]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+
+                                            "default": "85bdeca6-4cb1-435e-a81c-e65a04a910f4"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Expiry Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_visa_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Visa Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_visa_expiry_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Visa Expiry Date (A.D)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs",
+                                          "related_party_id_expiry_date_ad",
+                                          "related_party_id_expiry_date_bs",
+                                          "related_party_visa_issued_date_ad",
+                                          "related_party_visa_expiry_date_ad"
+                                        ]
+                                      },
+                                      {
+                                        "properties": {
+                                          "related_party_id_type_id": {
+                                            "enum": ["PP"]
+                                          },
+                                          "related_party_identification_number": {
+                                            "type": "string",
+                                            "title": "Identity Number",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_issue_country": {
+                                            "type": "string",
+                                            "title": "Country Of Issue",
+                                            "group": "personalInformation",
+                                            "default": "NP"
+                                          },
+                                          "related_party_issued_district": {
+                                            "type": "string",
+                                            "title": "Place Of Issue",
+                                            "group": "personalInformation",
+                                            "masterDataKey": "districts"
+                                          },
+                                          "related_party_issuing_authority": {
+                                            "type": "string",
+                                            "title": "Issuing Authority",
+
+                                            "default": "5db16d6d-63ea-4ff1-a8d3-0ffdf38a2773"
+                                          },
+                                          "related_party_id_issued_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Issued Date (A.D)",
+                                            "group": "personalInformation"
+                                          },
+                                          "related_party_id_expiry_date_ad": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "title": "Expiry Date (A.D)",
+                                            "group": "personalInformation"
+                                          }
+                                        },
+                                        "required": [
+                                          "related_party_identification_number",
+                                          "related_party_issue_country",
+                                          "related_party_issued_district",
+                                          "related_party_issuing_authority",
+                                          "related_party_id_issued_date_ad",
+                                          "related_party_id_issued_date_bs",
+                                          "related_party_id_expiry_date_ad",
+                                          "related_party_id_expiry_date_bs"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              },
+                              {
+                                "properties": {
+                                  "related_party_nationality": {
+                                    "not": {
+                                      "enum": [
+                                        "NP",
+                                        "68d05a63-d0f2-4efb-be59-4115b95f31ce"
+                                      ]
+                                    }
+                                  },
+                                  "related_party_id_type_id": {
+                                    "type": "string",
+                                    "title": "Identification",
+
+                                    "default": "PP"
+                                  },
+                                  "related_party_identification_number": {
+                                    "type": "string",
+                                    "title": "Identity Number",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_issue_country": {
+                                    "type": "string",
+                                    "title": "Country Of Issue",
+                                    "group": "personalInformation",
+                                    "default": ""
+                                  },
+                                  "related_party_issuing_authority": {
+                                    "type": "string",
+                                    "title": "Issuing Authority",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_id_issued_date_ad": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "title": "Issued Date (A.D)",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_id_issued_date_bs": {
+                                    "type": "string",
+                                    "readOnly": true,
+                                    "title": "Issued Date (B.S)",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_id_expiry_date_ad": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "title": "Expiry Date (A.D)",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_id_expiry_date_bs": {
+                                    "type": "string",
+                                    "readOnly": true,
+                                    "title": "Expiry Date (B.S)",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_visa_issued_date_ad": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "title": "Visa Issued Date (A.D)",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_visa_expiry_date_ad": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "title": "Visa Expiry Date (A.D)",
+                                    "group": "personalInformation"
+                                  },
+                                  "related_party_visa_type": {
+                                    "type": "string",
+                                    "title": "Visa Type",
+
+                                    "enum": ["Tourist", "Business", "Working"]
+                                  }
+                                },
+                                "required": [
+                                  "related_party_identification_number",
+                                  "related_party_issue_country",
+                                  "related_party_issuing_authority",
+                                  "related_party_id_issued_date_ad",
+                                  "related_party_id_issued_date_bs",
+                                  "related_party_id_expiry_date_ad",
+                                  "related_party_id_expiry_date_bs",
+                                  "related_party_visa_issued_date_ad",
+                                  "related_party_visa_expiry_date_ad",
+                                  "related_party_visa_type"
+                                ]
+                              }
+                            ]
+                          },
+                          "related_party_last_name_not_available": {
+                            "if": {
+                              "properties": {
+                                "related_party_last_name_not_available": {
+                                  "enum": ["Yes"]
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "related_party_last_name": {
+                                  "readOnly": true
+                                }
+                              }
+                            }
+                          },
+                          "related_party_email_not_available": {
+                            "if": {
+                              "properties": {
+                                "related_party_email_not_available": {
+                                  "enum": ["Yes"]
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "related_party_email": {
+                                  "readOnly": true
+                                }
+                              }
+                            }
+                          },
+                          "related_party_permanent_country": {
+                            "if": {
+                              "properties": {
+                                "related_party_permanent_country": {
+                                  "enum": ["NP"]
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "related_party_permanent_province": {
+                                  "type": "string",
+                                  "title": "Permanent Province",
+                                  "group": "RelatedPartyPermanentAddress"
+                                },
+                                "related_party_permanent_district": {
+                                  "type": "string",
+                                  "title": "Permanent District",
+                                  "group": "RelatedPartyPermanentAddress"
+                                },
+                                "related_party_permanent_municipality": {
+                                  "type": "string",
+                                  "title": "Permanent Municipality",
+                                  "group": "RelatedPartyPermanentAddress"
+                                },
+                                "related_party_permanent_ward_number": {
+                                  "type": "string",
+                                  "title": "Ward No",
+                                  "group": "RelatedPartyPermanentAddress",
+                                  "pattern": "^[0-9]{2}$",
+                                  "errorMessage": {
+                                    "pattern": "Allowed 2 number only"
+                                  }
+                                },
+                                "related_party_permanent_street_name": {
+                                  "type": "string",
+                                  "title": "Tole/Street",
+                                  "group": "RelatedPartyPermanentAddress",
+                                  "pattern": "^[a-zA-Z0-9]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                                  }
+                                },
+                                "related_party_permanent_town": {
+                                  "type": "string",
+                                  "title": "Town",
+                                  "group": "RelatedPartyPermanentAddress",
+                                  "pattern": "^[a-zA-Z]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphabet and spaces are allowed."
+                                  }
+                                },
+                                "related_party_permanent_house_number": {
+                                  "type": "string",
+                                  "title": "House No",
+                                  "group": "RelatedPartyPermanentAddress",
+                                  "pattern": "^[0-9]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only Number is allowed."
+                                  }
+                                }
+                              },
+                              "required": [
+                                "related_party_permanent_province",
+                                "related_party_permanent_district",
+                                "related_party_permanent_municipality",
+                                "related_party_permanent_ward_number",
+                                "related_party_permanent_street_name"
+                              ]
+                            },
+                            "else": {
+                              "properties": {
+                                "related_party_permanent_outside_town": {
+                                  "type": "string",
+                                  "title": "Outside Town",
+                                  "group": "RelatedPartyPermanentAddress",
+                                  "pattern": "^[a-zA-Z]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphabet and spaces are allowed."
+                                  }
+                                },
+                                "related_party_permanent_outside_street_name": {
+                                  "type": "string",
+                                  "title": "oustide Tole/Street",
+                                  "group": "RelatedPartyPermanentAddress",
+                                  "pattern": "^[a-zA-Z0-9 ]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                                  }
+                                }
+                              },
+                              "required": [
+                                "related_party_permanent_outside_town",
+                                "related_party_permanent_outside_street_name"
+                              ]
+                            }
+                          },
+
+                          "related_party_current_country": {
+                            "if": {
+                              "properties": {
+                                "related_party_current_country": {
+                                  "enum": ["NP"]
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "related_party_current_province": {
+                                  "type": "string",
+                                  "title": "Current Province",
+                                  "group": "RelatedPartyCurrentAddress",
+                                  "masterDataKey": "provinces"
+                                },
+                                "related_party_current_district": {
+                                  "type": "string",
+                                  "title": "Current District",
+                                  "group": "RelatedPartyCurrentAddress",
+                                  "masterDataKey": "districts"
+                                },
+                                "related_party_current_municipality": {
+                                  "type": "string",
+                                  "title": "Current Municipality",
+                                  "group": "RelatedPartyCurrentAddress",
+                                  "masterDataKey": "local_bodies"
+                                },
+                                "related_party_current_ward_number": {
+                                  "type": "string",
+                                  "title": "Ward No",
+                                  "group": "RelatedPartyCurrentAddress",
+                                  "pattern": "^[0-9]{2}$",
+                                  "errorMessage": {
+                                    "pattern": "Allowed 2 numbers only"
+                                  }
+                                },
+                                "related_party_current_street_name": {
+                                  "type": "string",
+                                  "title": "Tole/Street",
+                                  "group": "RelatedPartyCurrentAddress",
+                                  "pattern": "^[a-zA-Z0-9]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                                  }
+                                },
+                                "related_party_current_town": {
+                                  "type": "string",
+                                  "title": "Town",
+                                  "group": "RelatedPartyCurrentAddress",
+                                  "pattern": "^[a-zA-Z]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphabet and spaces are allowed."
+                                  }
+                                },
+                                "related_party_current_house_number": {
+                                  "type": "string",
+                                  "title": "House No",
+                                  "group": "RelatedPartyCurrentAddress",
+                                  "pattern": "^[0-9]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only numbers are allowed."
+                                  }
+                                }
+                              },
+                              "required": [
+                                "related_party_current_province",
+                                "related_party_current_district",
+                                "related_party_current_municipality",
+                                "related_party_current_ward_number",
+                                "related_party_current_street_name"
+                              ]
+                            },
+                            "else": {
+                              "properties": {
+                                "related_party_current_outside_town": {
+                                  "type": "string",
+                                  "title": "Outside Town",
+                                  "group": "CurrentAddress",
+                                  "pattern": "^[a-zA-Z]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphabet and spaces are allowed."
+                                  }
+                                },
+                                "related_party_current_outside_street_name": {
+                                  "type": "string",
+                                  "title": "Outside Tole/Street",
+                                  "group": "CurrentAddress",
+                                  "pattern": "^[a-zA-Z0-9 ]*$",
+                                  "errorMessage": {
+                                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                                  }
+                                }
+                              },
+                              "required": [
+                                "related_party_current_outside_town",
+                                "related_party_current_outside_street_name"
+                              ]
+                            }
+                          },
+
+                          "related_party_pep_person": {
+                            "if": {
+                              "properties": {
+                                "related_party_pep_person": {
+                                  "enum": ["Yes"]
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "related_party_pep_name": {
+                                  "type": "string",
+                                  "title": "Name of PEP",
+                                  "group": "RelatedPartyDeclaration",
+                                  "width": "half"
+                                },
+                                "related_party_pep_relationsip": {
+                                  "type": "string",
+                                  "title": "PEP Relationship With You",
+                                  "group": "RelatedPartyDeclaration",
+                                  "width": "half"
+                                }
+                              }
+                            }
+                          },
+                          "related_party_crime_in_past": {
+                            "if": {
+                              "properties": {
+                                "related_party_crime_in_past": {
+                                  "enum": ["Yes"]
+                                }
+                              }
+                            },
+                            "then": {
+                              "properties": {
+                                "related_party_crime_descripition": {
+                                  "type": "string",
+                                  "title": "Crime Description",
+                                  "group": "RelatedPartyDeclaration",
+                                  "width": "half"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "related_party_salutation": {
+                    "oneOf": [
+                      {
+                        "properties": {
+                          "related_party_salutation": {
+                            "enum": ["Mr", "Master"]
+                          },
+                          "related_party_gender": {
+                            "enum": ["Male", "Others"]
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "related_party_salutation": {
+                            "enum": ["Ms", "Mrs", "Miss"]
+                          },
+                          "related_party_gender": {
+                            "enum": ["Female", "Others"]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

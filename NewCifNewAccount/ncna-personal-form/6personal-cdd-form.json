@@ -1,0 +1,926 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "form_title": "personal_cdd",
+  "hasStep": true,
+  "isDisabled": true,
+  "submissionHidden": false,
+  "required": [
+    "hpp",
+    "pep",
+    "nationality",
+    "entitled_with_fund",
+    "family_pep_declaration",
+    "loan_status",
+    "is_blacklisted",
+    "customer_introduce_by",
+    "met_in_person",
+    "annual_volume_of_transactions",
+    "annual_number_of_transactions",
+    "monthly_volume_of_transactions",
+    "monthly_number_of_transactions",
+    "yearly_income",
+    "transaction_justification",
+    "transaction_fund_details",
+    "adverse_media"
+  ],
+  "properties": {
+    "is_high_risk_account": {
+      "type": "string",
+      "title": "Is High Risk Account?",
+      "enum": ["Yes", "No"],
+      "group": "Risk",
+      "readOnly": true
+    },
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "hideTitle": true,
+      "width": "full"
+    },
+    "is_sanction": {
+      "type": "boolean",
+      "title": "Is Sanctioned?",
+      "group": "Declaration"
+    },
+    "is_cib_list": {
+      "type": "boolean",
+      "title": "Is CIB Black Listed?",
+      "group": "Declaration"
+    },
+    "is_block_list": {
+      "type": "boolean",
+      "title": "Is Internal Block Listed?",
+      "group": "Declaration"
+    },
+    "hpp": {
+      "type": "string",
+      "title": "Highly Positioned Person (HPP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+    "pep": {
+      "type": "string",
+      "title": "Politically Exposed Person (PEP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+
+    "family_pep_declaration": {
+      "type": "string",
+      "title": "Customer declares family member as PEP or as associate PEP ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "width": 10
+    },
+    "adverse_media": {
+      "type": "string",
+      "title": "Adverse Media",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Geographical Risk",
+      "default": "NP",
+      "readOnly": true
+    },
+
+    "entitled_with_fund": {
+      "type": "string",
+      "title": "Is Ultimately account holder is entitled to the funds ?",
+      "group": "Beneficial Owner",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "occupation_type": {
+      "type": "string",
+      "title": "Occupation Type",
+      "group": "Occupation / Profession / Business Details",
+      "readOnly": true
+    },
+    "source_of_income": {
+      "type": "string",
+      "title": "Source of Income",
+      "group": "Occupation / Profession / Business Details",
+      "readOnly": true
+    },
+
+    "loan_status": {
+      "type": "string",
+      "title": "Has the customer taken any loan with us in the past ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "is_blacklisted": {
+      "type": "string",
+      "title": "Has the customer being blacklisted by us ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8,
+      "default": "No"
+    },
+    "customer_introduce_by": {
+      "type": "string",
+      "title": "Introducer Name",
+      "group": "statusOfClient",
+      "enum": [
+        "Bank Staff",
+        "Other Account Holder",
+        "Walk-in Customer",
+        "Local Government Bodies"
+      ],
+      "width": 8
+    },
+
+    "met_in_person": {
+      "type": "string",
+      "title": "Has the customer been met in-person (face-to-face) ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "annual_volume_of_transactions": {
+      "type": "string",
+      "title": "Annual Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "annual_number_of_transactions": {
+      "type": "string",
+      "title": "Annual Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8
+    },
+
+    "monthly_volume_of_transactions": {
+      "type": "string",
+      "title": "Monthly Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "monthly_number_of_transactions": {
+      "type": "string",
+      "title": "Monthly Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8
+    },
+    "yearly_income": {
+      "type": "string",
+      "title": "Yearly Income (Gross Income)",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "transaction_justification": {
+      "type": "string",
+      "title": "Is transaction amount justified with customer profile?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "transaction_fund_details": {
+      "type": "string",
+      "title": "Is the source of funds clear and identifiable ?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
+    },
+    "risk_level": {
+      "type": "string",
+      "group": "Risk",
+      "title": "Risk Level",
+      "enum": ["Low Risk", "Medium Risk", "High Risk"],
+      "readOnly": true
+    },
+    "risk_score": {
+      "type": "number",
+      "title": "Risk Score",
+      "group": "Risk",
+      "readOnly": true
+    },
+
+    "acknowledge": {
+      "type": "boolean",
+      "width": "full",
+      "hideTitle": true,
+      "title": "I acknowledge that the details provided are correct and complete.",
+      "group": ""
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": ["Approve", "Reject", "Revert"],
+      "width": "half",
+      "title": "Approval Status",
+      "group": ""
+    },
+    "approval_remarks": {
+      "type": "string",
+      "width": "half",
+      "title": "Approval Remarks",
+      "group": ""
+    },
+    "has_related_party": {
+      "type": "string",
+      "title": "Has a Power of Attorney / Mandatee been assigned ?",
+      "enum": ["Yes", "No"],
+      "group": "Related Parties",
+      "width": 8
+    }
+  },
+
+  "dependencies": {
+    "has_related_party": {
+      "if": {
+        "properties": {
+          "has_related_party": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "related_party": {
+            "type": "array",
+            "hideTitle": true,
+
+            "minItems": 0,
+            "title": "Related Party",
+            "items": {
+              "type": "object",
+              "properties": {
+                "designation": {
+                  "type": "string",
+                  "title": "Designation",
+                  "group": "personalInformation",
+                  "hideTitle": true,
+                  "enum": ["Power of Attorney", "Mandatee"]
+                }
+              },
+              "dependencies": {
+                "designation": {
+                  "if": {
+                    "properties": {
+                      "designation": {
+                        "enum": ["Power of Attorney"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "properties": {
+                      "first_name": {
+                        "type": "string",
+                        "title": "First Name",
+                        "group": "personalInformation",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z.\\s]*$",
+                        "errorMessage": {
+                          "pattern": "Alphabets and spaces only"
+                        }
+                      },
+                      "middle_name": {
+                        "type": "string",
+                        "title": "Middle Name",
+                        "group": "personalInformation",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z.\\s]*$",
+                        "errorMessage": {
+                          "pattern": "Alphabets only"
+                        }
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "title": "Last Name",
+                        "group": "personalInformation",
+                        "hideTitle": true,
+                        "pattern": "^[a-zA-Z./\\s]*$",
+                        "errorMessage": {
+                          "pattern": "Invalid Input"
+                        }
+                      },
+
+                      "relation_with_account_holder": {
+                        "type": "string",
+                        "title": "Relationship with the accoutholder ?",
+                        "group": "personalInformation",
+                        "hideTitle": true
+                      }
+                    }
+                  },
+                  "else": {
+                    "properties": {
+                      "related_party_detail": {
+                        "type": "array",
+                        "minItems": 1,
+                        "group": "Mandatee Detail",
+                        "hideTitle": true,
+                        "width": "full",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "first_name": {
+                              "type": "string",
+                              "title": "First Name",
+                              "group": "personalInformation",
+                              "hideTitle": true,
+                              "pattern": "^[a-zA-Z]*$",
+                              "errorMessage": {
+                                "pattern": "Alphabets and spaces only"
+                              },
+                              "width": 8
+                            },
+                            "middle_name": {
+                              "type": "string",
+                              "title": "Middle Name",
+                              "group": "personalInformation",
+                              "hideTitle": true,
+                              "pattern": "^[a-zA-Z]*$",
+                              "errorMessage": {
+                                "pattern": "Alphabets only"
+                              },
+                              "width": 8
+                            },
+                            "last_name": {
+                              "type": "string",
+                              "title": "Last Name",
+                              "group": "personalInformation",
+                              "hideTitle": true,
+                              "pattern": "^[a-zA-Z./\\s]*$",
+                              "errorMessage": {
+                                "pattern": "Invalid Input"
+                              },
+                              "width": 8
+                            },
+
+                            "relation_with_account_holder": {
+                              "type": "string",
+                              "title": "Relationship with the accoutholder ?",
+                              "group": "personalInformation",
+                              "hideTitle": true,
+                              "width": 8
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "group": "personalInformation"
+          }
+        }
+      }
+    },
+    "beneficial_owner": {
+      "if": {
+        "properties": {
+          "beneficial_owner": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "beneficial_name": {
+            "type": "string",
+            "title": "Name of Beneficial Owner",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_relationship": {
+            "type": "string",
+            "title": "Beneficial Owner Relationship with You",
+            "group": "Beneficial Owner Information"
+          }
+        },
+        "required": ["beneficial_name", "beneficial_relationship"]
+      }
+    },
+    "customer_introduce_by": {
+      "oneOf": [
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Bank Staff"]
+            },
+            "employee_id": {
+              "type": "string",
+              "title": "Bank Staff CIF Number",
+              "group": "statusOfClient",
+              "width": 8
+            }
+          },
+          "required": ["employee_id"]
+        },
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Other Account Holder"]
+            },
+            "introducer_account_number": {
+              "type": "string",
+              "title": "Introducer Account Number",
+              "group": "statusOfClient",
+              "pattern": "^[0-9]{14}$",
+              "message": "Must be of 14 Digits",
+              "width": 8,
+              "errorMessage": {
+                "pattern": "Must be of 14 Digits"
+              }
+            }
+          },
+          "required": ["introducer_account_number"]
+        },
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Walk-in Customer", "Local Government Bodies"]
+            }
+          },
+          "required": []
+        }
+      ]
+    },
+
+    "occupation_type": {
+      "if": {
+        "properties": {
+          "occupation_type": {
+            "enum": [
+              "4a3fa6bb-7580-4a7d-8479-0b44f31f58a6",
+              "EMP",
+              "cddfc23d-86b6-44cf-b640-25155cd3e52d",
+              "BSM",
+              "d3e087fa-5104-468b-80b7-5a6d6fe431d4"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": ["occupation_detail"],
+        "properties": {
+          "occupation_detail": {
+            "type": "array",
+            "title": "Occupation",
+            "group": "Occupation / Profession / Business Details",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name_of_organization": {
+                  "type": "string",
+                  "title": "Employer Name",
+                  "readOnly": true
+                },
+                "organization_address": {
+                  "type": "string",
+                  "title": "Address",
+                  "readOnly": true
+                },
+                "organization_contact_number": {
+                  "type": "number",
+                  "title": "Contact No.",
+                  "pattern": "^(\\d{7,12})?$",
+                  "errorMessage": {
+                    "pattern": "Mobile number must be 7 to 12 digits."
+                  },
+                  "readOnly": true
+                },
+                "designation": {
+                  "type": "string",
+                  "title": "Designation",
+                  "readOnly": true
+                },
+                "business_type": {
+                  "type": "string",
+                  "title": "Business Type",
+                  "readOnly": true
+                }
+              },
+              "required": []
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+
+    "nationality": {
+      "if": {
+        "properties": {
+          "nationality": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Geographical Risk",
+            "default": "NP",
+            "readOnly": true
+          }
+        },
+        "dependencies": {
+          "permanent_country": {
+            "if": {
+              "properties": {
+                "permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Geographical Risk",
+                  "readOnly": true
+                },
+                "permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Geographical Risk",
+                  "readOnly": true
+                },
+                "permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Geographical Risk",
+                  "readOnly": true
+                },
+                "permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Geographical Risk",
+                  "pattern": "^[0-9]{1,2}$",
+                  "errorMessage": {
+                    "pattern": "Allowed 2 number only"
+                  },
+                  "readOnly": true
+                },
+                "permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                }
+              },
+              "required": [
+                "permanent_province",
+                "permanent_district",
+                "permanent_municipality",
+                "permanent_ward_number",
+                "permanent_street_name",
+                "permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_postal_code": {
+                  "type": "string",
+                  "title": "Postal Code",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  },
+                  "readOnly": true
+                }
+              },
+              "required": [
+                "permanent_outside_town",
+                "permanent_outside_street_name",
+                "permanent_postal_code"
+              ]
+            }
+          }
+        },
+        "required": ["permanent_country"]
+      },
+      "else": {
+        "properties": {
+          "permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Geographical Risk"
+          }
+        },
+        "dependencies": {
+          "permanent_country": {
+            "if": {
+              "properties": {
+                "permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Geographical Risk",
+                  "readOnly": true
+                },
+                "permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Geographical Risk",
+                  "readOnly": true
+                },
+                "permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Geographical Risk"
+                },
+                "permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Geographical Risk",
+                  "pattern": "^[0-9]{1,2}$",
+                  "errorMessage": {
+                    "pattern": "Allowed 2 number only"
+                  },
+                  "readOnly": true
+                },
+                "permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                }
+              },
+              "required": [
+                "permanent_province",
+                "permanent_district",
+                "permanent_municipality",
+                "permanent_ward_number",
+                "permanent_street_name",
+                "permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  },
+                  "readOnly": true
+                },
+                "permanent_postal_code": {
+                  "type": "string",
+                  "title": "Postal Code",
+                  "group": "Geographical Risk",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  },
+                  "readOnly": true
+                }
+              },
+              "required": [
+                "permanent_outside_town",
+                "permanent_outside_street_name",
+                "permanent_postal_code"
+              ]
+            }
+          }
+        },
+        "required": ["permanent_country"]
+      }
+    },
+    "hpp": {
+      "if": {
+        "properties": {
+          "hpp": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "hpp_category": {
+            "type": "string",
+            "title": "HPP Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["hpp_category"],
+        "dependencies": {
+          "hpp_category": {
+            "if": {
+              "properties": {
+                "hpp_category": {
+                  "enum": ["CDHPP", "PDHPP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "hpp_sub_category": {
+                  "type": "string",
+                  "title": "HPP Sub Category",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["hpp_sub_category"]
+            }
+          }
+        }
+      }
+    },
+    "pep": {
+      "if": {
+        "properties": {
+          "pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["pep_category"]
+      }
+    },
+    "adverse_media": {
+      "if": {
+        "properties": {
+          "adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["adverse_category"]
+      }
+    },
+
+    "approval_status": {
+      "if": {
+        "properties": {
+          "approval_status": {
+            "enum": ["Revert"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "revert_to": {
+            "type": "string",
+            "title": "Revert To",
+            "width": "half"
+          }
+        },
+        "required": ["revert_to"]
+      }
+    }
+  }
+}

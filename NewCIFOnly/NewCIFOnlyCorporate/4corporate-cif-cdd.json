@@ -1,0 +1,687 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "form_title": "corporate_cdd",
+  "isDisabled": false,
+  "hasStep": true,
+  "submissionHidden": false,
+  "required": [
+    "loan_status",
+    "is_blacklisted",
+    "customer_introduce_by",
+    "met_in_person",
+    "registration_country",
+    "entiy_have_complex_business_ownership",
+    "declared_anticipated_annual_transaction",
+    "expected_anticipated_annual_transaction",
+    "number_of_transaction",
+    "yearly_income",
+    "transaction_justification",
+    "transaction_fund_details",
+    "pep",
+    "adverse_media"
+  ],
+  "properties": {
+    "is_high_risk_acc": {
+      "type": "boolean",
+      "title": "Is High Risk Account?"
+    },
+    "is_high_risk_account": {
+      "type": "string",
+      "title": "Is High Risk Account?",
+      "readOnly": true,
+      "enum": ["Yes", "No"],
+      "group": "Risk"
+    },
+    "is_sanction": {
+      "type": "boolean",
+      "title": "Is Sanctioned?",
+      "group": "Declaration"
+    },
+    "is_cib_list": {
+      "type": "boolean",
+      "title": "Is CIB Black Listed?",
+      "group": "Declaration"
+    },
+    "is_block_list": {
+      "type": "boolean",
+      "title": "Is Internal Block Listed?",
+      "group": "Declaration"
+    },
+    "pep": {
+      "type": "string",
+      "title": "Politically Exposed Person (PEP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+    "adverse_media": {
+      "type": "string",
+      "title": "Adverse Media",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+    "registration_country": {
+      "type": "string",
+      "title": "Registration Country",
+      "group": "Geographical Risk",
+      "readOnly": true
+    },
+    "related_party": {
+      "type": "array",
+      "minItems": 1,
+      "group": "Related Party Sections",
+      "width": "full",
+      "items": {
+        "type": "object",
+        "required": [
+          "is_account_signatory_same",
+          "has_related_person_kyc_document_completed"
+        ],
+        "properties": {
+          "related_party_designation": {
+            "type": "array",
+            "title": "Related Party Designation",
+            "group": "Related Party Designation",
+            "minItems": 1,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "required": ["designation", "customer_designation"],
+              "properties": {
+                "designation": {
+                  "type": "string",
+                  "title": "Related Party Type",
+                  "group": "Related Party Designation",
+                  "readOnly": true
+                },
+                "customer_designation": {
+                  "type": "string",
+                  "title": "Designation Type",
+                  "group": "Related Party Designation",
+                  "readOnly": true
+                }
+              },
+
+              "dependencies": {
+                "designation": {
+                  "if": {
+                    "properties": {
+                      "designation": {
+                        "enum": ["BENEF"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["beneficial_shares"],
+                    "properties": {
+                      "beneficial_shares": {
+                        "type": "integer",
+                        "title": "Beneficial Shares Percentage",
+                        "group": "Related Party Designation",
+                        "hideTitle": true,
+                        "default": 1,
+                        "readOnly": true
+                      }
+                    }
+                  },
+                  "else": {
+                    "required": [],
+                    "properties": {}
+                  }
+                },
+                "customer_designation": {
+                  "if": {
+                    "properties": {
+                      "customer_designation": {
+                        "enum": ["Individual", "Organization"]
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": ["shares"],
+                    "properties": {
+                      "shares": {
+                        "type": "integer",
+                        "title": "Shares Percentage",
+                        "group": "Related Party Designation",
+                        "default": 1,
+                        "readOnly": true
+                      }
+                    },
+                    "dependencies": {
+                      "shares": {
+                        "if": {
+                          "allOf": [
+                            {
+                              "properties": {
+                                "customer_designation": {
+                                  "const": "Organization"
+                                }
+                              }
+                            },
+                            {
+                              "properties": {
+                                "shares": { "maximum": 14 }
+                              }
+                            }
+                          ]
+                        },
+                        "then": {
+                          "properties": {
+                            "organization_name": {
+                              "type": "string",
+                              "title": "Full Name",
+                              "group": "Related Party Designation",
+                              "pattern": "^[a-zA-Z0-9\\s]+$",
+                              "errorMessage": {
+                                "pattern": "Only letters, numbers, and spaces are allowed"
+                              },
+                              "readOnly": true
+                            }
+                          },
+                          "required": ["organization_name"]
+                        }
+                      }
+                    }
+                  },
+                  "else": {
+                    "required": [],
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          },
+          "is_account_signatory_same": {
+            "type": "string",
+            "title": "Is the Account signatory the same as mentioned above related person/s?",
+            "group": "Related Persons/Signatory Section",
+            "enum": ["Yes", "No"],
+            "hideTitle": true,
+            "width": "half"
+          },
+          "has_related_person_kyc_document_completed": {
+            "type": "string",
+            "title": "Have the complete KYC documents of the related person and the signatory been obtained?",
+            "group": "Related Persons/Signatory Section",
+            "enum": ["Yes", "No"],
+            "hideTitle": true,
+            "width": "half"
+          }
+        },
+        "dependencies": {
+          "related_party_designation": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "related_party_designation": {
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "designation": {
+                            "not": {
+                              "const": "ShareHolder"
+                            }
+                          },
+                          "customer_designation": {
+                            "not": {
+                              "enum": ["Organization", "Individual"]
+                            }
+                          }
+                        },
+                        "required": ["designation", "customer_designation"]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "#/definitions/individual"
+                }
+              },
+
+              {
+                "if": {
+                  "properties": {
+                    "related_party_designation": {
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "designation": {
+                            "const": "ShareHolder"
+                          },
+                          "customer_designation": {
+                            "not": {
+                              "const": "Organization"
+                            }
+                          },
+                          "shares": {
+                            "minimum": 15
+                          }
+                        },
+                        "required": [
+                          "designation",
+                          "customer_designation",
+                          "shares"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "#/definitions/individual"
+                }
+              },
+
+              {
+                "if": {
+                  "properties": {
+                    "related_party_designation": {
+                      "contains": {
+                        "type": "object",
+                        "properties": {
+                          "designation": {
+                            "const": "ShareHolder"
+                          },
+                          "customer_designation": {
+                            "const": "Organization"
+                          },
+                          "shares": {
+                            "minimum": 15
+                          }
+                        },
+                        "required": [
+                          "designation",
+                          "customer_designation",
+                          "shares"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "then": {
+                  "$ref": "#/definitions/organization"
+                }
+              }
+            ]
+          },
+          "is_account_signatory_same": {
+            "if": {
+              "properties": {
+                "is_account_signatory_same": {
+                  "enum": ["No"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "is_account_signatory_family_member": {
+                  "type": "string",
+                  "width": "half",
+                  "title": "Is accounts signatory a family member of the related person/s?",
+                  "group": "Related Persons/Signatory Section",
+                  "enum": ["Yes", "No"],
+                  "readOnly": true
+                },
+                "is_account_signatory_has_sole_authority": {
+                  "type": "string",
+                  "width": "half",
+                  "title": "Does a single signatory have sole authorization to access the account?",
+                  "group": "Related Persons/Signatory Section",
+                  "enum": ["Yes", "No"],
+                  "readOnly": true
+                }
+              },
+              "required": [
+                "is_account_signatory_family_member",
+                "is_account_signatory_has_sole_authority"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "entiy_have_complex_business_ownership": {
+      "type": "string",
+      "title": "Does the entity have a complex business ownership structure with two or more layers?",
+      "group": "Ownership Layer",
+      "enum": ["Yes", "No"],
+      "width": "half"
+    },
+    "business_type_id": {
+      "type": "string",
+      "title": "Business Type",
+      "enum": ["Art and Antique Dealer", "Business", "N/A"],
+      "group": "Nature of Business",
+      "readOnly": true
+    },
+
+    "loan_status": {
+      "type": "string",
+      "title": "Has the customer taken any loan with us in the past ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "is_blacklisted": {
+      "type": "string",
+      "title": "Has the customer being blacklisted by us ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "customer_introduce_by": {
+      "type": "string",
+      "title": "Introducer Name",
+      "group": "statusOfClient",
+      "enum": [
+        "Bank Staff",
+        "Other Account Holder",
+        "Walk-in Customer",
+        "Local Government Bodies"
+      ],
+      "width": 8
+    },
+
+    "met_in_person": {
+      "type": "string",
+      "title": "Has the customer been met in-person (face-to-face) ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "declared_anticipated_annual_transaction": {
+      "type": "string",
+      "title": "Anticipated Annual Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,.]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      },
+      "readOnly": true
+    },
+    "expected_anticipated_annual_transaction": {
+      "type": "string",
+      "title": "Estimated Annual Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,.]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+    "number_of_transaction": {
+      "type": "string",
+      "title": "Number of Transaction",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,4}$",
+      "errorMessage": {
+        "pattern": "Only 4 numbers are allowed"
+      },
+      "readOnly": true
+    },
+    "yearly_income": {
+      "type": "string",
+      "title": "Yearly Income (Gross Income)",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,.]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      },
+      "readOnly": true
+    },
+    "income_year": {
+      "type": "string",
+      "title": "Year (BS)",
+      "group": "Transaction Details",
+      "readOnly": true
+    },
+    "transaction_justification": {
+      "type": "string",
+      "title": "Does transaction amount justified with customer profile?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "transaction_fund_details": {
+      "type": "string",
+      "title": "Is the source of funds clear and identifiable ?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
+    },
+    "risk_level": {
+      "type": "string",
+      "group": "Risk",
+      "title": "Risk Level",
+      "enum": ["Low Risk", "Medium Risk", "High Risk"],
+      "readOnly": true
+    },
+    "risk_score": {
+      "type": "string",
+      "title": "Risk Score",
+      "group": "Risk",
+      "readOnly": true
+    },
+
+    "acknowledge": {
+      "type": "boolean",
+      "width": "full",
+      "hideTitle": true,
+      "title": "I certify that the details I’ve provided are correct and complete.",
+      "group": ""
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": ["Approve", "Reject", "Revert"],
+      "width": "half",
+      "title": "Approval Status",
+      "group": ""
+    },
+    "approval_remarks": {
+      "type": "string",
+      "width": "half",
+      "title": "Approval Remarks",
+      "group": ""
+    }
+  },
+  "dependencies": {
+    "customer_introduce_by": {
+      "oneOf": [
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Bank Staff"]
+            },
+            "employee_id": {
+              "type": "string",
+              "title": "Bank Staff CIF Number",
+              "group": "statusOfClient",
+              "width": 8
+            }
+          },
+          "required": ["employee_id"]
+        },
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Other Account Holder"]
+            },
+            "introducer_account_number": {
+              "type": "string",
+              "title": "Introducer Account Number",
+              "group": "statusOfClient",
+              "pattern": "^[0-9]{14}$",
+              "message": "Must be of 14 Digits",
+              "width": 8,
+              "errorMessage": {
+                "pattern": "Must be of 14 Digits"
+              }
+            }
+          },
+          "required": ["introducer_account_number"]
+        }
+      ]
+    },
+
+    "registration_country": {
+      "if": {
+        "properties": {
+          "registration_country": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "registration_province": {
+            "type": "string",
+            "title": "Registration Province",
+            "group": "Geographical Risk",
+            "readOnly": true
+          },
+          "registration_district": {
+            "type": "string",
+            "title": "Registration District",
+            "group": "Geographical Risk",
+            "readOnly": true
+          }
+        },
+        "required": ["registration_province", "registration_district"]
+      },
+      "else": {
+        "required": [
+          "registration_town",
+          "registration_street",
+          "registration_postal_code"
+        ],
+        "properties": {
+          "registration_town": {
+            "type": "string",
+            "title": "Registration Town",
+            "group": "Geographical Risk",
+            "readOnly": true
+          },
+          "registration_street": {
+            "type": "string",
+            "title": "Registration Street",
+            "group": "Geographical Risk",
+            "readOnly": true
+          },
+          "registration_postal_code": {
+            "type": "string",
+            "title": "Registration Postal Code",
+            "group": "Geographical Risk",
+            "readOnly": true
+          }
+        }
+      }
+    },
+    "pep": {
+      "if": {
+        "properties": {
+          "pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["pep_category"]
+      }
+    },
+    "adverse_media": {
+      "if": {
+        "properties": {
+          "adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime "
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["adverse_category"]
+      }
+    }
+  },
+  "definitions": {
+    "individual": {
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "title": "First Name",
+          "pattern": "^[a-zA-Z\\s]*$",
+          "errorMessage": {
+            "pattern": "Alphabets and spaces only"
+          },
+          "readOnly": true
+        },
+        "middle_name": {
+          "type": "string",
+          "title": "Middle Name",
+          "pattern": "^[a-zA-Z\\s]*$",
+          "errorMessage": {
+            "pattern": "Alphabets and spaces only"
+          },
+          "readOnly": true
+        },
+        "last_name": {
+          "type": "string",
+          "title": "Last Name",
+          "connect": "last_nam_not_available",
+          "pattern": "^[a-zA-Z\\s/.]*$",
+          "errorMessage": {
+            "pattern": "Alphabets and spaces only"
+          },
+          "readOnly": true
+        }
+      },
+      "required": ["first_name", "last_name"],
+      "dependencies": {}
+    },
+    "organization": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Organization Name",
+          "pattern": "^[a-zA-Z0-9\\s\\-/%@.&]+$",
+          "errorMessage": {
+            "pattern": "Invalid Input"
+          },
+          "readOnly": true
+        }
+      },
+      "dependencies": {},
+      "required": ["name"]
+    }
+  }
+}

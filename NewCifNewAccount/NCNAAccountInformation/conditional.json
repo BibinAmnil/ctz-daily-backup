@@ -1,0 +1,23 @@
+{
+  "accountInfo": [
+    {
+      "account_type": "JOINT",
+      "step_slug": "personal-screening-form",
+      "project_slug": "ncna-personal-form"
+    },
+    {
+      "account_type": "MINOR",
+      "step_slug": "minor-screening",
+      "project_slug": "ncna-minor-account-opening"
+    },
+    {
+      "account_type": "INDIVIDUAL",
+      "step_slug": "personal-screening-form",
+      "project_slug": "ncna-personal-form"
+    },
+    {
+      "account_type": "CORPORATE",
+      "step_slug": "corporate-screening"
+    }
+  ]
+}

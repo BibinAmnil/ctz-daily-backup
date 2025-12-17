@@ -1,0 +1,1790 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "hasStep": true,
+  "form_title": "guardian_info",
+  "isDisabled": true,
+  "submissionHidden": false,
+  "required": [
+    "guardian_first_name",
+    "guardian_last_name",
+    "guardian_father_name",
+    "guardian_date_of_birth_ad",
+    "guardian_date_of_birth_bs",
+    "guardian_dedup_identification",
+    "guardian_dedup_id_number",
+    "guardian_salutation",
+    "guardian_gender",
+    "guardian_marital_status",
+    "guardian_email",
+    "guardian_nationality",
+    "guardian_current_country",
+    "guardian_issuing_authority",
+    "guardian_place_of_issue",
+
+    "guardian_related_party_family_account_holder",
+    "guardian_related_party_relation_with_account_holder",
+    "guardian_customer_type_id",
+    "guardian_family_information",
+
+    "guardian_contact_type",
+
+    "guardian_occupation_type",
+    "guardian_source_of_income",
+    "guardian_annual_volume_of_transactions",
+    "guardian_annual_number_of_transactions",
+    "guardian_monthly_volume_of_transactions",
+    "guardian_monthly_number_of_transactions",
+    "guardian_yearly_income",
+    "guardian_transaction_justification",
+    "guardian_transaction_fund_details",
+
+    "guardian_pep",
+    "guardian_family_pep_declaration",
+    "guardian_adverse_media",
+    "guardian_loan_status",
+    "guardian_is_blacklisted",
+    "guardian_customer_introduce_by",
+    "guardian_met_in_person",
+    "guardian_is_nrn",
+    "guardian_is_refugee",
+    "guardian_literacy",
+    "guardian_is_bank_staff",
+    "guardian_residential_status",
+    "guardian_is_us_person"
+  ],
+
+  "properties": {
+    "cif_data": {
+      "type": "string"
+    },
+    "account_info": {
+      "type": "string",
+      "width": "full",
+      "group": "guardian-account-information",
+      "hideTitle": true
+    },
+    "is_minor_account": {
+      "type": "boolean",
+      "width": "full",
+      "group": "guardian-account-information",
+      "default": false,
+      "hideTitle": true
+    },
+
+    "guardian_customer_type_id": {
+      "type": "string",
+      "title": "Customer Type",
+      "group": "Guardian Account Information"
+    },
+
+    "guardian_related_party_family_account_holder": {
+      "type": "string",
+      "title": "Is s/he family member of account holder?",
+      "enum": ["Yes", "No"],
+      "group": "Guardian Relationship"
+    },
+    "guardian_related_party_relation_with_account_holder": {
+      "type": "string",
+      "title": "Relationship with the Account holder ?",
+      "group": "Guardian Relationship"
+    },
+
+    "guardian_first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+
+    "guardian_middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+    "guardian_last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "Customer Information",
+      "connect": "guardian_last_name_not_available",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+
+    "guardian_last_name_not_available": {
+      "type": "boolean",
+      "title": "Is last name not available ?",
+      "group": "Customer Information"
+    },
+    "guardian_father_name": {
+      "type": "string",
+      "title": "Father Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+    "guardian_dedup_identification": {
+      "type": "string",
+      "title": "Identification",
+      "group": "Customer Information",
+      "default": "CTZN"
+    },
+    "guardian_dedup_id_number": {
+      "type": "string",
+      "title": "Identification Number",
+      "group": "Customer Information",
+      "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
+      "errorMessage": {
+        "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+      }
+    },
+    "guardian_date_of_birth_ad": {
+      "type": "string",
+      "group": "Customer Information",
+      "title": "Date of Birth (A.D.)"
+    },
+    "guardian_date_of_birth_bs": {
+      "type": "string",
+      "group": "Customer Information",
+      "title": "Date of Birth (B.S.)"
+    },
+
+    "guardian_dedup_check": {
+      "type": "string",
+      "title": "Preliminary Screening",
+      "group": "Customer Information",
+      "additionalProperties": true,
+      "width": "full"
+    },
+
+    "guardian_dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "group": "Customer Information",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "full_name", "label": "Name" },
+        { "key": "cif_number", "label": "Cif Number" },
+        { "key": "date_of_birth_ad", "label": "Date of Birth" },
+        {
+          "key": "identification_number",
+          "label": "Citizenship Number"
+        }
+      ],
+      "actions": [
+        {
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
+        }
+      ]
+    },
+    "guardian_has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "Guardian Information",
+      "width": "full",
+      "default": true,
+      "readOnly": true
+    },
+    "guardian_salutation": {
+      "type": "string",
+      "title": "Salutation",
+      "width": "full",
+      "group": "Personal Information"
+    },
+    "guardian_gender": {
+      "type": "string",
+      "title": "Gender",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "guardian_marital_status": {
+      "type": "string",
+      "title": "Marital Status",
+      "group": "Personal Information"
+    },
+
+    "guardian_is_nrn": {
+      "type": "string",
+      "title": "NRN",
+      "group": "Customer Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+    "guardian_is_refugee": {
+      "type": "string",
+      "title": "Refugee",
+      "group": "Customer Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+    "guardian_nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Customer Information",
+      "default": "NP",
+      "readOnly": false
+    },
+
+    "guardian_dedup_current_country": {
+      "type": "string",
+      "title": "Current Country",
+      "group": "Customer Information",
+      "default": "NP"
+    },
+
+    "guardian_issuing_authority": {
+      "type": "string",
+      "title": "Issuing Authority",
+      "group": "Customer Information",
+      "default": "DAO"
+    },
+    "guardian_place_of_issue": {
+      "type": "string",
+      "title": "Place of Issue",
+      "group": "Customer Information"
+    },
+
+    "guardian_email_not_available": {
+      "type": "boolean",
+      "title": "If email not available?",
+      "group": "Personal Information"
+    },
+    "guardian_email": {
+      "type": "string",
+      "title": "Email",
+      "group": "Personal Information",
+      "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
+      "errorMessage": {
+        "pattern": "Invalid Email Address"
+      }
+    },
+    "guardian_literacy": {
+      "type": "string",
+      "title": "Literacy",
+      "group": "Personal Information"
+    },
+    "guardian_is_bank_staff": {
+      "type": "string",
+      "title": "Bank Staff",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+
+    "guardian_family_information": {
+      "type": "array",
+      "title": "Family Information",
+      "minItems": 3,
+      "maxItems": 3,
+      "default": [
+        {
+          "guardian_family_member_relation": "FATHE"
+        },
+        {
+          "guardian_family_member_relation": "MOTHE"
+        },
+        {
+          "guardian_family_member_relation": "GRANF"
+        }
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "guardian_family_member_relation": {
+            "type": "string",
+            "title": "Relationship"
+          },
+          "guardian_family_member_full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "guardian_is_family_name_not_available": {
+            "type": "boolean",
+            "title": "Family Not Available?"
+          }
+        }
+      },
+      "group": "Family Information"
+    },
+    "guardian_personal_screening_data": {
+      "type": "string",
+      "width": "full",
+      "group": "",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "name", "label": "Name" },
+        { "key": "father_name", "label": "Father Name" },
+        { "key": "similarity", "label": "Similarity" }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+    "guardian_screening_ref_code": {
+      "type": "string",
+      "width": "full",
+      "title": "Screening",
+      "group": ""
+    },
+    "guardian_contact_type": {
+      "type": "string",
+      "title": "Contact Number Type",
+      "group": "Guardian Contact Detail",
+      "enum": [
+        "No Contact Detail",
+        "Mobile Number",
+        "Phone Number",
+        "Both Contact Detail"
+      ]
+    },
+    "guardian_id_type_details": {
+      "type": "array",
+      "title": "Identification Detail",
+      "group": "Identification Detail",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id_type_id": {
+            "type": "string",
+            "title": "Identification",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          },
+
+          "disable": {
+            "type": "boolean",
+            "title": "Disable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          },
+          "removable": {
+            "type": "boolean",
+            "title": "Removable",
+            "hideTitle": true,
+            "group": "Identification Detail"
+          }
+        },
+        "required": ["id_type_id"],
+        "dependencies": {
+          "id_type_id": {
+            "properties": {
+              "id_type_id": {
+                "type": "string"
+              },
+              "issuing_authority": {
+                "type": "string",
+                "title": "Issuing Authority",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+              "identification_number": {
+                "type": "string",
+                "title": "Identity Number",
+                "hideTitle": true,
+                "group": "Identification Detail",
+                "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
+                "errorMessage": {
+                  "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+                }
+              },
+              "issue_country": {
+                "type": "string",
+                "title": "Country Of Issue",
+                "group": "Identification Detail",
+                "default": "NP",
+                "hideTitle": true
+              },
+              "issued_district": {
+                "type": "string",
+                "title": "Place Of Issue",
+                "group": "Identification Detail",
+                "hideTitle": true
+              },
+
+              "id_issued_date_ad": {
+                "type": "string",
+                "title": "Issued Date (A.D)",
+                "hideTitle": true,
+                "group": "Identification Detail"
+              },
+              "id_issued_date_bs": {
+                "type": "string",
+                "title": "Issued Date (B.S)",
+                "hideTitle": true,
+                "group": "Identification Detail"
+              }
+            },
+            "required": [
+              "identification_number",
+              "issue_country",
+              "issued_district",
+              "issuing_authority",
+              "id_issued_date_ad",
+              "id_issued_date_bs"
+            ],
+            "dependencies": {
+              "id_type_id": {
+                "if": {
+                  "properties": {
+                    "id_type_id": {
+                      "enum": ["DL", "PP", "SSC", "VOT", "WPN", "VISA", "NRN"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "id_expiry_date_ad": {
+                      "type": "string",
+                      "title": "Expiry Date (A.D)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    },
+                    "id_expiry_date_bs": {
+                      "type": "string",
+                      "title": "Expiry Date (B.S)",
+                      "hideTitle": true,
+                      "group": "Identification Detail"
+                    }
+                  },
+                  "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "guardian_occupation_type": {
+      "type": "string",
+      "title": "Occupation Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "guardian_source_of_income": {
+      "type": "string",
+      "title": "Source of Income",
+      "group": "Occupation / Profession / Business Details"
+    },
+
+    "guardian_annual_volume_of_transactions": {
+      "type": "string",
+      "title": "Annual Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "guardian_annual_number_of_transactions": {
+      "type": "string",
+      "title": "Annual Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8
+    },
+
+    "guardian_monthly_volume_of_transactions": {
+      "type": "string",
+      "title": "Monthly Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "guardian_monthly_number_of_transactions": {
+      "type": "string",
+      "title": "Monthly Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8
+    },
+    "guardian_yearly_income": {
+      "type": "string",
+      "title": "Yearly Income (Gross Income)",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      }
+    },
+
+    "guardian_transaction_justification": {
+      "type": "string",
+      "title": "Is transaction amount justified with customer profile?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "guardian_transaction_fund_details": {
+      "type": "string",
+      "title": "Is the source of funds clear and identifiable ?",
+      "group": "Transaction Details",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "guardian_is_block_list": {
+      "type": "boolean",
+      "default": false
+    },
+    "guardian_is_existing_cif": {
+      "type": "boolean",
+      "default": false
+    },
+
+    "guardian_scheme_check": {
+      "type": "boolean",
+      "default": false
+    },
+
+    "guardian_is_cib_list": {
+      "type": "boolean",
+      "default": false
+    },
+
+    "guardian_is_sanction": {
+      "type": "boolean",
+      "default": false
+    },
+    "guardian_pep": {
+      "type": "string",
+      "title": "Politically Exposed Person (PEP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "guardian_family_pep_declaration": {
+      "type": "string",
+      "title": "Customer declares family member as PEP or as associate PEP ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "width": 10
+    },
+    "guardian_adverse_media": {
+      "type": "string",
+      "title": "Adverse Media",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "guardian_loan_status": {
+      "type": "string",
+      "title": "Has the customer taken any loan with us in the past ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "guardian_is_blacklisted": {
+      "type": "string",
+      "title": "Has the customer being blacklisted by us ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "guardian_customer_introduce_by": {
+      "type": "string",
+      "title": "Introducer Name",
+      "group": "statusOfClient",
+      "enum": [
+        "Bank Staff",
+        "Other Account Holder",
+        "Walk-in Customer",
+        "Local Government Bodies"
+      ],
+      "width": 8
+    },
+
+    "guardian_met_in_person": {
+      "type": "string",
+      "title": "Has the customer been met in-person (face-to-face) ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "guardian_calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
+    },
+    "guardian_risk_level": {
+      "type": "string",
+      "group": "Risk",
+      "title": "Risk Level",
+      "enum": ["Low Risk", "Medium Risk", "High Risk"],
+      "readOnly": true
+    },
+    "guardian_risk_score": {
+      "type": "number",
+      "title": "Risk Score",
+      "group": "Risk",
+      "readOnly": true
+    },
+    "guardian_residential_status": {
+      "type": "string",
+      "title": "Residential Status",
+      "group": "Guardian Permanent Address",
+      "enum": ["Yes", "No"],
+      "default": "Yes"
+    },
+    "guardian_is_us_person": {
+      "type": "string",
+      "title": "FATCA Declaration",
+      "group": "Personal Information",
+      "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
+      "default": "None"
+    }
+  },
+
+  "dependencies": {
+    "guardian_last_name_not_available": {
+      "if": {
+        "properties": {
+          "guardian_last_name_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_last_name": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "guardian_last_name": {
+            "readOnly": false
+          }
+        }
+      }
+    },
+
+    "guardian_has_cif": {
+      "if": {
+        "properties": {
+          "guardian_has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "Guardian Information",
+            "width": 4
+          },
+          "guardian_cif_enquiry": {
+            "type": "string",
+            "title": "Proceed",
+            "group": "Guardian Information",
+            "width": 4
+          }
+        },
+        "required": ["guardian_cif_number"]
+      }
+    },
+
+    "guardian_email_not_available": {
+      "if": {
+        "properties": {
+          "guardian_email_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_email": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "guardian_email": {
+            "readOnly": false
+          }
+        }
+      }
+    },
+
+    "guardian_nationality": {
+      "if": {
+        "properties": {
+          "guardian_nationality": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Guardian Permanent Address",
+            "default": "NP",
+            "readOnly": true
+          },
+          "guardian_same_as_permanent": {
+            "type": "boolean",
+            "title": "Same As Permanent Address",
+            "group": "Guardian Current Address",
+            "width": "full",
+            "default": false
+          },
+          "guardian_current_country": {
+            "type": "string",
+            "title": "Current Country",
+            "group": "Guardian Current Address",
+            "default": "NP"
+          },
+          "guardian_is_customer_disabled": {
+            "type": "boolean",
+            "title": "Is Customer Disabled or Senior Citizen?",
+            "group": "Guardian National ID Details",
+            "default": false,
+            "width": "full"
+          },
+          "guardian_national_id_number": {
+            "type": "string",
+            "title": "National ID Number",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issue_date_ad": {
+            "type": "string",
+            "title": "National Id Issue Date(A.D)",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issue_date_bs": {
+            "type": "string",
+            "title": "National Id Issue Date(B.S)",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issue_place": {
+            "type": "string",
+            "title": "National Id Issue Place",
+            "group": "Guardian National ID Details"
+          },
+          "guardian_national_id_issuing_authority": {
+            "type": "string",
+            "title": "Issuing Authority",
+            "group": "Guardian National ID Details",
+            "default": "DONICR",
+            "readOnly": true
+          },
+          "guardian_nid_verified": {
+            "type": "string",
+            "title": "NID Verified",
+            "group": "Guardian National ID Details",
+            "enum": ["Yes", "No"]
+          },
+          "guardian_nid_verify": {
+            "type": "string",
+            "title": "Verify NID",
+            "group": "Guardian National ID Details",
+            "width": 4,
+            "url": "https://citizenportal.donidcr.gov.np/ne/check-national-id-number"
+          }
+        },
+        "dependencies": {
+          "guardian_permanent_country": {
+            "if": {
+              "properties": {
+                "guardian_permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "guardian_permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Guardian Permanent Address"
+                },
+                "guardian_permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Guardian Permanent Address"
+                },
+                "guardian_permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Guardian Permanent Address"
+                },
+                "guardian_permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Guardian Permanent Address",
+                  "enum": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33"
+                  ]
+                },
+                "guardian_permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                }
+              },
+              "required": [
+                "guardian_permanent_province",
+                "guardian_permanent_district",
+                "guardian_permanent_municipality",
+                "guardian_permanent_ward_number",
+                "guardian_permanent_street_name",
+                "guardian_permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "guardian_permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_postal_code": {
+                  "type": "string",
+                  "title": "Postal Code",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  }
+                }
+              },
+              "required": [
+                "guardian_permanent_outside_town",
+                "guardian_permanent_outside_street_name",
+                "guardian_permanent_postal_code"
+              ]
+            }
+          },
+          "guardian_is_customer_disabled": {
+            "if": {
+              "properties": {
+                "guardian_is_customer_disabled": {
+                  "const": true
+                }
+              }
+            },
+            "then": {},
+            "else": {
+              "properties": {},
+              "required": [
+                "guardian_national_id_number",
+                "guardian_national_id_issue_date_ad",
+                "guardian_national_id_issue_date_bs",
+                "guardian_national_id_issue_place",
+                "guardian_national_id_issuing_authority",
+                "guardian_nid_verified"
+              ]
+            }
+          }
+        },
+        "required": ["guardian_permanent_country"]
+      },
+      "else": {
+        "properties": {
+          "guardian_permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Guardian Permanent Address"
+          },
+          "guardian_same_as_permanent": {
+            "type": "boolean",
+            "title": "Same As Permanent Address",
+            "group": "Guardian Current Address",
+            "width": "full"
+          },
+          "guardian_current_country": {
+            "type": "string",
+            "title": "Current Country",
+            "group": "Guardian Current Address",
+            "default": "NP"
+          }
+        },
+        "dependencies": {
+          "guardian_permanent_country": {
+            "if": {
+              "properties": {
+                "guardian_permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "guardian_permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Guardian Permanent Address"
+                },
+                "guardian_permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Guardian Permanent Address"
+                },
+                "guardian_permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Guardian Permanent Address"
+                },
+                "guardian_permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Guardian Permanent Address",
+                  "enum": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33"
+                  ]
+                },
+                "guardian_permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                }
+              },
+              "required": [
+                "guardian_permanent_province",
+                "guardian_permanent_district",
+                "guardian_permanent_municipality",
+                "guardian_permanent_ward_number",
+                "guardian_permanent_street_name",
+                "guardian_permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "guardian_permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "guardian_permanent_postal_code": {
+                  "type": "string",
+                  "title": "Postal Code",
+                  "group": "Guardian Permanent Address",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  }
+                }
+              },
+              "required": [
+                "guardian_permanent_outside_town",
+                "guardian_permanent_outside_street_name",
+                "guardian_permanent_postal_code"
+              ]
+            }
+          }
+        },
+        "required": ["guardian_permanent_country"]
+      }
+    },
+
+    "guardian_current_country": {
+      "oneOf": [
+        {
+          "properties": {
+            "guardian_current_country": {
+              "enum": ["NP"]
+            },
+            "guardian_same_as_permanent": {
+              "type": "boolean",
+              "title": "Same As Permanent Address",
+              "group": "Guardian Current Address",
+              "width": "full"
+            },
+            "guardian_current_province": {
+              "type": "string",
+              "title": "Current Province",
+              "group": "Guardian Current Address",
+              "masterDataKey": "provinces"
+            },
+            "guardian_current_district": {
+              "type": "string",
+              "title": "Current District",
+              "group": "Guardian Current Address",
+              "masterDataKey": "districts"
+            },
+            "guardian_current_municipality": {
+              "type": "string",
+              "title": "Current Municipality",
+              "group": "Guardian Current Address",
+              "masterDataKey": "local_bodies"
+            },
+            "guardian_current_ward_number": {
+              "type": "string",
+              "title": "Ward No",
+              "group": "Guardian Current Address",
+              "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19",
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29",
+                "30",
+                "31",
+                "32",
+                "33"
+              ]
+            },
+            "guardian_current_street_name": {
+              "type": "string",
+              "title": "Tole/Street",
+              "group": "Guardian Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "guardian_current_town": {
+              "type": "string",
+              "title": "Town",
+              "group": "Guardian Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "guardian_current_house_number": {
+              "type": "string",
+              "title": "House No",
+              "group": "Guardian Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            }
+          },
+          "dependencies": {
+            "guardian_same_as_permanent": {
+              "if": {
+                "properties": {
+                  "guardian_same_as_permanent": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "guardian_current_country": {
+                    "readOnly": true
+                  },
+                  "guardian_current_province": {
+                    "readOnly": true
+                  },
+                  "guardian_current_district": {
+                    "readOnly": true
+                  },
+                  "guardian_current_municipality": {
+                    "readOnly": true
+                  },
+                  "guardian_current_ward_number": {
+                    "readOnly": true
+                  },
+                  "guardian_current_street_name": {
+                    "readOnly": true
+                  },
+                  "guardian_current_town": {
+                    "readOnly": true
+                  },
+                  "guardian_current_house_number": {
+                    "readOnly": true
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "guardian_current_province",
+            "guardian_current_district",
+            "guardian_current_municipality",
+            "guardian_current_ward_number",
+            "guardian_current_street_name",
+            "guardian_current_town"
+          ]
+        },
+        {
+          "properties": {
+            "guardian_current_country": {
+              "not": {
+                "enum": ["NP"]
+              }
+            },
+            "guardian_same_as_permanent": {
+              "type": "boolean",
+              "title": "Same As Permanent Address",
+              "group": "Guardian Current Address",
+              "width": "full"
+            },
+            "guardian_current_outside_town": {
+              "type": "string",
+              "title": "Outside Town",
+              "group": "Guardian Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "guardian_current_outside_street_name": {
+              "type": "string",
+              "title": "Outside Tole/Street",
+              "group": "Guardian Current Address",
+              "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed."
+              }
+            },
+            "guardian_current_postal_code": {
+              "type": "string",
+              "title": "Postal Code",
+              "group": "Guardian Current",
+              "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+              "errorMessage": {
+                "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+              }
+            }
+          },
+          "required": [
+            "guardian_current_outside_town",
+            "guardian_current_outside_street_name",
+            "guardian_current_postal_code"
+          ],
+          "dependencies": {
+            "guardian_same_as_permanent": {
+              "if": {
+                "properties": {
+                  "guardian_same_as_permanent": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "guardian_current_country": {
+                    "readOnly": true
+                  },
+                  "guardian_current_outside_town": {
+                    "readOnly": true
+                  },
+                  "guardian_current_outside_street_name": {
+                    "readOnly": true
+                  },
+                  "guardian_current_postal_code": {
+                    "readOnly": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    "guardian_literacy": {
+      "if": {
+        "properties": {
+          "guardian_literacy": {
+            "enum": ["4", "5"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_educational_qualification": {
+            "type": "string",
+            "title": "Education Qualification",
+            "group": "Personal Information"
+          }
+        },
+        "required": ["guardian_educational_qualification"]
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+    "guardian_is_bank_staff": {
+      "if": {
+        "properties": {
+          "guardian_is_bank_staff": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_staff_id": {
+            "type": "string",
+            "title": "Staff ID",
+            "group": "Personal Information",
+            "pattern": "^[a-zA-Z0-9\\s.()]*$",
+            "errorMessage": {
+              "pattern": "Alphanumeric, spaces, brackets ( ), and dot (.) only allowed"
+            }
+          }
+        },
+        "required": ["guardian_staff_id"]
+      }
+    },
+    "guardian_contact_type": {
+      "oneOf": [
+        {
+          "properties": {
+            "guardian_contact_type": {
+              "enum": ["Phone Number"]
+            },
+            "guardian_phone_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Guardian Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            },
+            "guardian_phone_number": {
+              "type": "number",
+              "title": "Phone Number",
+              "group": "Guardian Contact Detail",
+              "pattern": "^(\\d{7,12})?$",
+              "width": 5,
+              "errorMessage": {
+                "pattern": "Mobile number must be 7 to 12 digits."
+              }
+            }
+          },
+          "required": ["guardian_phone_country_code", "guardian_phone_number"]
+        },
+        {
+          "properties": {
+            "guardian_contact_type": {
+              "enum": ["Mobile Number"]
+            },
+            "guardian_mobile_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Guardian Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            }
+          },
+          "dependencies": {
+            "guardian_mobile_country_code": {
+              "if": {
+                "properties": {
+                  "guardian_mobile_country_code": {
+                    "enum": ["NEPAL"]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "guardian_mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Guardian Contact Detail",
+                    "pattern": "^(\\d{10})?$",
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 10 digits."
+                    }
+                  }
+                },
+                "required": ["guardian_mobile_number"]
+              },
+              "else": {
+                "properties": {
+                  "guardian_mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Guardian Contact Detail",
+                    "pattern": "^(\\d{7,12})?$",
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 7 to 12 digits."
+                    }
+                  }
+                },
+                "required": ["guardian_mobile_number"]
+              }
+            }
+          },
+          "required": ["guardian_mobile_country_code"]
+        },
+        {
+          "properties": {
+            "guardian_contact_type": {
+              "enum": ["Both Contact Detail"]
+            },
+            "guardian_phone_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Guardian Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            },
+            "guardian_phone_number": {
+              "type": "number",
+              "title": "Phone Number",
+              "group": "Guardian Contact Detail",
+              "pattern": "^(\\d{7,12})?$",
+              "width": 5,
+              "errorMessage": {
+                "pattern": "Mobile number must be 7 to 12 digits."
+              }
+            },
+            "guardian_mobile_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Guardian Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            }
+          },
+          "required": [
+            "guardian_phone_country_code",
+            "guardian_phone_number",
+            "guardian_mobile_country_code"
+          ],
+          "dependencies": {
+            "guardian_mobile_country_code": {
+              "if": {
+                "properties": {
+                  "guardian_mobile_country_code": {
+                    "enum": ["NEPAL"]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "guardian_mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Guardian Contact Detail",
+                    "pattern": "^(\\d{10})?$",
+                    "width": 5,
+
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 10 digits."
+                    }
+                  }
+                },
+                "required": ["guardian_mobile_number"]
+              },
+              "else": {
+                "properties": {
+                  "guardian_mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Guardian Contact Detail",
+                    "pattern": "^(\\d{7,12})?$",
+                    "width": 5,
+
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 7 to 12 digits."
+                    }
+                  }
+                },
+                "required": ["guardian_mobile_number"]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "guardian_contact_type": {
+              "enum": ["No Contact Detail"]
+            }
+          }
+        }
+      ]
+    },
+
+    "guardian_customer_introduce_by": {
+      "oneOf": [
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Bank Staff"]
+            },
+            "guardian_employee_id": {
+              "type": "string",
+              "title": "Bank Staff CIF Number",
+              "group": "statusOfClient",
+              "width": 8
+            }
+          },
+          "required": ["guardian_employee_id"]
+        },
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Other Account Holder"]
+            },
+            "guardian_introducer_account_number": {
+              "type": "string",
+              "title": "Introducer Account Number",
+              "group": "statusOfClient",
+              "pattern": "^[0-9]{14}$",
+              "message": "Must be of 14 Digits",
+              "width": 8,
+              "errorMessage": {
+                "pattern": "Must be of 14 Digits"
+              }
+            }
+          },
+          "required": ["guardian_introducer_account_number"]
+        },
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Walk-in Customer", "Local Government Bodies"]
+            }
+          },
+          "required": []
+        }
+      ]
+    },
+
+    "guardian_occupation_type": {
+      "if": {
+        "properties": {
+          "guardian_occupation_type": {
+            "enum": ["BUSIN", "EMPLO", "SELFE"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_occupation_detail": {
+            "type": "array",
+            "title": "Occupation",
+            "group": "Occupation / Profession / Business Details",
+            "hideTitle": true,
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "guardian_name_of_organization": {
+                  "type": "string",
+                  "title": "Employer Name"
+                },
+                "guardian_organization_address": {
+                  "type": "string",
+                  "title": "Address"
+                },
+                "guardian_organization_contact_number": {
+                  "type": "number",
+                  "title": "Contact No.",
+                  "pattern": "^(\\d{7,12})?$",
+                  "errorMessage": {
+                    "pattern": "Mobile number must be 7 to 12 digits."
+                  }
+                },
+                "guardian_designation": {
+                  "type": "string",
+                  "title": "Designation"
+                },
+                "guardian_business_type": {
+                  "type": "string",
+                  "title": "Business Type"
+                }
+              },
+              "required": [
+                "guardian_name_of_organization",
+                "guardian_organization_address",
+                "guardian_organization_contact_number",
+                "guardian_designation",
+                "guardian_business_type"
+              ]
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {}
+      }
+    },
+
+    "guardian_pep": {
+      "if": {
+        "properties": {
+          "guardian_pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["guardian_pep_category"]
+      }
+    },
+
+    "guardian_adverse_media": {
+      "if": {
+        "properties": {
+          "guardian_adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["guardian_adverse_category"]
+      }
+    },
+
+    "guardian_is_nrn": {
+      "if": {
+        "properties": {
+          "guardian_is_nrn": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_is_refugee": {
+            "default": "No",
+            "readOnly": true
+          }
+        }
+      }
+    },
+    "guardian_is_refugee": {
+      "if": {
+        "properties": {
+          "guardian_is_refugee": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_is_nrn": {
+            "default": "No",
+            "readOnly": true
+          },
+          "guardian_dedup_identification": {
+            "readOnly": true
+          }
+        }
+      }
+    }
+  }
+}

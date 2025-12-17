@@ -1,0 +1,439 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "hasStep": true,
+  "form_title": "joint_info",
+  "submissionHidden": false,
+  "isDisabled": false,
+  "required": [
+    "pep",
+    "family_pep_declaration",
+    "adverse_media",
+    "loan_status",
+    "is_blacklisted",
+    "customer_introduce_by",
+    "met_in_person"
+  ],
+
+  "properties": {
+    "is_minor_account": {
+      "type": "boolean",
+      "title": "Is Minor Account?",
+      "width": 4,
+      "readOnly": true
+    },
+    "first_name": {
+      "type": "string",
+      "title": "First Name",
+      "hideTitle": true
+    },
+    "middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "hideTitle": true
+    },
+    "last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "hideTitle": true
+    },
+
+    "account_info": {
+      "type": "string",
+
+      "width": "full"
+    },
+    "pep": {
+      "type": "string",
+      "title": "Politically Exposed Person (PEP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "family_pep_declaration": {
+      "type": "string",
+      "title": "Customer declares family member as PEP or as associate PEP ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "width": 10
+    },
+    "adverse_media": {
+      "type": "string",
+      "title": "Adverse Media",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "loan_status": {
+      "type": "string",
+      "title": "Has the customer taken any loan with us in the past ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "is_blacklisted": {
+      "type": "string",
+      "title": "Has the customer being blacklisted by us ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "customer_introduce_by": {
+      "type": "string",
+      "title": "Introducer Name",
+      "group": "statusOfClient",
+      "enum": [
+        "Bank Staff",
+        "Other Account Holder",
+        "Walk-in Customer",
+        "Local Government Bodies"
+      ],
+      "width": 8
+    },
+
+    "met_in_person": {
+      "type": "string",
+      "title": "Has the customer been met in-person (face-to-face) ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
+    },
+    "risk_level": {
+      "type": "string",
+      "group": "Risk",
+      "title": "Risk Level",
+      "enum": ["Low Risk", "Medium Risk", "High Risk"],
+      "readOnly": true
+    },
+    "risk_score": {
+      "type": "number",
+      "title": "Risk Score",
+      "group": "Risk",
+      "readOnly": true
+    }
+  },
+
+  "dependencies": {
+    "is_minor_account": {
+      "if": {
+        "properties": {
+          "is_minor_account": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "required": ["occupation_type", "source_of_income"],
+
+        "properties": {
+          "nationality": {
+            "type": "string",
+            "title": "Nationality",
+            "hideTitle": true,
+            "default": "NP"
+          },
+
+          "occupation_type": {
+            "type": "string",
+            "title": "Occupation Type",
+            "group": "Occupation / Profession / Business Details"
+          },
+          "source_of_income": {
+            "type": "string",
+            "title": "Source of Income",
+            "group": "Occupation / Profession / Business Details"
+          }
+        },
+
+        "dependencies": {
+          "occupation_type": {
+            "if": {
+              "properties": {
+                "occupation_type": {
+                  "enum": [
+                    "4a3fa6bb-7580-4a7d-8479-0b44f31f58a6",
+                    "EMP",
+                    "cddfc23d-86b6-44cf-b640-25155cd3e52d",
+                    "BSM",
+                    "d3e087fa-5104-468b-80b7-5a6d6fe431d4"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": ["occupation_detail"],
+              "properties": {
+                "occupation_detail": {
+                  "type": "array",
+                  "title": "Occupation",
+                  "group": "Occupation / Profession / Business Details",
+                  "minItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name_of_organization": {
+                        "type": "string",
+                        "title": "Employer Name"
+                      },
+                      "organization_address": {
+                        "type": "string",
+                        "title": "Address"
+                      },
+                      "organization_contact_number": {
+                        "type": "number",
+                        "title": "Contact No.",
+                        "pattern": "^(\\d{7,12})?$",
+                        "errorMessage": {
+                          "pattern": "Mobile number must be 7 to 12 digits."
+                        }
+                      },
+                      "designation": {
+                        "type": "string",
+                        "title": "Designation"
+                      },
+                      "business_type": {
+                        "type": "string",
+                        "title": "Business Type"
+                      }
+                    },
+                    "required": [
+                      "name_of_organization",
+                      "organization_address",
+                      "organization_contact_number",
+                      "designation",
+                      "business_type"
+                    ]
+                  }
+                }
+              }
+            },
+            "else": {
+              "properties": {}
+            }
+          },
+          "pep": {
+            "if": {
+              "properties": {
+                "pep": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "pep_category": {
+                  "type": "string",
+                  "enum": [
+                    "Existing PEPs",
+                    "Former PEPs",
+                    "High-ranking officials from neighboring or nearby countries",
+                    "Other foreign PEPs",
+                    "International PEPs"
+                  ],
+                  "title": "Pep Category",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["pep_category"]
+            }
+          },
+          "adverse_media": {
+            "if": {
+              "properties": {
+                "adverse_media": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "adverse_category": {
+                  "type": "string",
+                  "enum": [
+                    "Money Laundering",
+                    "Terrorist Financing",
+                    "Financial Fraud",
+                    "Organized Crime"
+                  ],
+                  "title": "Category of Adverse",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["adverse_category"]
+            }
+          }
+        }
+      },
+      "else": {
+        "required": [],
+
+        "properties": {
+          "nationality": {
+            "type": "string",
+            "title": "Nationality",
+            "hideTitle": true,
+            "default": "NP",
+            "readOnly": false
+          }
+        },
+
+        "dependencies": {
+          "pep": {
+            "if": {
+              "properties": {
+                "pep": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "pep_category": {
+                  "type": "string",
+                  "enum": [
+                    "Existing PEPs",
+                    "Former PEPs",
+                    "High-ranking officials from neighboring or nearby countries",
+                    "Other foreign PEPs",
+                    "International PEPs"
+                  ],
+                  "title": "Pep Category",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["pep_category"]
+            }
+          },
+          "adverse_media": {
+            "if": {
+              "properties": {
+                "adverse_media": {
+                  "enum": ["Yes"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "adverse_category": {
+                  "type": "string",
+                  "enum": [
+                    "Money Laundering",
+                    "Terrorist Financing",
+                    "Financial Fraud",
+                    "Organized Crime"
+                  ],
+                  "title": "Category of Adverse",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["adverse_category"]
+            }
+          }
+        }
+      }
+    },
+    "customer_introduce_by": {
+      "oneOf": [
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Bank Staff"]
+            },
+            "employee_id": {
+              "type": "string",
+              "title": "Bank Staff CIF Number",
+              "group": "statusOfClient",
+              "width": 8
+            }
+          },
+          "required": ["employee_id"]
+        },
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Other Account Holder"]
+            },
+            "introducer_account_number": {
+              "type": "string",
+              "title": "Introducer Account Number",
+              "group": "statusOfClient",
+              "pattern": "^[0-9]{14}$",
+              "message": "Must be of 14 Digits",
+              "width": 8,
+              "errorMessage": {
+                "pattern": "Must be of 14 Digits"
+              }
+            }
+          },
+          "required": ["introducer_account_number"]
+        },
+        {
+          "properties": {
+            "customer_introduce_by": {
+              "enum": ["Walk-in Customer", "Local Government Bodies"]
+            }
+          },
+          "required": []
+        }
+      ]
+    },
+    "pep": {
+      "if": {
+        "properties": {
+          "pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["pep_category"]
+      }
+    },
+    "adverse_media": {
+      "if": {
+        "properties": {
+          "adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["adverse_category"]
+      }
+    }
+  }
+}

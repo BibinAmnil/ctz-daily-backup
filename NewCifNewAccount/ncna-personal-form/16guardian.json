@@ -1,0 +1,377 @@
+{
+  "type": "object",
+  "className": "fs-1",
+  "singleForm": true,
+  "hasStep": true,
+  "form_title": "guardian_info",
+  "isDisabled": false,
+  "submissionHidden": false,
+  "required": [
+    "guardian_first_name",
+    "guardian_last_name",
+    "guardian_father_name",
+    "guardian_date_of_birth_ad",
+    "guardian_date_of_birth_bs",
+    "guardian_dedup_identification",
+    "guardian_dedup_id_number",
+    "guardian_salutation",
+    "guardian_gender",
+    "guardian_marital_status",
+    "guardian_email",
+
+    "guardian_related_party_family_account_holder",
+    "guardian_related_party_relation_with_account_holder",
+    "guardian_customer_type_id",
+    "guardian_family_information",
+
+    "guardian_nationality",
+    "guardian_current_country",
+    "guardian_issuing_authority",
+    "guardian_place_of_issue",
+    "guardian_is_us_person"
+  ],
+
+  "properties": {
+    "cif_data": {
+      "type": "string"
+    },
+    "account_info": {
+      "type": "string",
+      "width": "full",
+      "group": "guardian-account-information",
+      "hideTitle": true
+    },
+    "is_minor_account": {
+      "type": "boolean",
+      "width": "full",
+      "group": "guardian-account-information",
+      "default": false,
+      "hideTitle": true
+    },
+
+    "guardian_customer_type_id": {
+      "type": "string",
+      "title": "Customer Type",
+      "group": "Guardian Account Information"
+    },
+
+    "guardian_related_party_family_account_holder": {
+      "type": "string",
+      "title": "Is s/he family member of account holder?",
+      "enum": ["Yes", "No"],
+      "group": "Guardian Relationship"
+    },
+    "guardian_related_party_relation_with_account_holder": {
+      "type": "string",
+      "title": "Relationship with the Account holder ?",
+      "group": "Guardian Relationship"
+    },
+
+    "guardian_first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+
+    "guardian_middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+    "guardian_last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "Customer Information",
+      "connect": "guardian_last_name_not_available",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+
+    "guardian_last_name_not_available": {
+      "type": "boolean",
+      "title": "Is last name not available ?",
+      "group": "Customer Information"
+    },
+    "guardian_father_name": {
+      "type": "string",
+      "title": "Father Name",
+      "group": "Customer Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
+    },
+
+    "guardian_nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Customer Information",
+      "default": "NP"
+    },
+    "guardian_current_country": {
+      "type": "string",
+      "title": "Current Country",
+      "group": "Customer Information",
+      "default": "NP"
+    },
+
+    "guardian_dedup_identification": {
+      "type": "string",
+      "title": "Identification",
+      "group": "Customer Information",
+      "default": "CTZN"
+    },
+
+    "guardian_issuing_authority": {
+      "type": "string",
+      "title": "Issuing Authority",
+      "group": "Customer Information",
+      "default": "DAO"
+    },
+    "guardian_place_of_issue": {
+      "type": "string",
+      "title": "Place of Issue",
+      "group": "Customer Information"
+    },
+
+    "guardian_dedup_id_number": {
+      "type": "string",
+      "title": "Identification Number",
+      "group": "Customer Information"
+    },
+    "guardian_date_of_birth_ad": {
+      "type": "string",
+      "group": "Customer Information",
+      "title": "Date of Birth (A.D.)"
+    },
+    "guardian_date_of_birth_bs": {
+      "type": "string",
+      "group": "Customer Information",
+      "title": "Date of Birth (B.S.)"
+    },
+
+    "guardian_dedup_check": {
+      "type": "string",
+      "title": "Preliminary Screening",
+      "group": "Customer Information",
+      "additionalProperties": true,
+      "width": "full"
+    },
+    "guardian_dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "group": "Customer Information",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "full_name", "label": "Name" },
+        { "key": "cif_number", "label": "Cif Number" },
+        { "key": "date_of_birth_ad", "label": "Date of Birth" },
+        {
+          "key": "identification_number",
+          "label": "Citizenship Number"
+        }
+      ],
+      "actions": [
+        {
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
+        }
+      ]
+    },
+    "guardian_has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "Guardian Information",
+      "width": "full",
+      "default": true,
+      "readOnly": true
+    },
+    "guardian_salutation": {
+      "type": "string",
+      "title": "Salutation",
+      "width": "full",
+      "group": "personalInformation"
+    },
+    "guardian_gender": {
+      "type": "string",
+      "title": "Gender",
+      "group": "personalInformation"
+    },
+    "guardian_marital_status": {
+      "type": "string",
+      "title": "Marital Status",
+      "group": "personalInformation"
+    },
+    "guardian_email_not_available": {
+      "type": "boolean",
+      "title": "If email not available?",
+      "group": "personalInformation"
+    },
+    "guardian_email": {
+      "type": "string",
+      "title": "Email",
+      "group": "personalInformation",
+      "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
+      "errorMessage": {
+        "pattern": "Invalid Email Address"
+      }
+    },
+    "guardian_family_information": {
+      "type": "array",
+      "title": "Family Information",
+      "minItems": 3,
+      "maxItems": 3,
+      "default": [
+        {
+          "guardian_family_member_relation": "FATHE"
+        },
+        {
+          "guardian_family_member_relation": "MOTHE"
+        },
+        {
+          "guardian_family_member_relation": "GRANF"
+        }
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "guardian_family_member_relation": {
+            "type": "string",
+            "title": "Relationship"
+          },
+          "guardian_family_member_full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "guardian_is_family_name_not_available": {
+            "type": "boolean",
+            "title": "Family Not Available?"
+          }
+        }
+      },
+      "group": "Family Information"
+    },
+
+    "guardian_personal_screening_data": {
+      "type": "string",
+      "width": "full",
+      "group": "Customer Information",
+      "additionalProperties": true,
+      "columns": [
+        { "key": "name", "label": "Name" },
+        { "key": "father_name", "label": "Father Name" },
+        { "key": "similarity", "label": "Similarity" }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+    "guardian_screening_ref_code": {
+      "type": "string",
+      "width": "full",
+      "title": "Screening",
+      "group": ""
+    },
+    "guardian_is_us_person": {
+      "type": "string",
+      "title": "FATCA Declaration",
+      "group": "Personal Information",
+      "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
+      "default": "None"
+    }
+  },
+
+  "dependencies": {
+    "guardian_last_name_not_available": {
+      "if": {
+        "properties": {
+          "guardian_last_name_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_last_name": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "guardian_last_name": {
+            "readOnly": false
+          }
+        }
+      }
+    },
+
+    "guardian_has_cif": {
+      "if": {
+        "properties": {
+          "guardian_has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "Guardian Information",
+            "width": 4
+          },
+          "guardian_cif_enquiry": {
+            "type": "string",
+            "title": "Proceed",
+            "group": "Guardian Information",
+            "width": 4
+          }
+        },
+        "required": ["guardian_cif_number"]
+      }
+    },
+
+    "guardian_email_not_available": {
+      "if": {
+        "properties": {
+          "guardian_email_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_email": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "guardian_email": {
+            "readOnly": false
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "form_title": "documents",
+  "type": "object",
+  "title": "Documents",
+  "hasStep": true,
+  "submissionHidden": false,
+  "properties": {},
+  "required": []
+}
