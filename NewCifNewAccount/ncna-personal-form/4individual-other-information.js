@@ -209,127 +209,6 @@
       });
     };
 
-    async handleSchemeChange() {
-      const schemaDependenciesMap = await Object.fromEntries(
-        this.schemaConditions?.schemaDependencies?.map((entry) => [
-          Object.keys(entry)[0],
-          Object.values(entry)[0],
-        ]) || []
-      );
-
-      const findCBSCode = (id) => {
-        for (const key in this.optionsData) {
-          const match =
-            this.optionsData[key]?.length > 0 &&
-            this.optionsData[key]?.find(
-              (item) => item?.fg_code || item?.cbs_code || item?.id === id
-            );
-          if (match) return match.cbs_code;
-        }
-        return null;
-      };
-
-      const accountCBSCode = await findCBSCode(this.formData.account_scheme_id);
-
-      const schemaDependentValues =
-        (await schemaDependenciesMap[accountCBSCode]) || {};
-
-      const resolveValue = (key, value) => {
-        if (!value) return value;
-        const optionSet = this.optionsData[key] || [];
-        const match = optionSet.find((item) =>
-          item.cbs_code
-            ? item.cbs_code === value
-            : item.title?.toLowerCase() === value?.toLowerCase()
-        );
-        return match ? match.id : value;
-      };
-      await this.setFormData((prevFormData) => ({
-        ...prevFormData,
-        gender: resolveValue(
-          "genders",
-          schemaDependentValues?.gender || this.formData?.gender || null
-        ),
-        occupation_type: resolveValue(
-          "occupation_types",
-          schemaDependentValues?.occupation_type ||
-            this.formData?.occupation_type ||
-            null
-        ),
-        nationality: resolveValue(
-          "nationalities",
-          schemaDependentValues?.nationality ||
-            this.formData?.nationality ||
-            null
-        ),
-        source_of_income: resolveValue(
-          "income_sources",
-          schemaDependentValues?.source_of_income ||
-            this.formData?.source_of_income ||
-            null
-        ),
-        province: resolveValue(
-          "provinces",
-          schemaDependentValues?.province || this.formData?.province || null
-        ),
-      }));
-
-      await this.setUiSchema((prevSchema) => ({
-        ...prevSchema,
-
-        date_of_birth_ad: {
-          ...prevSchema?.date_of_birth_ad,
-          "ui:options": {
-            ...prevSchema?.date_of_birth_ad?.["ui:options"],
-            validAge: schemaDependentValues?.date_of_birth_ad || 18,
-          },
-        },
-        date_of_birth_bs: {
-          ...prevSchema?.date_of_birth_bs,
-          "ui:options": {
-            ...prevSchema?.date_of_birth_bs?.["ui:options"],
-            validAge: schemaDependentValues?.date_of_birth_bs || 18,
-          },
-        },
-      }));
-    }
-
-    async handleSchemeCheck(payload) {
-      try {
-        if (
-          !(payload.account_scheme_id && payload.cif_number && payload.currency)
-        )
-          return;
-        else {
-          await this.axios.post(
-            `${this.mainRouteURL}/external-api/scheme-check`,
-            {
-              scheme: payload.account_scheme_id,
-              cif_number: payload.cif_number,
-              currency: payload.currency,
-            }
-          );
-          return;
-        }
-      } catch (error) {
-        this.setModalOpen({
-          open: true,
-          message: error
-            ? `${error.response?.data?.message || error?.response?.statusText}`
-            : `${error || "Unknown Error"}`,
-          subTitle: Array.isArray(error?.response?.data?.errors)
-            ? error?.response?.data?.errors
-                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
-                .join("\n")
-            : "",
-
-          status: "error",
-          close: "Close",
-        });
-        return {};
-      }
-    }
-
     async updateFormAndSchema(formData, schemaConditions) {
       this.formData = formData;
       this.setNextStep("personal-related-party-form");
@@ -619,6 +498,7 @@
         family_member_relation: "relationships",
         occupation_type: "occupations",
         source_of_income: "income_sources",
+        employment_type: "employment_statuses",
         permanent_country: "countries",
         relation_to_nominee: "relationships",
         account_scheme_id: "scheme_type",
@@ -826,6 +706,7 @@
         "mobile_country_code",
         "phone_country_code",
         "occupation_type",
+        "employment_type",
         "family_member_relation",
         "permanent_country",
         "account_scheme_id",
@@ -1241,6 +1122,9 @@
         "ui:order": [
           "occupation_type",
           "source_of_income",
+          "other_source_of_income",
+          "employment_type",
+          "other_employment_type",
           "occupation_detail",
 
           "has_nominee",
@@ -1309,8 +1193,8 @@
             onChange: (value) =>
               this.dropdownReset({
                 occupation_type: value,
-
                 source_of_income: null,
+                employment_type: null,
               }),
           },
         },
@@ -1327,21 +1211,9 @@
         occupation_detail: {
           "ui:classNames": "my-1",
           "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-
+            addable: false,
             orderable: false,
-
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
+            removable: false,
           },
 
           items: {},

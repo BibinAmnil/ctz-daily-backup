@@ -767,7 +767,7 @@
             first_name: formData.first_name,
             middle_name: formData.middle_name,
             last_name: formData.last_name,
-            citizenship_no: formData.dedup_identification,
+            citizenship_no: formData.dedup_id_number,
             dob_ad: formData.date_of_birth_ad,
           }
         );

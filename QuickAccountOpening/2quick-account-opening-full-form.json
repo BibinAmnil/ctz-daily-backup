@@ -23,6 +23,7 @@
     "contact_type",
     "occupation_type",
     "source_of_income",
+    "employment_type",
     "customer_type_id",
     "customer_status",
     "literacy",
@@ -419,6 +420,48 @@
       "type": "string",
       "title": "Source of Income",
       "group": "Occupation / Profession / Business Details"
+    },
+    "employment_type": {
+      "type": "string",
+      "title": "Employment Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+
+    "occupation_detail": {
+      "type": "array",
+      "title": "Occupation Detail",
+      "group": "Occupation / Profession / Business Details",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name_of_organization": {
+            "type": "string",
+            "title": "Employer Name"
+          },
+          "organization_address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "organization_contact_number": {
+            "type": "number",
+            "title": "Contact No.",
+            "pattern": "^(\\d{7,12})?$",
+            "errorMessage": {
+              "pattern": "Mobile number must be 7 to 12 digits."
+            }
+          },
+          "designation": {
+            "type": "string",
+            "title": "Designation"
+          },
+          "business_type": {
+            "type": "string",
+            "title": "Business Type"
+          }
+        },
+        "required": []
+      }
     },
 
     "personal_info_screening": {
@@ -1206,65 +1249,6 @@
       ]
     },
 
-    "occupation_type": {
-      "if": {
-        "properties": {
-          "occupation_type": {
-            "enum": ["AEX", "AC", "SEM", "BUSIN", "EMPLO", "SELFE"]
-          }
-        }
-      },
-      "then": {
-        "required": ["occupation_detail"],
-        "properties": {
-          "occupation_detail": {
-            "type": "array",
-            "title": "Occupation",
-            "group": "Occupation / Profession / Business Details",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "name_of_organization": {
-                  "type": "string",
-                  "title": "Employer Name"
-                },
-                "organization_address": {
-                  "type": "string",
-                  "title": "Address"
-                },
-                "organization_contact_number": {
-                  "type": "number",
-                  "title": "Contact No.",
-                  "pattern": "^(\\d{7,12})?$",
-                  "errorMessage": {
-                    "pattern": "Mobile number must be 7 to 12 digits."
-                  }
-                },
-                "designation": {
-                  "type": "string",
-                  "title": "Designation"
-                },
-                "business_type": {
-                  "type": "string",
-                  "title": "Business Type"
-                }
-              },
-              "required": [
-                "name_of_organization",
-                "organization_address",
-                "organization_contact_number",
-                "designation",
-                "business_type"
-              ]
-            }
-          }
-        }
-      },
-      "else": {
-        "properties": {}
-      }
-    },
     "pep": {
       "if": {
         "properties": {
@@ -1582,135 +1566,181 @@
           }
         }
       }
-    }
-  },
-  "beneficial_owner": {
-    "if": {
-      "properties": {
-        "beneficial_owner": {
-          "enum": ["Yes"]
-        }
-      }
     },
-    "then": {
-      "properties": {
-        "beneficial_name": {
-          "type": "string",
-          "title": "Name of Beneficial Owner",
-          "group": "Beneficial Owner Information"
-        },
-        "beneficial_relationship": {
-          "type": "string",
-          "title": "Beneficial Owner Relationship with You",
-          "group": "Beneficial Owner Information"
-        },
-        "beneficial_id_number": {
-          "type": "string",
-          "title": "Beneficial Owner ID Number",
-          "group": "Beneficial Owner Information"
-        },
-        "beneficial_id_issuing_authority": {
-          "type": "string",
-          "title": "Beneficial Owner ID Issuing Authority",
-          "group": "Beneficial Owner Information"
-        },
-        "beneficial_id_issue_date_ad": {
-          "type": "string",
-          "title": "Beneficial Owner ID Issue Date (AD)",
-          "group": "Beneficial Owner Information"
-        },
-        "beneficial_id_issue_date_bs": {
-          "type": "string",
-          "title": "Beneficial Owner ID Issue Date (BS)",
-          "group": "Beneficial Owner Information"
-        },
-        "beneficial_address": {
-          "type": "string",
-          "title": "Beneficial Owner Address",
-          "group": "Beneficial Owner Information"
-        },
-        "beneficial_contact_number": {
-          "type": "number",
-          "title": "Beneficial Owner Contact Number",
-          "group": "Beneficial Owner Information"
+    "beneficial_owner": {
+      "if": {
+        "properties": {
+          "beneficial_owner": {
+            "enum": ["Yes"]
+          }
         }
       },
-      "required": ["beneficial_name", "beneficial_relationship"]
-    }
-  },
-
-  "has_nominee": {
-    "if": {
-      "properties": {
-        "has_nominee": {
-          "enum": ["Yes"]
-        }
-      }
-    },
-    "then": {
-      "properties": {
-        "nominee_full_name": {
-          "type": "string",
-          "title": "Nominee Full Name",
-          "group": "Nominee Detail"
-        },
-        "relation_to_nominee": {
-          "type": "string",
-          "title": "Relation to Nominee",
-          "group": "Nominee Detail"
-        },
-        "nominee_father_name": {
-          "type": "string",
-          "title": "Nominee Father Name",
-          "group": "Nominee Detail"
-        },
-        "nominee_grandfather_name": {
-          "type": "string",
-          "title": "Nominee Grandfather Name",
-          "group": "Nominee Detail"
-        },
-        "nominee_contact_number": {
-          "type": "string",
-          "title": "Nominee Contact No.",
-          "group": "Nominee Detail",
-          "pattern": "^(\\d{7,12})?$",
-          "errorMessage": {
-            "pattern": "Mobile number must be 7 to 12 digits."
+      "then": {
+        "properties": {
+          "beneficial_name": {
+            "type": "string",
+            "title": "Name of Beneficial Owner",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_relationship": {
+            "type": "string",
+            "title": "Beneficial Owner Relationship with You",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_number": {
+            "type": "string",
+            "title": "Beneficial Owner ID Number",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_issuing_authority": {
+            "type": "string",
+            "title": "Beneficial Owner ID Issuing Authority",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_issue_date_ad": {
+            "type": "string",
+            "title": "Beneficial Owner ID Issue Date (AD)",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_id_issue_date_bs": {
+            "type": "string",
+            "title": "Beneficial Owner ID Issue Date (BS)",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_address": {
+            "type": "string",
+            "title": "Beneficial Owner Address",
+            "group": "Beneficial Owner Information"
+          },
+          "beneficial_contact_number": {
+            "type": "number",
+            "title": "Beneficial Owner Contact Number",
+            "group": "Beneficial Owner Information"
           }
         },
-        "nominee_address": {
-          "type": "string",
-          "title": "Nominee Address",
-          "group": "Nominee Detail"
-        },
-        "nominee_id_number": {
-          "type": "string",
-          "title": "Nominee Citizenship/ ID No",
-          "group": "Nominee Detail"
-        },
-        "nominee_id_issuing_authority": {
-          "type": "string",
-          "title": "Nominee ID Issuing Authority",
-          "group": "Nominee Detail"
-        },
-        "nominee_id_issue_date_ad": {
-          "type": "string",
-          "title": "Nominee ID Issue Date (AD)",
-          "group": "Nominee Detail"
-        },
-        "nominee_id_issue_date_bs": {
-          "type": "string",
-          "title": "Nominee ID Issue Date (BS)",
-          "group": "Nominee Detail"
+        "required": ["beneficial_name", "beneficial_relationship"]
+      }
+    },
+
+    "has_nominee": {
+      "if": {
+        "properties": {
+          "has_nominee": {
+            "enum": ["Yes"]
+          }
         }
       },
-      "required": [
-        "nominee_full_name",
-        "relation_to_nominee",
-        "nominee_father_name",
-        "nominee_grandfather_name"
-      ]
+      "then": {
+        "properties": {
+          "nominee_full_name": {
+            "type": "string",
+            "title": "Nominee Full Name",
+            "group": "Nominee Detail"
+          },
+          "relation_to_nominee": {
+            "type": "string",
+            "title": "Relation to Nominee",
+            "group": "Nominee Detail"
+          },
+          "nominee_father_name": {
+            "type": "string",
+            "title": "Nominee Father Name",
+            "group": "Nominee Detail"
+          },
+          "nominee_grandfather_name": {
+            "type": "string",
+            "title": "Nominee Grandfather Name",
+            "group": "Nominee Detail"
+          },
+          "nominee_contact_number": {
+            "type": "string",
+            "title": "Nominee Contact No.",
+            "group": "Nominee Detail",
+            "pattern": "^(\\d{7,12})?$",
+            "errorMessage": {
+              "pattern": "Mobile number must be 7 to 12 digits."
+            }
+          },
+          "nominee_address": {
+            "type": "string",
+            "title": "Nominee Address",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_number": {
+            "type": "string",
+            "title": "Nominee Citizenship/ ID No",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_issuing_authority": {
+            "type": "string",
+            "title": "Nominee ID Issuing Authority",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_issue_date_ad": {
+            "type": "string",
+            "title": "Nominee ID Issue Date (AD)",
+            "group": "Nominee Detail"
+          },
+          "nominee_id_issue_date_bs": {
+            "type": "string",
+            "title": "Nominee ID Issue Date (BS)",
+            "group": "Nominee Detail"
+          }
+        },
+        "required": [
+          "nominee_full_name",
+          "relation_to_nominee",
+          "nominee_father_name",
+          "nominee_grandfather_name"
+        ]
+      },
+      "else": {}
     },
-    "else": {}
+    "source_of_income": {
+      "if": {
+        "properties": {
+          "source_of_income": {
+            "enum": ["OTHER"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "other_source_of_income": {
+            "type": "string",
+            "title": "Other Source of Income",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["other_source_of_income"]
+      }
+    },
+    "employment_type": {
+      "if": {
+        "properties": {
+          "employment_type": {
+            "enum": ["OTH"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "other_employment_type": {
+            "type": "string",
+            "title": "Other Employment Type",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["other_employment_type"]
+      }
+    }
   }
 }

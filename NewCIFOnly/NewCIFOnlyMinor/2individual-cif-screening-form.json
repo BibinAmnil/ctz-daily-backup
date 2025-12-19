@@ -30,6 +30,7 @@
     "residential_status",
     "occupation_type",
     "source_of_income",
+    "employment_type",
     "is_us_person"
   ],
 
@@ -401,6 +402,47 @@
       "type": "string",
       "title": "Source of Income",
       "group": "Occupation / Profession / Business Details"
+    },
+    "employment_type": {
+      "type": "string",
+      "title": "Employment Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "occupation_detail": {
+      "type": "array",
+      "title": "Occupation Detail",
+      "group": "Occupation / Profession / Business Details",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name_of_organization": {
+            "type": "string",
+            "title": "Employer Name"
+          },
+          "organization_address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "organization_contact_number": {
+            "type": "number",
+            "title": "Contact No.",
+            "pattern": "^[0-9]{7,12}$",
+            "errorMessage": {
+              "pattern": "Mobile number must be 7 to 12 digits."
+            }
+          },
+          "designation": {
+            "type": "string",
+            "title": "Designation"
+          },
+          "business_type": {
+            "type": "string",
+            "title": "Business Type"
+          }
+        },
+        "required": []
+      }
     },
 
     "personal_info_screening": {
@@ -1054,65 +1096,6 @@
       ]
     },
 
-    "occupation_type": {
-      "if": {
-        "properties": {
-          "occupation_type": {
-            "enum": ["AEX", "AC", "SEM", "BUSIN", "EMPLO", "SELFE"]
-          }
-        }
-      },
-      "then": {
-        "required": ["occupation_detail"],
-        "properties": {
-          "occupation_detail": {
-            "type": "array",
-            "title": "Occupation",
-            "group": "Occupation / Profession / Business Details",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "name_of_organization": {
-                  "type": "string",
-                  "title": "Employer Name"
-                },
-                "organization_address": {
-                  "type": "string",
-                  "title": "Address"
-                },
-                "organization_contact_number": {
-                  "type": "number",
-                  "title": "Contact No.",
-                  "pattern": "^[0-9]{7,12}$",
-                  "errorMessage": {
-                    "pattern": "Mobile number must be 7 to 12 digits."
-                  }
-                },
-                "designation": {
-                  "type": "string",
-                  "title": "Designation"
-                },
-                "business_type": {
-                  "type": "string",
-                  "title": "Business Type"
-                }
-              },
-              "required": [
-                "name_of_organization",
-                "organization_address",
-                "organization_contact_number",
-                "designation",
-                "business_type"
-              ]
-            }
-          }
-        }
-      },
-      "else": {
-        "properties": {}
-      }
-    },
     "pep": {
       "if": {
         "properties": {
@@ -1128,7 +1111,7 @@
             "enum": [
               "Existing PEPs",
               "Former PEPs",
-              "High-ranking officials from neighbouring or nearby countries",
+              "High-ranking officials from neighboring or nearby countries",
               "Other foreign PEPs",
               "International PEPs"
             ],
@@ -1378,6 +1361,52 @@
             "readOnly": false
           }
         }
+      }
+    },
+    "source_of_income": {
+      "if": {
+        "properties": {
+          "source_of_income": {
+            "enum": ["OTHER"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "other_source_of_income": {
+            "type": "string",
+            "title": "Other Source of Income",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["other_source_of_income"]
+      }
+    },
+    "employment_type": {
+      "if": {
+        "properties": {
+          "employment_type": {
+            "enum": ["OTH"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "other_employment_type": {
+            "type": "string",
+            "title": "Other Employment Type",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["other_employment_type"]
       }
     }
   }

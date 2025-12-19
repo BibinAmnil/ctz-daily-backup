@@ -459,6 +459,7 @@
         marital_status: "marital_status",
 
         source_of_income: "income_sources",
+        employment_type: "employment_statuses",
 
         issued_district_text: "countries",
 
@@ -671,6 +672,7 @@
         "constitution_code_id",
         "marital_status",
         "source_of_income",
+        "employment_type",
         "issued_district_text",
         "relation_to_nominee",
         "designation",
@@ -1172,9 +1174,10 @@
           "nominee_contact_number",
 
           "occupation_type",
-
           "source_of_income",
-
+          "other_source_of_income",
+          "employment_type",
+          "other_employment_type",
           "occupation_detail",
 
           "pep",
@@ -1281,14 +1284,6 @@
           },
         },
 
-        source_of_income: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions("income_sources");
-            },
-          },
-        },
         customer_type_id: {},
 
         dedup_identification: {},
@@ -1903,71 +1898,27 @@
         },
 
         occupation_type: {
-          // "ui:widget": "CascadeDropdown",
           "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
             onChange: (value) =>
               this.dropdownReset({
                 occupation_type: value,
-                source_of_income: this.optionsData["occupation_rule"]?.[
-                  `source_of_income_list`
-                ]?.find((item) => item?.cascade_id?.includes(value))?.id,
+                source_of_income: null,
+                employment_type: null,
               }),
           },
         },
 
-        source_of_income: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.occupation_type
-            //   );
-            // },
-          },
-        },
+        source_of_income: {},
 
         occupation_detail: {
           "ui:classNames": "my-1",
           "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-
+            addable: false,
             orderable: false,
-
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
+            removable: false,
           },
 
-          items: {
-            business_type: {
-              // "ui:widget": "CascadeDropdown",
-              // "ui:options": {
-              //   getOptions: (formData) => {
-              //     return this.filterOptionsOccupation(
-              //       "occupation_rule",
-              //       "business_type_list",
-              //       formData?.occupation_type
-              //     );
-              //   },
-              // },
-            },
-          },
+          items: {},
         },
 
         family_information: {

@@ -490,6 +490,7 @@
         occupation_type: "occupations",
 
         source_of_income: "income_sources",
+        employment_type: "employment_statuses",
 
         permanent_country: "countries",
 
@@ -725,6 +726,7 @@
         "mobile_country_code",
         "phone_country_code",
         "occupation_type",
+        "employment_type",
         "permanent_country",
         "account_scheme_id",
         "business_type",
@@ -1103,7 +1105,6 @@
           }
         );
 
-        console.log("selectedValue++++", selectedValue);
         return selectedValue;
       };
 
@@ -1235,6 +1236,9 @@
 
           "occupation_type",
           "source_of_income",
+          "other_source_of_income",
+          "employment_type",
+          "other_employment_type",
           "occupation_detail",
 
           "has_nominee",
@@ -1377,14 +1381,6 @@
           },
         },
 
-        source_of_income: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions("income_sources");
-            },
-          },
-        },
         customer_type_id: {},
         dedup_identification: {
           // "ui:widget": "CascadeDropdown",
@@ -2204,70 +2200,30 @@
         },
 
         occupation_type: {
-          // "ui:widget": "CascadeDropdown",
           "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
             onChange: (value) =>
               this.dropdownReset({
                 occupation_type: value,
-                source_of_income: this.optionsData["occupation_rule"]?.[
-                  `source_of_income_list`
-                ]?.find((item) => item?.cascade_id?.includes(value))?.id,
+                source_of_income: null,
+                employment_type: null,
               }),
           },
         },
 
         source_of_income: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.occupation_type
-            //   );
-            // },
-          },
+          "ui:options": {},
         },
 
         occupation_detail: {
           "ui:classNames": "my-1",
           "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-
+            addable: false,
             orderable: false,
-
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
+            removable: false,
           },
 
           items: {
-            business_type: {
-              // "ui:widget": "CascadeDropdown",
-              // "ui:options": {
-              //   getOptions: (formData) => {
-              //     return this.filterOptionsOccupation(
-              //       "occupation_rule",
-              //       "business_type_list",
-              //       formData?.occupation_type
-              //     );
-              //   },
-              // },
-            },
+            business_type: {},
           },
         },
 

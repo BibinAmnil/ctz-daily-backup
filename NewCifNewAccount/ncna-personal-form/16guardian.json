@@ -202,27 +202,27 @@
       "type": "string",
       "title": "Salutation",
       "width": "full",
-      "group": "personalInformation"
+      "group": "Personal Information"
     },
     "guardian_gender": {
       "type": "string",
       "title": "Gender",
-      "group": "personalInformation"
+      "group": "Personal Information"
     },
     "guardian_marital_status": {
       "type": "string",
       "title": "Marital Status",
-      "group": "personalInformation"
+      "group": "Personal Information"
     },
     "guardian_email_not_available": {
       "type": "boolean",
       "title": "If email not available?",
-      "group": "personalInformation"
+      "group": "Personal Information"
     },
     "guardian_email": {
       "type": "string",
       "title": "Email",
-      "group": "personalInformation",
+      "group": "Personal Information",
       "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
       "errorMessage": {
         "pattern": "Invalid Email Address"

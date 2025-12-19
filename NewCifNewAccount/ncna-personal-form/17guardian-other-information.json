@@ -9,6 +9,7 @@
   "required": [
     "guardian_occupation_type",
     "guardian_source_of_income",
+    "guardian_employment_type",
     "guardian_declared_anticipated_annual_transaction",
     "guardian_expected_anticipated_annual_transaction",
     "guardian_number_of_transaction",
@@ -50,6 +51,47 @@
       "type": "string",
       "title": "Source of Income",
       "group": "Occupation / Profession / Business Details"
+    },
+    "guardian_employment_type": {
+      "type": "string",
+      "title": "Employment Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "guardian_occupation_detail": {
+      "type": "array",
+      "title": "Occupation Detail",
+      "group": "Occupation / Profession / Business Details",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name_of_organization": {
+            "type": "string",
+            "title": "Employer Name"
+          },
+          "organization_address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "organization_contact_number": {
+            "type": "number",
+            "title": "Contact No.",
+            "pattern": "^[0-9]{7,12}$",
+            "errorMessage": {
+              "pattern": "Mobile number must be 7 to 12 digits."
+            }
+          },
+          "designation": {
+            "type": "string",
+            "title": "Designation"
+          },
+          "business_type": {
+            "type": "string",
+            "title": "Business Type"
+          }
+        },
+        "required": []
+      }
     },
     "guardian_declared_anticipated_annual_transaction": {
       "type": "string",
@@ -281,66 +323,6 @@
       ]
     },
 
-    "guardian_occupation_type": {
-      "if": {
-        "properties": {
-          "guardian_occupation_type": {
-            "enum": ["BUSIN", "EMPLO", "SELFE"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "guardian_occupation_detail": {
-            "type": "array",
-            "title": "Occupation",
-            "group": "Occupation / Profession / Business Details",
-            "hideTitle": true,
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "guardian_name_of_organization": {
-                  "type": "string",
-                  "title": "Employer Name"
-                },
-                "guardian_organization_address": {
-                  "type": "string",
-                  "title": "Address"
-                },
-                "guardian_organization_contact_number": {
-                  "type": "number",
-                  "title": "Contact No.",
-                  "pattern": "^(\\d{7,12})?$",
-                  "errorMessage": {
-                    "pattern": "Mobile number must be 7 to 12 digits."
-                  }
-                },
-                "guardian_designation": {
-                  "type": "string",
-                  "title": "Designation"
-                },
-                "guardian_business_type": {
-                  "type": "string",
-                  "title": "Business Type"
-                }
-              },
-              "required": [
-                "guardian_name_of_organization",
-                "guardian_organization_address",
-                "guardian_organization_contact_number",
-                "guardian_designation",
-                "guardian_business_type"
-              ]
-            }
-          }
-        }
-      },
-      "else": {
-        "properties": {}
-      }
-    },
-
     "guardian_pep": {
       "if": {
         "properties": {
@@ -391,6 +373,53 @@
           }
         },
         "required": ["guardian_adverse_category"]
+      }
+    },
+
+    "guardian_source_of_income": {
+      "if": {
+        "properties": {
+          "guardian_source_of_income": {
+            "enum": ["OTHER"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_other_source_of_income": {
+            "type": "string",
+            "title": "Other Source of Income",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["guardian_other_source_of_income"]
+      }
+    },
+    "guardian_employment_type": {
+      "if": {
+        "properties": {
+          "guardian_employment_type": {
+            "enum": ["OTH"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_other_employment_type": {
+            "type": "string",
+            "title": "Other Employment Type",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["guardian_other_employment_type"]
       }
     }
   }

@@ -1098,13 +1098,7 @@
                   "title": "Business Type"
                 }
               },
-              "required": [
-                "name_of_organization",
-                "organization_address",
-                "organization_contact_number",
-                "designation",
-                "business_type"
-              ]
+              "required": []
             }
           }
         }

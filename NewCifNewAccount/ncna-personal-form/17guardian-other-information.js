@@ -669,6 +669,7 @@
         guardian_family_member_relation: "relationships",
         guardian_occupation_type: "occupations",
         guardian_source_of_income: "income_sources",
+        guardian_employment_type: "employment_statuses",
         guardian_permanent_country: "countries",
         relation_to_nominee: "relationships",
         account_scheme_id: "scheme_type",
@@ -865,6 +866,7 @@
         "guardian_phone_country_code",
         "guardian_occupation_type",
         "guardian_source_of_income",
+        "guardian_employment_type",
         "guardian_permanent_country",
         "account_scheme_id",
         "guardian_business_type",
@@ -1203,6 +1205,9 @@
         "ui:order": [
           "guardian_occupation_type",
           "guardian_source_of_income",
+          "guardian_other_source_of_income",
+          "guardian_employment_type",
+          "guardian_other_employment_type",
 
           "guardian_occupation_detail",
           "guardian_business_type",
@@ -1985,7 +1990,7 @@
             issue_country: {
               "ui:options": {},
             },
-           comment: {
+            comment: {
               "ui:widget": "textarea",
               "ui:options": {
                 rows: 5,
@@ -2101,47 +2106,6 @@
                 },
               },
             },
-            // issuing_authority: {
-            //   "ui:options": {
-            //     setValue: (formData, index) => {
-            //       const document_types = {
-            //         citizenship_number: "CTZN",
-            //         passport: "PP",
-            //         driving_license: "LCNSE",
-            //         voter_id: "VOTER",
-            //         nid: "NID",
-            //         embassy: "EMBSY",
-            //       };
-            //       const issuing_authorities = {
-            //         citizenship_number: "DAO",
-            //         passport: "DAO",
-            //         driving_license: "NA",
-            //         voter_id: "a4e3fa6d-133d-40da-8996-444207b7f2a2",
-            //         nid: "DONICR",
-            //         embassy: "5db16d6d-63ea-4ff1-a8d3-0ffdf38a2773",
-            //       };
-
-            //       const currentIdType =
-            //         formData?.guardian_id_type_details?.[index]?.id_type_id;
-
-            //       const matchingDocType = Object.entries(document_types).find(
-            //         ([_, value]) => value === currentIdType
-            //       );
-
-            //       if (matchingDocType) {
-            //         const [docTypeKey] = matchingDocType;
-            //         setFormData((prev) => ({
-            //           ...prev,
-            //           issuing_authority: issuing_authorities[docTypeKey],
-            //         }));
-
-            //         return issuing_authorities[docTypeKey];
-            //       }
-
-            //       return null;
-            //     },
-            //   },
-            // },
             issued_district: {
               "ui:widget": "CascadeDropdown",
               "ui:options": {
@@ -2211,36 +2175,28 @@
           },
         },
         guardian_occupation_type: {
-          // "ui:widget": "CascadeDropdown",
           "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
             onChange: (value) =>
               this.dropdownReset({
                 guardian_occupation_type: value,
-                guardian_source_of_income: this.optionsData[
-                  "occupation_rule"
-                ]?.[`source_of_income_list`]?.find((item) =>
-                  item?.cascade_id?.includes(value)
-                )?.id,
+                guardian_source_of_income: null,
+                guardian_employment_type: null,
               }),
           },
         },
 
-        guardian_source_of_income: {
-          // "ui:widget": "CascadeDropdown",
+        guardian_source_of_income: {},
+
+        guardian_occupation_detail: {
+          "ui:classNames": "my-1",
           "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.guardian_occupation_type
-            //   );
-            // },
+            addable: false,
+            orderable: false,
+            removable: false,
+          },
+
+          items: {
+            guardian_business_type: {},
           },
         },
 

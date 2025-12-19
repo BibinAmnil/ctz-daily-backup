@@ -661,7 +661,6 @@
           }
         );
 
-        console.log("selectedValue++++", selectedValue);
         return selectedValue;
       };
 

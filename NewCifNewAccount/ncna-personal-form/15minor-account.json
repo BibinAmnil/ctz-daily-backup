@@ -1,13 +1,18 @@
 {
   "type": "object",
-  "className": "fs-1",
-  "singleForm": true,
   "hasStep": true,
-  "isDisabled": false,
   "form_title": "minor_info",
-  "submissionHidden": false,
+  "isDisabled": false,
   "required": [
     "branch",
+    "account_type_id",
+    "account_scheme_id",
+    "nationality",
+    "currency",
+    "account_purpose",
+    "customer_type_id",
+    "customer_status",
+    "salutation",
     "first_name",
     "last_name",
     "father_name",
@@ -15,51 +20,206 @@
     "date_of_birth_bs",
     "dedup_identification",
     "dedup_id_number",
-    "account_info",
-    "account_type_id",
-    "account_scheme_id",
     "gender",
-    "email",
-    "salutation",
     "marital_status",
+    "email",
+    "family_information",
     "contact_type",
-    "family_information",
-    "currency",
-    "customer_type_id",
-    "customer_status",
-    "nationality",
-    "family_information",
+    "literacy",
     "religion",
     "is_nrn",
     "is_refugee",
+    "current_country",
     "residential_status",
     "occupation_type",
     "source_of_income",
-    "literacy",
+    "employment_type",
     "is_us_person"
   ],
 
   "properties": {
+    "has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "Primary Account Information",
+      "hideTitle": true,
+      "readOnly": true,
+      "width": "full"
+    },
     "branch": {
       "type": "string",
       "title": "Branch",
       "group": "Account Information",
       "readOnly": true
     },
-    "source": {
-      "type": "string"
+    "account_type_id": {
+      "type": "string",
+      "title": "Account Type",
+      "group": "Account Information"
+    },
+    "account_scheme_id": {
+      "type": "string",
+      "title": "Product Scheme",
+      "group": "Account Information"
+    },
+    "currency": {
+      "type": "string",
+      "title": "Currency of Account",
+      "group": "Account Information"
+    },
+    "account_purpose": {
+      "type": "string",
+      "title": "Purpose of Account",
+      "group": "Account Information",
+      "default": "SAVIN"
+    },
+
+    "customer_type_id": {
+      "type": "string",
+      "title": "Customer Type",
+      "group": "Account Information"
+    },
+    "customer_status": {
+      "type": "string",
+      "title": "Customer Status",
+      "group": "Account Information",
+      "enum": ["Good", "Bad", "Doubtful"],
+      "default": "Good"
+    },
+    "literacy": {
+      "type": "string",
+      "title": "Literacy",
+      "group": "Personal Information"
     },
     "cif_data": {
       "type": "string"
+    },
+
+    "source": {
+      "type": "string"
+    },
+
+    "first_name": {
+      "type": "string",
+      "title": "First Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "middle_name": {
+      "type": "string",
+      "title": "Middle Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "last_name": {
+      "type": "string",
+      "title": "Last Name",
+      "group": "Personal Information",
+      "connect": "last_name_not_available",
+      "readOnly": true
+    },
+
+    "last_name_not_available": {
+      "type": "boolean",
+      "title": "Is last name not available ?",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "father_name": {
+      "type": "string",
+      "title": "Father Name",
+      "group": "Personal Information",
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
+      "readOnly": true
+    },
+    "dedup_identification": {
+      "type": "string",
+      "title": "Identification",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "dedup_id_number": {
+      "type": "string",
+      "title": "Identification Number",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+    "date_of_birth_ad": {
+      "type": "string",
+      "group": "Personal Information",
+      "title": "Date of Birth (A.D.)",
+      "readOnly": true
+    },
+    "date_of_birth_bs": {
+      "type": "string",
+      "group": "Personal Information",
+      "title": "Date of Birth (B.S.)",
+      "readOnly": true
+    },
+
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true
+    },
+
+    "is_nrn": {
+      "type": "string",
+      "title": "NRN",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
+      "readOnly": true
+    },
+    "is_refugee": {
+      "type": "string",
+      "title": "Refugee",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
+      "readOnly": true
     },
 
     "nationality": {
       "type": "string",
       "title": "Nationality",
       "group": "Personal Information",
-      "default": "NP",
       "readOnly": true
     },
+    "marital_status": {
+      "type": "string",
+      "title": "Marital Status",
+      "group": "Personal Information",
+      "readOnly": true,
+      "default": "UNMAR"
+    },
+
+    "salutation": {
+      "type": "string",
+      "title": "Salutation",
+      "width": "full",
+      "group": "Personal Information"
+    },
+
+    "gender": {
+      "type": "string",
+      "title": "Gender",
+      "group": "Personal Information",
+      "readOnly": true
+    },
+
     "contact_type": {
       "type": "string",
       "title": "Contact Number Type",
@@ -71,6 +231,28 @@
         "Phone Number",
         "Both Contact Detail"
       ]
+    },
+
+    "religion": {
+      "type": "string",
+      "title": "Religion",
+      "group": "Personal Information",
+      "enum": ["Hindu", "Buddhist", "Christian", "Other"]
+    },
+
+    "email_not_available": {
+      "type": "boolean",
+      "title": "If email not available?",
+      "group": "Personal Information"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email",
+      "group": "Personal Information",
+      "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
+      "errorMessage": {
+        "pattern": "Invalid Email Address"
+      }
     },
 
     "id_type_details": {
@@ -191,172 +373,23 @@
         }
       }
     },
-    "email_not_available": {
-      "type": "boolean",
-      "title": "If email not available?",
-      "group": "Personal Information"
-    },
-    "email": {
-      "type": "string",
-      "title": "Email",
-      "group": "Personal Information",
-      "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
-      "errorMessage": {
-        "pattern": "Invalid Email Address"
-      }
-    },
-
-    "salutation": {
-      "type": "string",
-      "title": "Salutation",
-      "width": "full",
-      "group": "Personal Information"
-    },
-    "first_name": {
-      "type": "string",
-      "title": "First Name",
-      "group": "Personal Information",
-      "pattern": "^[a-zA-Z.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
-      },
-      "readOnly": true
-    },
-    "middle_name": {
-      "type": "string",
-      "title": "Middle Name",
-      "group": "Personal Information",
-      "pattern": "^[a-zA-Z\\s.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-      },
-      "readOnly": true
-    },
-    "last_name": {
-      "type": "string",
-      "title": "Last Name",
-      "group": "Personal Information",
-      "connect": "last_name_not_available",
-      "pattern": "^[a-zA-Z\\s.()/]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-      },
-      "readOnly": true
-    },
-
-    "last_name_not_available": {
-      "type": "boolean",
-      "title": "Is last name not available ?",
-      "group": "Personal Information",
-      "readOnly": true
-    },
-    "father_name": {
-      "type": "string",
-      "title": "Father Name",
-      "group": "Personal Information",
-      "pattern": "^[a-zA-Z\\s.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-      },
-      "readOnly": true
-    },
-
-    "gender": {
-      "type": "string",
-      "title": "Gender",
-      "group": "Personal Information",
-      "readOnly": true
-    },
-    "marital_status": {
-      "type": "string",
-      "title": "Marital Status",
-      "group": "Personal Information",
-      "default": "UNMAR",
-      "readOnly": true
-    },
-
-    "dedup_identification": {
-      "type": "string",
-      "title": "Identification",
-      "group": "Personal Information",
-      "readOnly": true
-    },
-    "dedup_id_number": {
-      "type": "string",
-      "title": "Identification Number",
-      "group": "Personal Information",
-      "readOnly": true
-    },
-    "date_of_birth_ad": {
-      "type": "string",
-      "group": "Personal Information",
-      "title": "Date of Birth (A.D.)",
-      "readOnly": true
-    },
-    "date_of_birth_bs": {
-      "type": "string",
-      "group": "Personal Information",
-      "title": "Date of Birth (B.S.)",
-      "readOnly": true
-    },
-
-    "has_cif": {
-      "type": "boolean",
-      "title": "Has CIF Number?",
-      "group": "Minor Account",
-      "width": "full",
-      "readOnly": true
-    },
-
-    "account_info": {
-      "type": "string",
-      "group": "Account Information",
-      "width": "full",
-      "readOnly": true
-    },
-    "account_type_id": {
-      "type": "string",
-      "title": "Account Type",
-      "group": "Account Information"
-    },
-    "account_scheme_id": {
-      "type": "string",
-      "title": "Product Schema",
-      "group": "Account Information"
-    },
-    "currency": {
-      "type": "string",
-      "title": "Currency of Account",
-      "group": "Account Information"
-    },
-    "customer_type_id": {
-      "type": "string",
-      "title": "Customer Type",
-      "group": "Account Information"
-    },
-
-    "customer_status": {
-      "type": "string",
-      "title": "Customer Status",
-      "group": "Account Information",
-      "enum": ["Good", "Bad", "Doubtful"],
-      "default": "Good"
-    },
 
     "family_information": {
       "type": "array",
       "title": "Family Information",
-      "minItems": 3,
-      "maxItems": 3,
+      "group": "Family Information",
       "default": [
         {
-          "family_member_relation": "FATHE"
+          "family_member_relation": "FATHE",
+          "family_member_full_name": ""
         },
         {
-          "family_member_relation": "MOTHE"
+          "family_member_relation": "MOTHE",
+          "family_member_full_name": ""
         },
         {
-          "family_member_relation": "GRANF"
+          "family_member_relation": "GRANF",
+          "family_member_full_name": ""
         }
       ],
       "items": {
@@ -368,56 +401,32 @@
           },
           "family_member_full_name": {
             "type": "string",
-            "title": "Full Name"
+            "title": "Full Name",
+            "pattern": "^[a-zA-Z\\s.()]*$",
+            "errorMessage": {
+              "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+            }
           },
           "is_family_name_not_available": {
             "type": "boolean",
-            "title": "Family Not Available?"
+            "title": "Member not available?"
+          }
+        },
+        "required": ["family_member_full_name", "family_member_relation"]
+      },
+      "dependencies": {
+        "family_member_relation": {
+          "if": {
+            "properties": {
+              "family_member_relation": {
+                "enum": ["SPOUS"]
+              }
+            }
           }
         }
-      },
-      "group": "Family Information"
+      }
     },
 
-    "current_country": {
-      "type": "string",
-      "title": "Current Country",
-      "group": "Current Address",
-      "default": "NP"
-    },
-    "is_nrn": {
-      "type": "string",
-      "title": "NRN",
-      "group": "Personal Information",
-      "enum": ["Yes", "No"],
-      "default": "No",
-      "readOnly": true
-    },
-    "is_refugee": {
-      "type": "string",
-      "title": "Refugee",
-      "group": "Personal Information",
-      "enum": ["Yes", "No"],
-      "default": "No",
-      "readOnly": true
-    },
-    "religion": {
-      "type": "string",
-      "title": "Religion",
-      "group": "Personal Information"
-    },
-    "literacy": {
-      "type": "string",
-      "title": "Literacy",
-      "group": "Personal Information"
-    },
-    "residential_status": {
-      "type": "string",
-      "title": "Residential Status",
-      "group": "Permanent Address",
-      "enum": ["Yes", "No"],
-      "default": "Yes"
-    },
     "occupation_type": {
       "type": "string",
       "title": "Occupation Type",
@@ -427,6 +436,60 @@
       "type": "string",
       "title": "Source of Income",
       "group": "Occupation / Profession / Business Details"
+    },
+    "employment_type": {
+      "type": "string",
+      "title": "Employment Type",
+      "group": "Occupation / Profession / Business Details"
+    },
+    "occupation_detail": {
+      "type": "array",
+      "title": "Occupation Detail",
+      "group": "Occupation / Profession / Business Details",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "name_of_organization": {
+            "type": "string",
+            "title": "Employer Name"
+          },
+          "organization_address": {
+            "type": "string",
+            "title": "Address"
+          },
+          "organization_contact_number": {
+            "type": "number",
+            "title": "Contact No.",
+            "pattern": "^[0-9]{7,12}$",
+            "errorMessage": {
+              "pattern": "Mobile number must be 7 to 12 digits."
+            }
+          },
+          "designation": {
+            "type": "string",
+            "title": "Designation"
+          },
+          "business_type": {
+            "type": "string",
+            "title": "Business Type"
+          }
+        },
+        "required": []
+      }
+    },
+
+    "personal_info_screening": {
+      "type": "string",
+      "title": "Screening",
+      "group": ""
+    },
+    "residential_status": {
+      "type": "string",
+      "title": "Residential Status",
+      "group": "Permanent Address",
+      "enum": ["Yes", "No"],
+      "default": "Yes"
     },
     "is_us_person": {
       "type": "string",
@@ -438,6 +501,33 @@
   },
 
   "dependencies": {
+    "has_cif": {
+      "if": {
+        "properties": {
+          "has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "Primary Account Information",
+            "hideTitle": true,
+            "readOnly": true
+          },
+          "cif_enquiry": {
+            "type": "string",
+            "title": "Proceed",
+            "hideTitle": true,
+            "group": "Primary Account Information"
+          }
+        },
+        "required": ["cif_number"]
+      }
+    },
     "literacy": {
       "if": {
         "properties": {
@@ -458,251 +548,6 @@
       },
       "else": {
         "properties": {}
-      }
-    },
-
-    "email_not_available": {
-      "if": {
-        "properties": {
-          "email_not_available": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "email": {
-            "readOnly": true
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "email": {
-            "readOnly": false
-          }
-        }
-      }
-    },
-
-    "contact_type": {
-      "oneOf": [
-        {
-          "properties": {
-            "contact_type": {
-              "enum": ["Phone Number"]
-            },
-            "phone_country_code": {
-              "type": "string",
-              "title": "Code",
-              "group": "Contact Detail",
-              "width": 4,
-              "default": "NEPAL"
-            },
-            "phone_number": {
-              "type": "number",
-              "title": "Phone Number",
-              "group": "Contact Detail",
-              "pattern": "^(\\d{7,12})?$",
-              "width": 5,
-              "errorMessage": {
-                "pattern": "Mobile number must be 7 to 12 digits."
-              }
-            }
-          },
-          "required": ["phone_country_code", "phone_number"]
-        },
-        {
-          "properties": {
-            "contact_type": {
-              "enum": ["Mobile Number"]
-            },
-            "mobile_country_code": {
-              "type": "string",
-              "title": "Code",
-              "group": "Contact Detail",
-              "width": 4,
-              "default": "NEPAL"
-            }
-          },
-          "dependencies": {
-            "mobile_country_code": {
-              "if": {
-                "properties": {
-                  "mobile_country_code": {
-                    "enum": ["NEPAL"]
-                  }
-                }
-              },
-              "then": {
-                "properties": {
-                  "mobile_number": {
-                    "type": "number",
-                    "title": "Mobile Number",
-                    "group": "Contact Detail",
-                    "width": 5,
-                    "pattern": "^(\\d{10})?$",
-                    "errorMessage": {
-                      "pattern": "Mobile number must be 10 digits."
-                    }
-                  }
-                },
-                "required": ["mobile_number"]
-              },
-              "else": {
-                "properties": {
-                  "mobile_number": {
-                    "type": "number",
-                    "title": "Mobile Number",
-                    "group": "Contact Detail",
-                    "pattern": "^(\\d{7,12})?$",
-                    "errorMessage": {
-                      "pattern": "Mobile number must be 7 to 12 digits."
-                    }
-                  }
-                },
-                "required": ["mobile_number"]
-              }
-            }
-          },
-          "required": ["mobile_country_code"]
-        },
-        {
-          "properties": {
-            "contact_type": {
-              "enum": ["Both Contact Detail"]
-            },
-            "phone_country_code": {
-              "type": "string",
-              "title": "Code",
-              "group": "Contact Detail",
-              "width": 4,
-              "default": "NEPAL"
-            },
-            "phone_number": {
-              "type": "number",
-              "title": "Phone Number",
-              "group": "Contact Detail",
-              "pattern": "^(\\d{7,12})?$",
-              "width": 5,
-              "errorMessage": {
-                "pattern": "Mobile number must be 7 to 12 digits."
-              }
-            },
-            "mobile_country_code": {
-              "type": "string",
-              "title": "Code",
-              "group": "Contact Detail",
-              "width": 4,
-              "default": "NEPAL"
-            }
-          },
-          "required": [
-            "phone_country_code",
-            "phone_number",
-            "mobile_country_code"
-          ],
-          "dependencies": {
-            "mobile_country_code": {
-              "if": {
-                "properties": {
-                  "mobile_country_code": {
-                    "enum": ["NEPAL"]
-                  }
-                }
-              },
-              "then": {
-                "properties": {
-                  "mobile_number": {
-                    "type": "number",
-                    "title": "Mobile Number",
-                    "group": "Contact Detail",
-                    "pattern": "^(\\d{10})?$",
-                    "width": 5,
-                    "errorMessage": {
-                      "pattern": "Mobile number must be 10 digits."
-                    }
-                  }
-                },
-                "required": ["mobile_number"]
-              },
-              "else": {
-                "properties": {
-                  "mobile_number": {
-                    "type": "number",
-                    "title": "Mobile Number",
-                    "group": "Contact Detail",
-                    "pattern": "^(\\d{7,12})?$",
-                    "width": 5,
-                    "errorMessage": {
-                      "pattern": "Mobile number must be 7 to 12 digits."
-                    }
-                  }
-                },
-                "required": ["mobile_number"]
-              }
-            }
-          }
-        },
-        {
-          "properties": {
-            "contact_type": {
-              "enum": ["No Contact Detail"]
-            }
-          }
-        }
-      ]
-    },
-
-    "last_name_not_available": {
-      "if": {
-        "properties": {
-          "last_name_not_available": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "last_name": {
-            "readOnly": true
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "last_name": {
-            "readOnly": false
-          }
-        }
-      }
-    },
-    "has_cif": {
-      "if": {
-        "properties": {
-          "has_cif": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "cif_number": {
-            "type": "string",
-            "title": "CIF Number",
-            "group": "Minor Account",
-            "width": 4,
-            "readOnly": true
-          },
-          "cif_enquiry": {
-            "type": "string",
-            "title": "Proceed",
-            "group": "Minor Account",
-            "width": 4,
-            "readOnly": true
-          }
-        },
-        "required": ["cif_number"]
       }
     },
 
@@ -1312,63 +1157,317 @@
       ]
     },
 
-    "occupation_type": {
+    "pep": {
       "if": {
         "properties": {
-          "occupation_type": {
-            "enum": ["AEX", "AC", "SEM", "BUSIN", "EMPLO", "SELFE"]
+          "pep": {
+            "enum": ["Yes"]
           }
         }
       },
       "then": {
-        "required": ["occupation_detail"],
         "properties": {
-          "occupation_detail": {
-            "type": "array",
-            "title": "Occupation",
-            "group": "Occupation / Profession / Business Details",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "name_of_organization": {
-                  "type": "string",
-                  "title": "Employer Name"
-                },
-                "organization_address": {
-                  "type": "string",
-                  "title": "Address"
-                },
-                "organization_contact_number": {
-                  "type": "number",
-                  "title": "Contact No.",
-                  "pattern": "^[0-9]{7,12}$",
-                  "errorMessage": {
-                    "pattern": "Mobile number must be 7 to 12 digits."
+          "pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["pep_category"]
+      }
+    },
+    "adverse_media": {
+      "if": {
+        "properties": {
+          "adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["adverse_category"]
+      }
+    },
+
+    "contact_type": {
+      "oneOf": [
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["Phone Number"]
+            },
+            "phone_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            },
+            "phone_number": {
+              "type": "number",
+              "title": "Phone Number",
+              "group": "Contact Detail",
+              "pattern": "^(\\d{7,12})?$",
+              "width": 5,
+              "errorMessage": {
+                "pattern": "Mobile number must be 7 to 12 digits."
+              }
+            }
+          },
+          "required": ["phone_country_code", "phone_number"]
+        },
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["Mobile Number"]
+            },
+            "mobile_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            }
+          },
+          "dependencies": {
+            "mobile_country_code": {
+              "if": {
+                "properties": {
+                  "mobile_country_code": {
+                    "enum": ["NEPAL"]
                   }
-                },
-                "designation": {
-                  "type": "string",
-                  "title": "Designation"
-                },
-                "business_type": {
-                  "type": "string",
-                  "title": "Business Type"
                 }
               },
-              "required": [
-                "name_of_organization",
-                "organization_address",
-                "organization_contact_number",
-                "designation",
-                "business_type"
-              ]
+              "then": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "width": 5,
+                    "pattern": "^(\\d{10})?$",
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 10 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              },
+              "else": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "pattern": "^(\\d{7,12})?$",
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 7 to 12 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              }
             }
+          },
+          "required": ["mobile_country_code"]
+        },
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["Both Contact Detail"]
+            },
+            "phone_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            },
+            "phone_number": {
+              "type": "number",
+              "title": "Phone Number",
+              "group": "Contact Detail",
+              "pattern": "^(\\d{7,12})?$",
+              "width": 5,
+              "errorMessage": {
+                "pattern": "Mobile number must be 7 to 12 digits."
+              }
+            },
+            "mobile_country_code": {
+              "type": "string",
+              "title": "Code",
+              "group": "Contact Detail",
+              "width": 4,
+              "default": "NEPAL"
+            }
+          },
+          "required": [
+            "phone_country_code",
+            "phone_number",
+            "mobile_country_code"
+          ],
+          "dependencies": {
+            "mobile_country_code": {
+              "if": {
+                "properties": {
+                  "mobile_country_code": {
+                    "enum": ["NEPAL"]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "pattern": "^(\\d{10})?$",
+                    "width": 5,
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 10 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              },
+              "else": {
+                "properties": {
+                  "mobile_number": {
+                    "type": "number",
+                    "title": "Mobile Number",
+                    "group": "Contact Detail",
+                    "pattern": "^(\\d{7,12})?$",
+                    "width": 5,
+                    "errorMessage": {
+                      "pattern": "Mobile number must be 7 to 12 digits."
+                    }
+                  }
+                },
+                "required": ["mobile_number"]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "contact_type": {
+              "enum": ["No Contact Detail"]
+            }
+          }
+        }
+      ]
+    },
+
+    "email_not_available": {
+      "if": {
+        "properties": {
+          "email_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "email": {
+            "readOnly": true
           }
         }
       },
       "else": {
-        "properties": {}
+        "properties": {
+          "email": {
+            "readOnly": false
+          }
+        }
+      }
+    },
+    "last_name_not_available": {
+      "if": {
+        "properties": {
+          "last_name_not_available": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "last_name": {
+            "readOnly": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "last_name": {
+            "readOnly": false
+          }
+        }
+      }
+    },
+    "source_of_income": {
+      "if": {
+        "properties": {
+          "source_of_income": {
+            "enum": ["OTHER"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "other_source_of_income": {
+            "type": "string",
+            "title": "Other Source of Income",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["other_source_of_income"]
+      }
+    },
+    "employment_type": {
+      "if": {
+        "properties": {
+          "employment_type": {
+            "enum": ["OTH"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "other_employment_type": {
+            "type": "string",
+            "title": "Other Employment Type",
+            "group": "Occupation / Profession / Business Details",
+            "pattern": "^[0-9a-zA-Z\\s]*$",
+            "errorMessage": {
+              "pattern": "Only alphanumeric characters are allowed."
+            }
+          }
+        },
+        "required": ["other_employment_type"]
       }
     }
   }

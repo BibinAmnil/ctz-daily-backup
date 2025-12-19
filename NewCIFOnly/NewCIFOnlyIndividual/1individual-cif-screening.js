@@ -696,7 +696,7 @@
             first_name: formData.first_name,
             middle_name: formData.middle_name,
             last_name: formData.last_name,
-            citizenship_no: formData.dedup_identification,
+            citizenship_no: formData.dedup_id_number,
             dob_ad: formData.date_of_birth_ad,
           }
         );
@@ -1090,15 +1090,15 @@
           "ui:classNames":
             "d-flex justify-content-end align-items-end h-100 mt-5",
           "ui:options": {
-            disableButton: (formData) =>
-              !(
-                formData?.first_name?.trim() &&
-                formData?.last_name?.trim() &&
-                formData?.father_name?.trim() &&
-                formData?.date_of_birth_ad?.trim() &&
-                formData?.dedup_identification?.trim() &&
-                formData?.dedup_id_number?.trim()
-              ),
+            disableButton: (formData) => {
+              let requiredFields = jsonSchema.required || [];
+              const allFilled = requiredFields.every((field) => {
+                const value = formData?.[field];
+                return value !== undefined && value !== null && value !== "";
+              });
+              const isTrue = !allFilled;
+              return this.form_status?.includes("init") && isTrue;
+            },
 
             onClick: (formData) => {
               this.getDedupCheck(formData);

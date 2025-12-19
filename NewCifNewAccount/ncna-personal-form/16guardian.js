@@ -1442,8 +1442,8 @@
           "guardian_marital_status",
           "guardian_email",
           "guardian_email_not_available",
-          "guardian_family_information",
           "guardian_is_us_person",
+          "guardian_family_information",
           "cif_data",
         ],
         connectedPairs: [

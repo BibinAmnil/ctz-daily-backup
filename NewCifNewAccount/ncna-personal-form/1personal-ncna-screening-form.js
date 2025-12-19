@@ -133,7 +133,6 @@
         })
         .map((item) => ({
           label: `${item.title} - ${item?.cbs_code}`,
-
           value: item?.fg_code || item?.cbs_code || item?.id,
         }));
     }
@@ -942,18 +941,12 @@
 
         currency: {
           "ui:options": {
-            onChange: (value) => {
-              this.dropdownReset({
-                account_scheme_id: null,
-                customer_type_id: null,
-              });
-
-              this.handleSchemeCheck({
-                cif_number: this.formData?.cif_number,
-                currency: value,
-                account_scheme_id: this.formData?.account_scheme_id,
-              });
-            },
+            // onChange: (value) => {
+            //   this.dropdownReset({
+            //     account_scheme_id: null,
+            //     customer_type_id: null,
+            //   });
+            // },
           },
         },
 

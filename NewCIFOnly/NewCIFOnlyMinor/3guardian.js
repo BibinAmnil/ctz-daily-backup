@@ -484,6 +484,7 @@
         guardian_family_member_relation: "relationships",
         guardian_occupation_type: "occupations",
         guardian_source_of_income: "income_sources",
+        guardian_employment_type: "employment_statuses",
         guardian_permanent_country: "countries",
         relation_to_nominee: "relationships",
         account_scheme_id: "scheme_type",
@@ -673,6 +674,7 @@
         "guardian_phone_country_code",
         "guardian_occupation_type",
         "guardian_source_of_income",
+        "guardian_employment_type",
         "guardian_permanent_country",
         "account_scheme_id",
         "guardian_business_type",
@@ -1315,7 +1317,9 @@
 
           "guardian_occupation_type",
           "guardian_source_of_income",
-
+          "guardian_other_source_of_income",
+          "guardian_employment_type",
+          "guardian_other_employment_type",
           "guardian_occupation_detail",
           "guardian_business_type",
           "guardian_personal_info_screening",
@@ -2384,76 +2388,28 @@
         },
 
         guardian_occupation_type: {
-          // "ui:widget": "CascadeDropdown",
           "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
             onChange: (value) =>
               this.dropdownReset({
                 guardian_occupation_type: value,
-                guardian_source_of_income: this.optionsData[
-                  "occupation_rule"
-                ]?.[`source_of_income_list`]?.find((item) =>
-                  item?.cascade_id?.includes(value)
-                )?.id,
+                guardian_source_of_income: null,
+                guardian_employment_type: null,
               }),
           },
         },
 
-        guardian_source_of_income: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.guardian_occupation_type
-            //   );
-            // },
-          },
-        },
+        guardian_source_of_income: {},
 
         guardian_occupation_detail: {
           "ui:classNames": "my-1",
           "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-
+            addable: false,
             orderable: false,
-
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
+            removable: false,
           },
 
           items: {
-            guardian_business_type: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData) => {
-                  const filteredData = this.filterOptionsOccupation(
-                    "occupation_rule",
-                    "business_type_list",
-                    formData?.guardian_occupation_type
-                  );
-                  return [
-                    ...filteredData,
-                    { label: "Others", value: "others" },
-                  ];
-                },
-              },
-            },
+            guardian_business_type: {},
           },
         },
 
