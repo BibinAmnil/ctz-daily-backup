@@ -140,6 +140,30 @@
       "additionalProperties": true
     },
 
+    "dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "additionalProperties": true,
+      "columns": [
+        {
+          "key": "full_name",
+          "label": "Name"
+        },
+        {
+          "key": "cif_number",
+          "label": "Cif Number"
+        }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+
     "personal_screening_data": {
       "type": "string",
       "width": "full",

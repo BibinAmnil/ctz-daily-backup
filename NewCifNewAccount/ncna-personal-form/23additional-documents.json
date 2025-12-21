@@ -13,9 +13,15 @@
     },
     "mode_of_operation": {
       "type": "string",
-      "width": 6,
+      "width": "half",
       "title": "Mode of Operation"
+    },
+    "remarks": {
+      "type": "string",
+      "width": "half",
+      "title": "Remarks",
+      "hideTitle": true
     }
   },
-  "required": []
+  "required": ["mode_of_operation"]
 }

@@ -30,7 +30,7 @@
       cascadeId = null
     ) {
       const fieldMapping = {
-        mode_of_operation: "mode_of_operation",
+        mode_of_operation: "mode_of_operations",
       };
 
       const dataKey = fieldMapping[fieldKey] || fieldKey;
@@ -242,7 +242,13 @@
       this.initializeSchema(setJsonSchema, formData);
 
       return {
-        "ui:order": ["document_preview", "IDCRD", "SPCMN", "mode_of_operation"],
+        "ui:order": [
+          "document_preview",
+          "IDCRD",
+          "SPCMN",
+          "mode_of_operation",
+          "remarks",
+        ],
         document_preview: {
           "ui:label": false,
           "ui:widget": "DocumentsPreview",
@@ -251,12 +257,11 @@
             filterByCbsCode: ["AOF", "IDCRD", "SPCMN"],
           },
         },
-        mode_of_operation: {
-          "ui:widget": "CascadeDropdown",
+        mode_of_operation: {},
+        remarks: {
+          "ui:widget": "textarea",
           "ui:options": {
-            getOptions: () => {
-              return [{ label: "TO BE UPDATE", value: "TBU" }];
-            },
+            rows: 5,
           },
         },
       };

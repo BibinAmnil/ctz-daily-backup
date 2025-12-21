@@ -687,6 +687,10 @@
 
         if (dedupResponse) {
           this.toast.success(dedupResponse?.data?.data?.dedup_message);
+          this.setFormData((prevData) => ({
+            ...prevData,
+            dedup_module_data: dedupResponse?.data?.data?.data,
+          }));
         }
 
         // Screening check
@@ -802,6 +806,7 @@
 
           "extra_gap",
           "dedup_check",
+          "dedup_module_data",
           "personal_screening_data",
           "screening_ref_code",
         ],
@@ -1127,6 +1132,38 @@
             },
             actionHandlers: {
               view: (record) => setIsModalVisible(true),
+            },
+          },
+        },
+
+        dedup_module_data: {
+          "ui:widget": "ScreeningReportCard",
+          "ui:label": false,
+          showCheckbox: false,
+          showViewedColumn: false,
+          // showActionText: true,
+          fixedActionsColumn: true,
+          "ui:options": {
+            onCheckboxChange: (tableData, category, checked) => {
+              this.setFormData((prevData) => ({
+                ...prevData,
+                [category]: checked ? "Yes" : "No",
+                dedup_module_data: tableData,
+              }));
+            },
+            disabledButton: (this.form_status?.includes("review") ||
+              this.form_status?.includes("approval") ||
+              this.form_status?.includes("reporting") ||
+              this.form_status?.includes("Completed")) && ["match"],
+            actionHandlers: {
+              ...(!(
+                this.form_status?.includes("review") ||
+                this.form_status?.includes("approval") ||
+                this.form_status?.includes("reporting") ||
+                this.form_status?.includes("Completed")
+              ) && {
+                view: (record) => setIsModalVisible(true),
+              }),
             },
           },
         },

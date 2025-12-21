@@ -30,7 +30,7 @@
       cascadeId = null
     ) {
       const fieldMapping = {
-        mode_of_operation: "mode_of_operation",
+        mode_of_operation: "mode_of_operations",
       };
 
       const dataKey = fieldMapping[fieldKey] || fieldKey;
@@ -242,13 +242,26 @@
       this.initializeSchema(setJsonSchema, formData);
 
       return {
-        "ui:order": ["document_preview", "IDCRD", "SPCMN", "mode_of_operation"],
+        "ui:order": [
+          "document_preview",
+          "IDCRD",
+          "SPCMN",
+          "mode_of_operation",
+          "remarks",
+        ],
         document_preview: {
           "ui:label": false,
           "ui:widget": "DocumentsPreview",
           "ui:options": {
             idToRender: ["b9e7481e-1a93-11f0-88e5-005056b0e504"],
             filterByCbsCode: ["AOF", "IDCRD", "SPCMN"],
+          },
+        },
+        mode_of_operation: {},
+        remarks: {
+          "ui:widget": "textarea",
+          "ui:options": {
+            rows: 5,
           },
         },
       };
