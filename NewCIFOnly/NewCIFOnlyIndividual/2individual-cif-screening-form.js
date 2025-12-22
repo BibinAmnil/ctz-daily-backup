@@ -1173,11 +1173,11 @@
 
           "nominee_contact_number",
 
-          "occupation_type",
-          "source_of_income",
-          "other_source_of_income",
           "employment_type",
           "other_employment_type",
+          "source_of_income",
+          "other_source_of_income",
+          "occupation_type",
           "occupation_detail",
 
           "pep",
@@ -2031,7 +2031,7 @@
               "ui:options": {
                 setDisabled: (formData, index) =>
                   /* !this?.formData?.cif_data
-                    ? */ this.form_status.includes("init") ||
+                      ? */ this.form_status.includes("init") ||
                   this.form_status.includes("update")
                     ? formData?.family_information?.[index ?? 0]
                         ?.family_member_relation === "FATHE" &&

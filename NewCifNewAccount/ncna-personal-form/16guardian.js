@@ -33,32 +33,6 @@
     }
 
     customValidate(formData, errors, uiSchema) {
-      //45 Character Validation
-      const municipalityTitle = this.optionsData["local_bodies"]?.find(
-        (item) => item?.id === formData?.guardian_permanent_municipality
-      )?.title;
-
-      const clonedFormData = JSON.parse(JSON.stringify(formData));
-      clonedFormData.guardian_permanent_municipality = municipalityTitle;
-
-      this.functionGroup?.validateCombinedLength(clonedFormData, errors, {
-        type: "guardian_permanent",
-        fieldNames: {
-          town: "ward_number",
-          street: "street_name",
-          postalCode: "municipality",
-        },
-      });
-
-      this.functionGroup?.validateCombinedLength(formData, errors, {
-        type: "guardian_permanent",
-        fieldNames: {
-          town: "outside_town",
-          street: "outside_street_name",
-          postalCode: "postal_code",
-        },
-      });
-
       const hasUncheckedView = Object.keys(
         formData?.guardian_personal_screening_data || {}
       ).map((key) => {
@@ -77,35 +51,14 @@
         (value) => value === false
       );
 
+      // Need to uncomment in LIVE
       // if (addHasUncheckedView) {
       //   errors?.guardian_personal_screening_data?.addError(
       //     "View all Screening Data To Continue"
       //   );
+      //   this.toast.error("View all Screening Data To Continue");
       // }
 
-      if (formData?.guardian_national_id_number == "999-999-999-9") {
-        return errors;
-      } else if (formData.guardian_nid_verified === "No") {
-        errors.guardian_nid_verified.addError("NID must be verified.");
-      }
-
-      const familyInfo = formData?.guardian_family_information;
-      const requiredFields = ["guardian_family_member_full_name"]; // Add more fields here as needesd
-      if (Array.isArray(familyInfo)) {
-        familyInfo.forEach((member, index) => {
-          requiredFields.forEach((field) => {
-            const value = member?.[field]?.toString().trim();
-            if (!value) {
-              errors.guardian_family_information ??= [];
-              errors.guardian_family_information[index] ??= {};
-              errors.guardian_family_information[index][field] ??= {};
-              errors.guardian_family_information[index][field].addError(
-                "Required"
-              );
-            }
-          });
-        });
-      }
       return errors;
     }
 
@@ -122,16 +75,6 @@
         },
       }));
     };
-
-    // FUNCTION TO SPLIT FULL NAME
-    splitFullName(fullName) {
-      const parts = fullName?.trim()?.split(/\s+/); // Split by spaces
-      let firstName = parts[0] || "";
-      let middleName = parts.length > 2 ? parts.slice(1, -1).join(" ") : "";
-      let lastName = parts.length > 1 ? parts[parts.length - 1] : "";
-
-      return { firstName, middleName, lastName };
-    }
 
     // FUNCTION TO ADD PREFIX TO THE RESPONSE
     addPrefixToKeys(obj, prefix) {
@@ -223,105 +166,6 @@
       }, 100);
     };
 
-    async handleSchemeChange() {
-      const schemaDependenciesMap = await Object.fromEntries(
-        this.schemaConditions?.schemaDependencies?.map((entry) => [
-          Object.keys(entry)[0],
-          Object.values(entry)[0],
-        ]) || []
-      );
-      const findCBSCode = (id) => {
-        for (const key in this.optionsData) {
-          const match =
-            this.optionsData[key]?.length > 0 &&
-            this.optionsData[key]?.find(
-              (item) => item?.fg_code || item?.cbs_code || item?.id === id
-            );
-          if (match) return match.cbs_code;
-        }
-        return null;
-      };
-
-      const accountCBSCode = await findCBSCode(this.formData.account_scheme_id);
-
-      const schemaDependentValues =
-        (await schemaDependenciesMap[accountCBSCode]) || {};
-
-      const resolveValue = (key, value) => {
-        if (!value) return value;
-
-        const optionSet = this.optionsData[key] || [];
-        const match = optionSet.find((item) =>
-          item.cbs_code ? item.cbs_code === value : item.title === value
-        );
-
-        return match ? match.id : value;
-      };
-
-      await this.setFormData((prevFormData) => ({
-        ...prevFormData,
-        guardian_gender:
-          schemaDependentValues?.guardian_gender ||
-          this.formData?.guardian_gender ||
-          null,
-        guardian_occupation_type: resolveValue(
-          "occupation_types",
-          schemaDependentValues?.guardian_occupation_type ||
-            this.formData?.guardian_occupation_type ||
-            null
-        ),
-        guardian_nationality: resolveValue(
-          "nationalities",
-          schemaDependentValues?.guardian_nationality ||
-            this.formData?.guardian_nationality ||
-            null
-        ),
-        guardian_source_of_income: resolveValue(
-          "income_sources",
-          schemaDependentValues?.guardian_source_of_income ||
-            this.formData?.guardian_source_of_income ||
-            null
-        ),
-        guardian_business_type: resolveValue(
-          "guardian_business_type",
-          schemaDependentValues?.guardian_business_type ||
-            this.formData?.guardian_business_type ||
-            null
-        ),
-        province: resolveValue(
-          "provinces",
-          schemaDependentValues?.province || this.formData?.province || null
-        ),
-      }));
-
-      await this.setUiSchema((prevSchema) => ({
-        ...prevSchema,
-        guardian_date_of_birth_ad: {
-          ...prevSchema?.guardian_date_of_birth_ad,
-          "ui:options": {
-            ...prevSchema?.guardian_date_of_birth_ad?.["ui:options"],
-            validAge: schemaDependentValues?.guardian_date_of_birth_ad || 0,
-          },
-        },
-        guardian_date_of_birth_bs: {
-          ...prevSchema?.guardian_date_of_birth_bs,
-          "ui:options": {
-            ...prevSchema?.guardian_date_of_birth_bs?.["ui:options"],
-            validAge: schemaDependentValues?.guardian_date_of_birth_bs || 0,
-          },
-        },
-      }));
-    }
-
-    lookupValue(value, key) {
-      if (!this.optionsData[value]) return null;
-      const foundItem = this.optionsData[value].find(
-        (item) => item.cbs_code === key || item.title === key
-      );
-      if (!foundItem) return null;
-      return founditem?.fg_code || item?.cbs_code || item?.id;
-    }
-
     async updateFormAndSchema(formData, schemaConditions) {
       this.formData = formData;
       if (!this.form_status?.includes("case-init")) {
@@ -332,44 +176,6 @@
           };
         });
       }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-
-        const flatEntry = { key: index };
-
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-
-        return acc;
-      }, {});
     }
 
     async calculateRisk(value) {
@@ -395,6 +201,12 @@
           guardian_risk_level: resp?.risk_level,
           guardian_risk_score: resp?.risk_score,
         }));
+        this.setJsonSchema((prevJsonSchema) => {
+          return {
+            ...prevJsonSchema,
+            isDisabled: false,
+          };
+        });
 
         return;
       } catch (error) {
@@ -403,119 +215,6 @@
         return {};
       } finally {
         this.addLoader("guardian_calculate_risk", false);
-      }
-    }
-
-    async fetchMasterData(url, axios) {
-      try {
-        const response = await axios.get(url);
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
-        const data = response?.data;
-
-        this.isMasterDataLoaded = true;
-        this.optionsData = data.data;
-
-        return data.data;
-      } catch (error) {
-        console.error("Error fetching options:", error);
-        return {};
-      }
-    }
-
-    async fetchPersonalInfoScreening() {
-      this.addLoader("guardian_personal_info_screening", true);
-
-      try {
-        if (!this.formData?.guardian_first_name?.trim()) {
-          this.toast.error("Please enter a First Name");
-          return;
-        }
-        let payload = {
-          first_name: this.formData.guardian_first_name,
-          last_name: this.formData.guardian_last_name,
-          middle_name: this.formData.guardian_middle_name,
-          father_name: this.formData.guardian_father_name,
-          identification_number: this.formData.guardian_identification_number,
-          blacklist_min_score: Number(this.formData.blacklist_min_score),
-          sanction_min_score: Number(this.formData.sanction_min_score),
-          pep_min_score: Number(this.formData.pep_min_score),
-          adverse_media_min_score: Number(
-            this.formData.adverse_media_min_score
-          ),
-          max_results: Number(this.formData.max_result),
-          dob: this.formData.guardian_date_of_birth_ad,
-        };
-
-        const response = await this.axios.post(
-          `${this.mainRouteURL}/external-api/screening-check`,
-          payload
-        );
-
-        // if (!response) {
-        //   throw new Error("Network response was not ok");
-        // }
-        const responseData =
-          response?.data?.data?.realTimeScreeningResult?.responseData;
-        const responseD = response?.data?.data?.realTimeScreeningResult;
-        const screeningLists = responseData?.ResultedRecords;
-        const data = screeningLists?.map((item) => ({
-          ...item,
-          source: item?.listName.includes("LNACCUITYLIST_PEP")
-            ? "pep"
-            : item?.listName.includes("LNACCUITYLIST_GWL")
-            ? "sanction"
-            : item?.listName.includes("KSKLLIST")
-            ? "blacklist"
-            : item?.listName.includes("LNACCUITYLIST_EDD")
-            ? "adverse_media"
-            : item?.listName.includes("NBAPEPLIST")
-            ? "pep_nba"
-            : item?.listName.includes("BLOCKLIST")
-            ? "blocklist"
-            : item?.listName,
-          listIdDetails: [{ ...item?.listIdDetails }],
-        }));
-
-        this.setFormData((prevData) => ({
-          ...prevData,
-          guardian_personal_info_screening: "true",
-          guardian_personal_screening_data: this.preprocessData(data),
-          screening_ref_code: responseD.uniqueRequestId,
-        }));
-        this.setJsonSchema((prevJsonSchema) => {
-          return {
-            ...prevJsonSchema,
-            isDisabled: false,
-          };
-        });
-        this.setRenderFormKey((prev) => prev + 1);
-        return;
-      } catch (error) {
-        this.setModalOpen({
-          open: true,
-          message: error
-            ? `${error.response?.data?.message || error?.response?.statusText}`
-            : `${error || "Unknown Error"}`,
-          subTitle: Array.isArray(error?.response?.data?.errors)
-            ? error?.response?.data?.errors
-                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
-                .join("\n")
-            : "",
-
-          status: "error",
-          close: "Close",
-        });
-        return {};
-      } finally {
-        this.addLoader("guardian_personal_info_screening", false);
-        this.setJsonSchema((prevJsonSchema) => {
-          return {
-            ...prevJsonSchema,
-            isDisabled: false,
-          };
-        });
       }
     }
 
@@ -659,6 +358,7 @@
         guardian_permanent_district: "districts",
         guardian_permanent_municipality: "local_bodies",
         guardian_current_country: "countries",
+        guardian_dedup_current_country: "countries",
         guardian_current_province: "provinces",
         guardian_current_district: "districts",
         guardian_current_municipality: "local_bodies",
@@ -670,6 +370,7 @@
         guardian_family_member_relation: "relationships",
         guardian_occupation_type: "occupations",
         guardian_source_of_income: "income_sources",
+        guardian_employment_type: "employment_statuses",
         guardian_permanent_country: "countries",
         relation_to_nominee: "relationships",
         account_scheme_id: "scheme_type",
@@ -688,6 +389,10 @@
         guardian_national_id_issue_place: "districts",
         guardian_related_party_relation_with_account_holder: "relationships",
         guardian_place_of_issue: "districts",
+        guardian_literacy: "literacy",
+        guardian_educational_qualification: "education_qualifications",
+        guardian_hpp_category: "hpp_categories",
+        guardian_hpp_sub_category: "hpp_sub_categories",
       };
       const dataKey = fieldMapping[fieldKey] || fieldKey;
       let fieldOptions = optionsData[dataKey] || [];
@@ -825,7 +530,7 @@
 
     async initializeSchema(setJsonSchema, formData) {
       if (!this.form_status?.includes("case-init")) this.setDivide(true);
-      this.setNextStep("guardian-address");
+      this.setNextStep("personal-cdd-form");
 
       if (this.form_status?.includes("review")) {
         this.setJsonSchema((prevSchema) => {
@@ -846,6 +551,7 @@
         "guardian_permanent_district",
         "guardian_permanent_municipality",
         "guardian_current_country",
+        "guardian_dedup_current_country",
         "guardian_current_province",
         "guardian_current_district",
         "guardian_current_municipality",
@@ -857,6 +563,7 @@
         "guardian_phone_country_code",
         "guardian_occupation_type",
         "guardian_source_of_income",
+        "guardian_employment_type",
         "guardian_permanent_country",
         "account_scheme_id",
         "guardian_business_type",
@@ -874,6 +581,10 @@
         "guardian_national_id_issuing_authority",
         "guardian_national_id_issue_place",
         "guardian_place_of_issue",
+        "guardian_literacy",
+        "guardian_educational_qualification",
+        "guardian_hpp_category",
+        "guardian_hpp_sub_category",
       ];
 
       for (const fieldKey of fieldsToUpdate) {
@@ -948,10 +659,7 @@
           guardian_date_of_birth_bs: resp?.date_of_birth_ad
             ? this.adToBs(resp?.date_of_birth_ad)
             : "",
-          guardian_cif_data: {
-            ...this.formData?.cif_data,
-            guardian: prefixAddedData,
-          },
+          guardian_guardian_cif_data: JSON.stringify(prefixAddedData),
         }));
         return;
       } catch (error) {
@@ -1320,10 +1028,6 @@
         widgets,
         jsonSchema,
       } = options;
-      !(
-        this.formData?.case_status !== "Draft" ||
-        this.formData?.case_status !== "Proceed"
-      ) && (this.nationalityChanged = true);
       const handleSetNotAvailable = (value, keyName) => {
         setTimeout(
           () =>
@@ -1342,69 +1046,6 @@
         );
       };
 
-      const sameAsPermanentOnChange = (value) => {
-        this.setFormData((prevFormData) => {
-          let updatedFormData = { ...prevFormData };
-          updatedFormData.guardian_same_as_permanent = value;
-
-          if (value) {
-            updatedFormData = {
-              ...updatedFormData,
-              guardian_current_country:
-                updatedFormData.guardian_permanent_country || "NP",
-              guardian_current_province:
-                updatedFormData.guardian_permanent_province || "",
-              guardian_current_district:
-                updatedFormData.guardian_permanent_district || "",
-              guardian_current_municipality:
-                updatedFormData.guardian_permanent_municipality || "",
-              guardian_current_ward_number:
-                updatedFormData.guardian_permanent_ward_number || "",
-              guardian_current_street_name:
-                updatedFormData.guardian_permanent_street_name || "",
-              guardian_current_town:
-                updatedFormData.guardian_permanent_town || "",
-              guardian_current_house_number:
-                updatedFormData.guardian_permanent_house_number || "",
-              guardian_current_outside_town:
-                updatedFormData.guardian_permanent_outside_town || "",
-              guardian_current_outside_street_name:
-                updatedFormData.guardian_permanent_outside_street_name,
-              guardian_current_postal_code:
-                updatedFormData.guardian_permanent_postal_code,
-            };
-          } else {
-            updatedFormData = {
-              ...updatedFormData,
-              guardian_same_as_permanent: value,
-              guardian_current_country: "NP", // Default
-              guardian_current_province: "",
-              guardian_current_district: "",
-              guardian_current_municipality: "",
-              guardian_current_ward_number: "",
-              guardian_current_street_name: "",
-              guardian_current_town: "",
-              guardian_current_house_number: "",
-              guardian_current_outside_town: "",
-              guardian_current_outside_street_name: "",
-              guardian_current_postal_code: "",
-            };
-          }
-
-          return updatedFormData;
-        });
-      };
-
-      const defaultSelectedValue = (value) => {
-        const selectedValue = this.functionGroup?.getRequiredDocuments(
-          this.optionsData["multi_validation_mapping"],
-          {
-            document_type: value,
-          }
-        );
-        return selectedValue;
-      };
-
       this.initializeSchema(setJsonSchema, formData);
       return {
         "ui:ObjectFieldTemplate": ObjectFieldTemplate,
@@ -1412,161 +1053,53 @@
           "guardian_has_cif",
           "guardian_cif_number",
           "guardian_cif_enquiry",
-          "guardian_customer_type_id",
-          "account_info",
-          "is_minor_account",
 
           "guardian_first_name",
           "guardian_middle_name",
           "guardian_last_name",
           "guardian_last_name_not_available",
           "guardian_father_name",
+          "guardian_grandfather_name",
           "guardian_date_of_birth_ad",
           "guardian_date_of_birth_bs",
-          "guardian_nationality",
-          "guardian_current_country",
           "guardian_dedup_identification",
-          "guardian_issuing_authority",
-          "guardian_place_of_issue",
           "guardian_dedup_id_number",
-          "extra_gap",
-          "guardian_dedup_check",
-          "guardian_personal_screening_data",
-          "guardian_screening_ref_code",
-          "guardian_dedup_module_data",
-
+          "guardian_existing_permanent_address",
           "guardian_related_party_family_account_holder",
           "guardian_related_party_relation_with_account_holder",
-          "guardian_salutation",
-          "guardian_gender",
-          "guardian_marital_status",
-          "guardian_email",
-          "guardian_email_not_available",
-          "guardian_is_us_person",
-          "guardian_family_information",
-          "cif_data",
+
+          "guardian_dedup_check",
+          "guardian_dedup_module_data",
+          "guardian_personal_screening_data",
+          "guardian_screening_ref_code",
+
+          "guardian_hpp",
+          "guardian_hpp_category",
+          "guardian_hpp_sub_category",
+          "guardian_pep",
+          "guardian_pep_category",
+          "guardian_pep_declaration",
+          "guardian_family_pep_declaration",
+          "guardian_adverse_media",
+          "guardian_adverse_category",
+          "guardian_loan_status",
+          "guardian_is_blacklisted",
+          "guardian_customer_introduce_by",
+          "guardian_employee_id",
+          "guardian_introducer_account_number",
+          "guardian_met_in_person",
+
+          "guardian_risk_level",
+          "guardian_calculate_risk",
+
+          "guardian_cif_data",
+          "account_info",
+          "is_minor_account",
         ],
         connectedPairs: [
           ["guardian_last_name", "guardian_last_name_not_available"],
           ["guardian_email", "guardian_email_not_available"],
         ],
-
-        guardian_marital_status: {
-          "ui:options": {
-            onChange: (value) => {
-              this.updateFamilyInformation(value);
-            },
-          },
-        },
-
-        guardian_is_customer_disabled: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-        },
-        guardian_nid_verify: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames": "mt-5 w-100",
-          "ui:options": {
-            disableButton: (formData) => !formData?.guardian_national_id_number,
-            buttonClassName: "w-100",
-            onClick: async (formData) => {
-              this.addLoader("guardian_nid_verify", true);
-              let nidVerifiedValue = "No";
-
-              try {
-                const response = await this.axios.post(
-                  `${this.mainRouteURL}/external-api/verify-nid`,
-                  {
-                    nin: formData?.guardian_national_id_number,
-                    first_name: formData?.guardian_first_name,
-                    last_name: formData?.guardian_last_name,
-                    middle_name: formData?.guardian_middle_name,
-                    date_of_birth: formData?.guardian_date_of_birth_ad,
-                  }
-                );
-
-                const responseData = response?.data;
-                nidVerifiedValue = responseData?.resCod == "200" ? "Yes" : "No";
-                this.setModalOpen({
-                  open: true,
-                  message: responseData?.data?.message,
-                  close: "Close",
-                  status: "success",
-                });
-              } catch (err) {
-                nidVerifiedValue = "No";
-                this.setModalOpen({
-                  open: true,
-                  message: err?.response?.data?.message,
-                  close: "Close",
-                  status: "error",
-                });
-              } finally {
-                this.addLoader("guardian_nid_verify", false);
-                this.setFormData((prevForm) => ({
-                  ...prevForm,
-                  guardian_nid_verified: nidVerifiedValue,
-                }));
-              }
-            },
-          },
-        },
-        guardian_nid_reset: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames": "mt-5 w-100",
-          "ui:options": {
-            disableButton: (formData) => !formData?.guardian_nid_verified,
-            buttonClassName: "w-100",
-            onClick: async (formData) => {
-              this.dropdownReset({
-                guardian_national_id_number: null,
-                guardian_national_id_issue_date_ad: "",
-                guardian_national_id_issue_date_bs: "",
-                guardian_national_id_issue_place: "",
-                guardian_nid_verified: "",
-              });
-            },
-          },
-        },
-
-        guardian_declared_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Customer",
-            amount: true,
-          },
-        },
-        guardian_expected_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Branch",
-            amount: true,
-          },
-        },
-        guardian_yearly_income: {
-          "ui:options": {
-            amount: true,
-          },
-        },
-
-        account_info: {
-          "ui:widget": "hidden",
-        },
-        is_minor_account: {
-          "ui:widget": "hidden",
-        },
-        guardian_screening_ref_code: {
-          "ui:widget": "hidden",
-        },
-        cif_data: {
-          "ui:widget": "hidden",
-        },
-        guardian_customer_type_id: {},
-
         guardian_has_cif: {
           "ui:widget": "CustomCheckBoxWidget",
           "ui:label": false,
@@ -1582,218 +1115,58 @@
               ),
           },
         },
+        guardian_first_name: {
+          "ui:options": {
+            maxLength: 30,
+          },
+        },
+        guardian_middle_name: {
+          "ui:options": {
+            maxLength: 30,
+          },
+        },
+        guardian_last_name: {
+          "ui:options": {
+            maxLength: 30,
+          },
+        },
+
+        guardian_father_name: {
+          "ui:options": {
+            maxLength: 50,
+          },
+        },
+        guardian_grandfather_name: {
+          "ui:options": {
+            maxLength: 50,
+          },
+        },
+
+        account_info: {
+          "ui:widget": "hidden",
+        },
+        is_minor_account: {
+          "ui:widget": "hidden",
+        },
+        guardian_screening_ref_code: {
+          "ui:widget": "hidden",
+        },
+        guardian_cif_data: {
+          "ui:widget": "hidden",
+        },
 
         guardian_dedup_identification: {
-          "ui:widget": "CascadeDropdown",
+          // "ui:widget": "CascadeDropdown",
           "ui:options": {
-            getOptions: (formData, index) => {
-              const filterOption = this.functionGroup?.getRequiredDocuments(
-                this.optionsData["multi_validation_mapping"],
-                {
-                  nationality:
-                    formData?.guardian_nationality ||
-                    this.formData?.guardian_nationality,
-                  account_type: "INDIVIDUAL",
-                  ...((formData?.guardian_nationality ||
-                    this.formData?.guardian_nationality) === "NP" && {
-                    current_country:
-                      formData?.guardian_current_country ||
-                      this.formData?.guardian_current_country,
-                  }),
-                }
-              );
-
-              return filterOption || [];
-            },
             onChange: (value) => {
               this.dropdownReset({
                 guardian_dedup_identification: value,
-                guardian_issuing_authority:
-                  this.formData?.guardian_nationality === "IN" && value === "DL"
-                    ? "GOI"
-                    : this.formData?.guardian_nationality !== "IN" &&
-                      value === "DL"
-                    ? "DOTM"
-                    : defaultSelectedValue(value)?.[0]?.value,
-                guardian_place_of_issue: null,
                 guardian_dedup_id_number: "",
               });
             },
           },
         },
 
-        guardian_issuing_authority: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            setDisabled: (formData, index) => {
-              return (formData?.guardian_nationality === "IN" &&
-                formData?.guardian_dedup_identification === "DL") ||
-                (formData?.guardian_nationality !== "IN" &&
-                  formData?.guardian_dedup_identification === "DL")
-                ? true
-                : defaultSelectedValue(
-                    formData?.guardian_dedup_identification ||
-                      this.formData?.guardian_dedup_identification
-                  )?.length === 1
-                ? true
-                : false;
-            },
-            getOptions: (formData, index) => {
-              return defaultSelectedValue(
-                formData?.guardian_dedup_identification ||
-                  this.formData?.guardian_dedup_identification
-              );
-            },
-            onChange: (value) => {
-              this.dropdownReset({
-                guardian_issuing_authority: value,
-                guardian_place_of_issue: null,
-                guardian_dedup_id_number: "",
-              });
-            },
-          },
-        },
-
-        guardian_dedup_id_number: {
-          "ui:options": {
-            onChange: (value) => {
-              this.convertToArray(
-                value,
-                "identification_number",
-                "guardian_id_type_details",
-                ["guardian_dedup_identification", "id_type_id"]
-              );
-            },
-          },
-        },
-        guardian_father_name: {
-          "ui:options": {
-            onChange: (value) => {
-              this.convertToArray(
-                value,
-                "guardian_family_member_full_name",
-                "guardian_family_information"
-              );
-            },
-          },
-        },
-        declared_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Customer",
-            amount: true,
-          },
-        },
-        guardian_dedup_check: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames":
-            "d-flex justify-content-end align-items-end h-100 my-1",
-          "ui:options": {
-            disableButton: (formData) =>
-              !(
-                formData?.guardian_first_name?.trim() &&
-                formData?.guardian_last_name?.trim() &&
-                formData?.guardian_father_name?.trim() &&
-                formData?.guardian_dedup_id_number?.trim() &&
-                formData?.guardian_date_of_birth_ad?.trim() &&
-                formData?.guardian_date_of_birth_bs?.trim()
-              ),
-            onClick: (formData) => {
-              this.getDedupCheck(formData);
-            },
-          },
-        },
-        guardian_nationality: {
-          "ui:options": {
-            onChange: async (value) => {
-              this.dropdownReset({
-                guardian_nationality: value,
-                guardian_dedup_id_number: "",
-                guardian_dedup_identification:
-                  value === "NP" ? "CTZN" : value === "IN" ? null : "PP",
-                guardian_permanent_country:
-                  value === "NP"
-                    ? "NP"
-                    : this.formData?.guardian_permanent_country,
-                guardian_customer_type_id: null,
-                guardian_id_type_details:
-                  value === "NP" || value === "IN"
-                    ? [{}]
-                    : [
-                        {
-                          id_type_id: "PP",
-                        },
-                        {
-                          removable: false,
-                          id_type_id: "TRDOC",
-                        },
-                      ],
-                guardian_national_id_number: "",
-                guardian_national_id_issue_date_ad: undefined,
-                guardian_national_id_issue_date_bs: undefined,
-                guardian_national_id_issue_place: null,
-              });
-              (await value) === "NP" && (this.nationalityChanged = true);
-              return null;
-            },
-          },
-        },
-
-        guardian_national_id_issue_date_ad: {
-          "ui:widget": widgets.CustomDatePicker,
-          "ui:help": "Date Format: YYYY-MM-DD",
-          "ui:placeholder": "Select Issued Date (A.D)",
-          "ui:options": {
-            enforceAgeRestriction: false,
-            validAge: 0,
-            name: "guardian_national_id_issue_date_ad",
-            enforceAgeRestriction: true,
-            disableFutureDates: true,
-            minimumDate: (formData) => {
-              return (
-                formData?.guardian_date_of_birth_ad &&
-                this.moment(formData?.guardian_date_of_birth_ad)
-                  .add(1, "day")
-                  .format("YYYY-MM-DD")
-              );
-            },
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                true,
-                "guardian_national_id_issue_date_ad"
-              );
-            },
-          },
-        },
-        guardian_national_id_issue_date_bs: {
-          "ui:widget": widgets.NepaliDatePickerR,
-          "ui:options": {
-            enforceAgeRestriction: true,
-            disableFutureDates: true,
-            validAge: 0,
-            name: "guardian_national_id_issue_date_bs",
-            minimumDate: (formData) => {
-              return (
-                formData?.guardian_date_of_birth_bs &&
-                this.moment(formData?.guardian_date_of_birth_bs).format(
-                  "YYYY-MM-DD"
-                )
-              );
-            },
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                false,
-                "guardian_national_id_issue_date_bs"
-              );
-            },
-          },
-        },
         guardian_dedup_module_data: {
           "ui:widget": "ScreeningReportCard",
           "ui:label": false,
@@ -1836,92 +1209,8 @@
             },
           },
         },
-        guardian_related_party_relation_with_account_holder: {
-          // "ui:widget": "CascadeDropdown",
-          // "ui:options": {
-          //   getOptions: (formData) => {
-          //     return this.filterOptions(
-          //       "relationships",
-          //       "MINOR"
-          //     );
-          //   },
-          // },
-        },
+        guardian_related_party_relation_with_account_holder: {},
 
-        guardian_salutation: {
-          "ui:widget": "CustomRadioWidget",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.functionGroup?.getRequiredDocuments(
-            //     this.optionsData["multi_validation_mapping"],
-            //     {
-            //       account_info: undefined,
-            //     }
-            //   );
-            // },
-            onChange: (value) => {
-              this.dropdownReset({
-                guardian_salutation: value,
-                guardian_gender: null,
-              });
-            },
-          },
-        },
-        guardian_permanent_country: {
-          "ui:options": {
-            onChange: (value) => {
-              return this.dropdownReset({
-                guardian_permanent_country: value,
-                guardian_permanent_province: null,
-                guardian_permanent_district: null,
-                guardian_permanent_municipality: null,
-                guardian_permanent_house_number: "",
-                guardian_permanent_ward_number: "",
-                guardian_permanent_town: "",
-                guardian_permanent_street_name: "",
-                guardian_permanent_outside_town: "",
-                guardian_permanent_outside_street_name: "",
-                guardian_permanent_postal_code: "",
-              });
-            },
-          },
-        },
-        account_type_id: {
-          "ui:options": {
-            onChange: (value) => {
-              return this.dropdownReset({
-                account_type_id: value,
-                account_scheme_id: null,
-              });
-            },
-          },
-        },
-        account_scheme_id: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "scheme_type",
-                formData?.account_type_id
-              );
-            },
-            onChange: (value) =>
-              setTimeout(() => {
-                this.handleSchemeChange();
-              }, 100),
-          },
-        },
-        guardian_gender: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "genders",
-                formData?.guardian_salutation
-              );
-            },
-          },
-        },
         guardian_cif_enquiry: {
           "ui:widget": "ButtonField",
           "ui:label": false,
@@ -1954,24 +1243,59 @@
 
         guardian_date_of_birth_ad: {
           "ui:widget": widgets.CustomDatePicker,
-          "ui:help": "Date Format: YYYY-MM-DD",
           "ui:placeholder": "Select Date of Birth (A.D)",
+          "ui:help": "Date Format: YYYY-MM-DD",
           "ui:options": {
             name: "guardian_date_of_birth_ad",
             enforceAgeRestriction: true,
             validAge: 18,
             onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                true,
-                "guardian_date_of_birth_ad"
-              );
+              if (
+                !this.moment(selectedDate).isBefore(
+                  this.moment().subtract(80, "years")
+                )
+              ) {
+                this.convertDate(
+                  selectedDate,
+                  setFormData,
+                  true,
+                  "guardian_date_of_birth_ad"
+                );
+                this.setUiSchema((prevUiSchema) => {
+                  return {
+                    ...prevUiSchema,
+                    guardian_date_of_birth_bs: {
+                      ...prevUiSchema?.guardian_date_of_birth_bs,
+                      "ui:widget": widgets.NepaliDatePickerR,
+                    },
+                  };
+                });
+              } else {
+                setTimeout(() => {
+                  this.setFormData((prev) => ({
+                    ...prev,
+                    guardian_date_of_birth_bs: undefined,
+                  }));
+                  this.setUiSchema((prevUiSchema) => {
+                    return {
+                      ...prevUiSchema,
+                      guardian_date_of_birth_bs: {
+                        ...prevUiSchema?.guardian_date_of_birth_bs,
+                        "ui:widget": "TextWidget",
+                      },
+                    };
+                  });
+                }, 100);
+              }
             },
           },
         },
         guardian_date_of_birth_bs: {
-          "ui:widget": widgets.NepaliDatePickerR,
+          "ui:widget": this.moment(
+            this.formData?.guardian_date_of_birth_ad
+          ).isBefore(this.moment().subtract(80, "years"))
+            ? "TextWidget"
+            : widgets.NepaliDatePickerR,
           "ui:help": "Date Format: YYYY-MM-DD",
           "ui:options": {
             enforceAgeRestriction: true,
@@ -1988,742 +1312,29 @@
           },
         },
 
-        guardian_same_as_permanent: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => sameAsPermanentOnChange(value),
-            preserveValue: true,
-          },
-        },
-        guardian_email_not_available: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => handleSetNotAvailable(value, "guardian_email"),
-            preserveValue: true,
-          },
-        },
-
-        guardian_permanent_province: {
-          "ui:options": {
-            onChange: (value) =>
-              this.dropdownReset({
-                guardian_permanent_province: value,
-                guardian_permanent_district: null,
-                guardian_permanent_municipality: null,
-                guardian_permanent_house_number: "",
-                guardian_permanent_ward_number: "",
-                guardian_permanent_town: "",
-                guardian_permanent_street_name: "",
-                guardian_permanent_outside_town: "",
-                guardian_permanent_outside_street_name: "",
-              }),
-          },
-        },
-        guardian_permanent_district: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "districts",
-                formData?.guardian_permanent_province
-              );
-            },
-            onChange: (value) =>
-              this.dropdownReset({
-                guardian_permanent_district: value,
-                guardian_permanent_municipality: null,
-                guardian_permanent_house_number: "",
-                guardian_permanent_ward_number: "",
-                guardian_permanent_town: "",
-                guardian_permanent_street_name: "",
-                guardian_permanent_outside_town: "",
-                guardian_permanent_outside_street_name: "",
-              }),
-          },
-        },
-        guardian_permanent_municipality: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "local_bodies",
-                formData?.guardian_permanent_district
-              );
-            },
-          },
-        },
-
-        guardian_id_type_details: {
-          "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-            orderable: false,
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-          },
-          items: {
-            "ui:order": [
-              "id_type_id",
-              "identification_number",
-              "issue_country",
-              "issued_district",
-              "issued_district_text",
-              "issuing_authority",
-              "issuing_authority_text",
-              "id_issued_date_ad",
-              "id_issued_date_bs",
-              "id_expiry_date_ad",
-              "id_expiry_date_bs",
-              "visa_issued_date_ad",
-              "visa_expiry_date_ad",
-              "national_id_number",
-              "citizenship_number",
-              "comment",
-              "disable",
-              "removable",
-            ],
-            disable: {
-              "ui:widget": "hidden",
-            },
-            removable: {
-              "ui:widget": "hidden",
-            },
-            id_type_id: {
-              // "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                setDisabled: (formData, index) => {
-                  if (
-                    formData?.guardian_id_type_details?.[index]?.id_type_id ===
-                    formData?.guardian_dedup_identification
-                  )
-                    return true;
-                  const blocks = {
-                    "dc396a31-7c87-42d6-b208-ae973cecb12b": "WPERM",
-                    "2c825f3c-372e-4cf4-aaa2-601652927933": "WPERM",
-                    "c711e377-393a-4e8b-b1df-8531bbb4184f": "NRNID",
-                  };
-                  return (
-                    blocks[formData?.account_scheme_id] &&
-                    blocks[formData?.account_scheme_id] ===
-                      formData?.guardian_id_type_details?.[index]?.id_type_id
-                  );
-                },
-
-                // getOptions: (formData, index) => {
-                //   this.setFormData((prev) => ({
-                //     ...prev,
-                //     guardian_id_type_details:
-                //       prev?.guardian_id_type_details?.map((i) => {
-                //         return i?.id_type_id
-                //           ? {
-                //               ...i,
-                //               disable: true,
-                //             }
-                //           : i;
-                //       }),
-                //   }));
-
-                //   const selected = formData?.guardian_id_type_details?.map(
-                //     (i, idx) => (idx !== index ? i?.id_type_id : null)
-                //   );
-                //   const opts = this.functionGroup?.getRequiredDocuments(
-                //     this.optionsData["multi_validation_mapping"],
-                //     {
-                //       nationality:
-                //         formData?.guardian_nationality ??
-                //         this.formData?.guardian_nationality,
-                //       account_type:
-                //         formData?.guardian_nationality === "IN"
-                //           ? formData?.account_info
-                //           : undefined,
-                //     }
-                //   );
-
-                //   return (
-                //     opts?.filter(
-                //       (o) =>
-                //         o?.value &&
-                //         (o.value ===
-                //           formData?.guardian_id_type_details?.[index]
-                //             ?.id_type_id ||
-                //           !selected?.includes(o.value))
-                //     ) || []
-                //   );
-                // },
-                onChange: (data, index) => {
-                  const document_types = {
-                    citizenship_number: "CTZN",
-                    passport: "PP",
-                    driving_license: "LCNSE",
-                    voter_id: "VOTER",
-                    nid: "NID",
-                    pan: "PANR",
-                  };
-                  const issuing_authorities = {
-                    citizenship_number: "DAO",
-                    passport: "85bdeca6-4cb1-435e-a81c-e65a04a910f4",
-                    driving_license: "NA",
-                    voter_id: "a4e3fa6d-133d-40da-8996-444207b7f2a2",
-                    nid: "DONICR",
-                    pan: "IRD",
-                  };
-
-                  const matchingDocType = Object.entries(document_types).find(
-                    ([_, value]) => value === data
-                  );
-                  const [docTypeKey] = matchingDocType ?? "";
-                  this.setFormData((prev) => ({
-                    ...prev,
-                    guardian_id_type_details:
-                      prev?.guardian_id_type_details?.map((item, idx) =>
-                        index === idx
-                          ? {
-                              id_type_id: data,
-                              issuing_authority:
-                                issuing_authorities[docTypeKey] ?? null,
-                            }
-                          : item
-                      ),
-                  }));
-                },
-              },
-            },
-            // identification_number: {
-            //   "ui:options": {
-            //     setDisabled: (formData, index) => {
-            //       if (
-            //         formData?.guardian_id_type_details?.[index]?.id_type_id ===
-            //         formData?.guardian_dedup_identification
-            //       )
-            //         return true;
-            //     },
-            //   },
-            // },
-
-            issue_country: {
-              "ui:options": {},
-            },
-            comment: {
-              "ui:widget": "textarea",
-              "ui:options": {
-                rows: 5,
-              },
-            },
-
-            id_issued_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:placeholder": "Select Issued Date (A.D)",
-              "ui:options": {
-                name: "id_issued_date_ad",
-                enforceAgeRestriction: false,
-                validAge: 0,
-                disableFutureDates: true,
-                minimumDate: (formData) => {
-                  return (
-                    formData?.guardian_date_of_birth_ad &&
-                    this.moment(formData?.guardian_date_of_birth_ad)
-                      .add(16, "years")
-                      .format("YYYY-MM-DD")
-                  );
-                },
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    true,
-                    "id_issued_date_ad",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            id_issued_date_bs: {
-              "ui:widget": widgets.NepaliDatePickerR,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:options": {
-                enforceAgeRestriction: true,
-                name: "id_issued_date_bs",
-                disableFutureDates: true,
-                minimumDate: (formData) => {
-                  // const minDateValue = formData?.guardian_id_type_details?.map(
-                  //   (item) =>
-                  //     item?.id_type_id ===
-                  //     "CTZN"
-                  //       ? this.NepaliDate.parseEnglishDate(
-                  //           this.moment(formData?.guardian_date_of_birth_ad)
-                  //             .add(16, "years")
-                  //             .format("YYYY-MM-DD"),
-                  //           "YYYY-MM-DD"
-                  //         ).format("YYYY-MM-DD")
-                  //       : undefined
-                  // );
-                  // return minDateValue && minDateValue[0];
-                  return (
-                    formData?.guardian_date_of_birth_bs &&
-                    this.moment(formData?.guardian_date_of_birth_bs)
-                      .add(16, "years")
-                      .format("YYYY-MM-DD")
-                  );
-                },
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    false,
-                    "id_issued_date_bs",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            id_expiry_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:placeholder": "Select Expiry Date (A.D)",
-              "ui:options": {
-                enforceAgeRestriction: false,
-                minDate: 0,
-                name: "id_expiry_date_ad",
-                enforceAgeRestriction: true,
-                enableFutureDates: true,
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    true,
-                    "id_expiry_date_ad",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            id_expiry_date_bs: {
-              "ui:widget": widgets.NepaliDatePickerR,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:options": {
-                enforceAgeRestriction: true,
-                name: "id_expiry_date_bs",
-                minDate: 0,
-                enableFutureDates: true,
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    false,
-                    "id_expiry_date_bs",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            // issuing_authority: {
-            //   "ui:options": {
-            //     setValue: (formData, index) => {
-            //       const document_types = {
-            //         citizenship_number: "CTZN",
-            //         passport: "PP",
-            //         driving_license: "LCNSE",
-            //         voter_id: "VOTER",
-            //         nid: "NID",
-            //         embassy: "EMBSY",
-            //       };
-            //       const issuing_authorities = {
-            //         citizenship_number: "DAO",
-            //         passport: "DAO",
-            //         driving_license: "NA",
-            //         voter_id: "a4e3fa6d-133d-40da-8996-444207b7f2a2",
-            //         nid: "DONICR",
-            //         embassy: "5db16d6d-63ea-4ff1-a8d3-0ffdf38a2773",
-            //       };
-
-            //       const currentIdType =
-            //         formData?.guardian_id_type_details?.[index]?.id_type_id;
-
-            //       const matchingDocType = Object.entries(document_types).find(
-            //         ([_, value]) => value === currentIdType
-            //       );
-
-            //       if (matchingDocType) {
-            //         const [docTypeKey] = matchingDocType;
-            //         setFormData((prev) => ({
-            //           ...prev,
-            //           issuing_authority: issuing_authorities[docTypeKey],
-            //         }));
-
-            //         return issuing_authorities[docTypeKey];
-            //       }
-
-            //       return null;
-            //     },
-            //   },
-            // },
-            issued_district: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData, index) => {
-                  const identification =
-                    formData?.guardian_id_type_details?.[index]?.id_type_id;
-                  return this.filterOptions(
-                    identification === "PP" || identification === "EMBSY"
-                      ? "country_and_district"
-                      : "districts"
-                  );
-                },
-              },
-            },
-            issued_district_text: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData, index) => {
-                  const identification =
-                    formData?.guardian_id_type_details?.[index]?.id_type_id;
-                  return this.filterOptions(
-                    identification === "PP" || identification === "EMBSY"
-                      ? "country_and_district"
-                      : "countries"
-                  );
-                },
-              },
-            },
-            visa_issued_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:placeholder": "Select Visa Issued Date (A.D)",
-
-              "ui:options": {
-                enforceAgeRestriction: false,
-
-                disableFutureDates: true,
-
-                validAge: 0,
-                minimumDate: (formData) => {
-                  const minDateValue = formData?.guardian_id_type_details?.map(
-                    (item) =>
-                      this.moment(item?.id_issued_date_ad).format("YYYY-MM-DD")
-                  );
-
-                  return minDateValue && minDateValue[0];
-                },
-              },
-            },
-
-            visa_expiry_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:placeholder": "Select Visa Expiry Date (A.D)",
-
-              "ui:options": {
-                enforceAgeRestriction: false,
-
-                minDate: 0,
-
-                enableFutureDates: true,
-              },
-            },
-            visa_type: {
-              "ui:placeholder": "Select Visa Type",
-            },
-          },
-        },
-        guardian_occupation_type: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
-            onChange: (value) =>
-              this.dropdownReset({
-                guardian_occupation_type: value,
-                guardian_source_of_income: this.optionsData[
-                  "occupation_rule"
-                ]?.[`source_of_income_list`]?.find((item) =>
-                  item?.cascade_id?.includes(value)
-                )?.id,
-              }),
-          },
-        },
-
-        guardian_source_of_income: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.guardian_occupation_type
-            //   );
-            // },
-          },
-        },
-
-        guardian_occupation_detail: {
-          "ui:classNames": "my-1",
-          "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-
-            orderable: false,
-
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-          },
-
-          items: {
-            guardian_business_type: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData) => {
-                  const filteredData = this.filterOptionsOccupation(
-                    "occupation_rule",
-                    "business_type_list",
-                    formData?.guardian_occupation_type
-                  );
-                  return [
-                    ...filteredData,
-                    { label: "Others", value: "others" },
-                  ];
-                },
-              },
-            },
-          },
-        },
-
-        guardian_family_information: {
-          "ui:widget": "EditableTableWidget",
-          "ui:label": false,
-          "ui:options": {
-            orderable: false,
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-            fieldKeys: ["guardian_family_member_relation"],
-            disableSpecificKeys: this.form_status?.includes("init")
-              ? [
-                  { guardian_family_member_relation: 0 },
-                  { guardian_family_member_relation: 1 },
-                  { guardian_family_member_relation: 2 },
-                ]
-              : [
-                  {
-                    guardian_family_member_relation: 0,
-                    guardian_family_member_full_name: 0,
-                    guardian_is_family_name_not_available: 0,
-                  },
-                  {
-                    guardian_family_member_relation: 1,
-                    guardian_family_member_full_name: 1,
-                    guardian_is_family_name_not_available: 1,
-                  },
-                  {
-                    guardian_family_member_relation: 2,
-                    guardian_family_member_full_name: 2,
-                    guardian_is_family_name_not_available: 2,
-                  },
-                ],
-          },
-          items: {
-            guardian_family_member_relation: {
-              "ui:widget": "CascadeDropdown",
-              "ui:placeholder": "Select Relationship",
-              "ui:disabled": true,
-              "ui:options": {
-                getOptions: (formData, rowIndex) => {
-                  const familyInfo =
-                    formData?.guardian_family_information || [];
-
-                  const currentValue =
-                    familyInfo[
-                      rowIndex
-                    ]?.guardian_family_member_relation?.trim() || "";
-
-                  const usedBefore = familyInfo
-                    .slice(0, rowIndex)
-                    .map((item) =>
-                      item?.guardian_family_member_relation?.trim()
-                    )
-                    .filter(Boolean);
-
-                  return (this.filterOptions("relationships") || []).filter(
-                    (opt) => {
-                      const val = opt?.value?.trim();
-                      if (!val) return false;
-                      if (val === currentValue) return true;
-                      return !usedBefore.includes(val);
-                    }
-                  );
-                },
-              },
-            },
-            guardian_family_member_full_name: {
-              "ui:placeholder": "Enter Full Name",
-              "ui:options": {
-                setDisabled: (formData, index) =>
-                  this.form_status.includes("init") ||
-                  this.form_status.includes("update")
-                    ? formData?.guardian_family_information?.[index ?? 0]
-                        ?.guardian_is_family_name_not_available ??
-                      (formData?.guardian_family_information?.[index ?? 0]
-                        ?.guardian_family_member_relation === "FATHE" &&
-                      formData?.guardian_father_name
-                        ? true
-                        : false)
-                    : true,
-              },
-            },
-
-            guardian_is_family_name_not_available: {
-              "ui:widget": "CustomCheckBoxWidget",
-              "ui:options": {
-                setDisabled: (formData, index) =>
-                  this.form_status.includes("init") ||
-                  this.form_status.includes("update")
-                    ? formData?.guardian_family_information?.[index ?? 0]
-                        ?.guardian_family_member_relation === "FATHE" &&
-                      formData?.guardian_father_name
-                      ? true
-                      : false
-                    : true,
-                onChange: (value, index) => {
-                  this.familyNameChange(
-                    "guardian_family_member_full_name",
-                    value,
-                    "guardian_family_information",
-                    index ?? 0
-                  );
-                },
-              },
-            },
-          },
-        },
-
-        guardian_annual_income: {
-          "ui:options": {
-            amount: true,
-          },
-        },
-
-        screening_filter: {
+        guardian_dedup_check: {
           "ui:widget": this.form_status?.includes("init")
             ? "ButtonField"
             : "hidden",
           "ui:label": false,
+          "ui:classNames":
+            "d-flex justify-content-end align-items-end h-100 my-1",
           "ui:options": {
-            disableButton: (formData) => {
-              let requiredFields = jsonSchema.required || [];
-              const allFilled = requiredFields.every((field) => {
-                const value = formData?.[field];
-                return value !== undefined && value !== null && value !== "";
-              });
-
-              const isDedupCheck = !!formData?.guardian_dedup_module_data;
-
-              const isTrue = !(allFilled && isDedupCheck);
-              return this.form_status?.includes("init") && isTrue;
-            },
-            onClick: (event) => {
-              setFormData((prevData) => {
-                const currentValue = prevData?.screening_filter;
-
-                function toggleFilter(value) {
-                  if (value === undefined) return "true";
-                  if (value === "true") return "false";
-                  return "true";
-                }
-
-                return {
-                  ...prevData,
-                  screening_filter: toggleFilter(currentValue),
-                };
-              });
+            disableButton: (formData) =>
+              !(
+                formData?.guardian_first_name?.trim() &&
+                formData?.guardian_last_name?.trim() &&
+                formData?.guardian_father_name?.trim() &&
+                formData?.guardian_dedup_id_number?.trim() &&
+                formData?.guardian_date_of_birth_ad?.trim() &&
+                formData?.guardian_date_of_birth_bs?.trim()
+              ),
+            onClick: (formData) => {
+              this.getDedupCheck(formData);
             },
           },
         },
 
-        guardian_personal_info_screening: {
-          "ui:widget": "hidden",
-          "ui:label": false,
-          "ui:classNames": "my-1",
-          "ui:options": {
-            block: true,
-            disableButton: (formData) => {
-              let requiredFields = [
-                "guardian_first_name",
-                "guardian_last_name",
-                "guardian_father_name",
-                "guardian_date_of_birth_ad",
-                "guardian_date_of_birth_bs",
-                "guardian_dedup_identification",
-                "guardian_dedup_id_number",
-                "guardian_salutation",
-                "guardian_gender",
-                "guardian_marital_status",
-                "guardian_email",
-                "guardian_nationality",
-                "guardian_contact_type",
-                "guardian_occupation_type",
-                "guardian_source_of_income",
-                "guardian_related_party_family_account_holder",
-                "guardian_related_party_relation_with_account_holder",
-                "guardian_customer_type_id",
-              ];
-              const allFilled = requiredFields.every((field) => {
-                const value = formData?.[field];
-                return value !== undefined && value !== null && value !== "";
-              });
-
-              const isDedupCheck = !!formData?.guardian_dedup_module_data;
-
-              const isTrue = !(allFilled && isDedupCheck);
-              return this.form_status?.includes("init") && isTrue;
-            },
-            onClick: () => {
-              this.fetchPersonalInfoScreening();
-              setFormData((prevData) => ({
-                ...prevData,
-                guardian_is_existing_cif: false,
-                guardian_scheme_check: false,
-                guardian_is_cib_list: false,
-                guardian_is_block_list: false,
-                guardian_is_sanction: false,
-              }));
-            },
-          },
-        },
         guardian_personal_screening_data: {
           "ui:widget": "ScreeningReportCard",
           "ui:label": false,
@@ -2778,45 +1389,62 @@
             onChange: (value) => {
               this.dropdownReset({
                 guardian_current_country: value,
-                guardian_dedup_identification: null,
-                guardian_issuing_authority: null,
-                guardian_place_of_issue: null,
-                guardian_dedup_id_number: "",
+                guardian_current_province: null,
+                guardian_current_district: null,
+                guardian_current_municipality: null,
               });
             },
           },
         },
 
         guardian_current_province: {
-          "ui:widget": "hidden",
+          "ui:options": {
+            onChange: (value) =>
+              this.dropdownReset({
+                guardian_current_province: value,
+                guardian_current_district: null,
+                guardian_current_municipality: null,
+                guardian_current_house_number: "",
+                guardian_current_ward_number: "",
+                guardian_current_town: "",
+                guardian_current_street_name: "",
+                guardian_current_outside_town: "",
+                guardian_current_outside_street_name: "",
+              }),
+          },
         },
-
         guardian_current_district: {
-          "ui:widget": "hidden",
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: (formData) => {
+              return this.filterOptions(
+                "districts",
+                formData?.guardian_current_province
+              );
+            },
+            onChange: (value) =>
+              this.dropdownReset({
+                guardian_current_district: value,
+                guardian_current_municipality: null,
+                guardian_current_house_number: "",
+                guardian_current_ward_number: "",
+                guardian_current_town: "",
+                guardian_current_street_name: "",
+                guardian_current_outside_town: "",
+                guardian_current_outside_street_name: "",
+              }),
+          },
         },
         guardian_current_municipality: {
-          "ui:widget": "hidden",
-        },
-        guardian_current_ward_number: {
-          "ui:widget": "hidden",
-        },
-        guardian_current_street_name: {
-          "ui:widget": "hidden",
-        },
-        guardian_current_town: {
-          "ui:widget": "hidden",
-        },
-        guardian_current_house_number: {
-          "ui:widget": "hidden",
-        },
-        guardian_current_outside_town: {
-          "ui:widget": "hidden",
-        },
-        guardian_current_outside_street_name: {
-          "ui:widget": "hidden",
-        },
-        guardian_current_postal_code: {
-          "ui:widget": "hidden",
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: (formData) => {
+              return this.filterOptions(
+                "local_bodies",
+                formData?.guardian_current_district
+              );
+            },
+          },
         },
 
         guardian_screening_card: {

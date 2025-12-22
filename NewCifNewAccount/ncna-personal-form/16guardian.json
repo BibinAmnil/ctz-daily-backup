@@ -1,38 +1,42 @@
 {
   "type": "object",
-  "className": "fs-1",
-  "singleForm": true,
   "hasStep": true,
   "form_title": "guardian_info",
-  "isDisabled": false,
   "submissionHidden": false,
+  "isDisabled": false,
   "required": [
     "guardian_first_name",
     "guardian_last_name",
     "guardian_father_name",
+    "guardian_grandfather_name",
     "guardian_date_of_birth_ad",
     "guardian_date_of_birth_bs",
     "guardian_dedup_identification",
     "guardian_dedup_id_number",
-    "guardian_salutation",
-    "guardian_gender",
-    "guardian_marital_status",
-    "guardian_email",
-
+    "guardian_existing_permanent_address",
     "guardian_related_party_family_account_holder",
     "guardian_related_party_relation_with_account_holder",
-    "guardian_customer_type_id",
-    "guardian_family_information",
 
-    "guardian_nationality",
-    "guardian_current_country",
-    "guardian_issuing_authority",
-    "guardian_place_of_issue",
-    "guardian_is_us_person"
+    "guardian_hpp",
+    "guardian_pep",
+    "guardian_adverse_media",
+    "guardian_family_pep_declaration",
+    "guardian_loan_status",
+    "guardian_is_blacklisted",
+    "guardian_customer_introduce_by",
+    "guardian_met_in_person"
   ],
 
   "properties": {
-    "cif_data": {
+    "guardian_has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "Guardian Information",
+      "width": "full",
+      "default": true,
+      "readOnly": true
+    },
+    "guardian_cif_data": {
       "type": "string"
     },
     "account_info": {
@@ -49,34 +53,15 @@
       "hideTitle": true
     },
 
-    "guardian_customer_type_id": {
-      "type": "string",
-      "title": "Customer Type",
-      "group": "Guardian Account Information"
-    },
-
-    "guardian_related_party_family_account_holder": {
-      "type": "string",
-      "title": "Is s/he family member of account holder?",
-      "enum": ["Yes", "No"],
-      "group": "Guardian Relationship"
-    },
-    "guardian_related_party_relation_with_account_holder": {
-      "type": "string",
-      "title": "Relationship with the Account holder ?",
-      "group": "Guardian Relationship"
-    },
-
     "guardian_first_name": {
       "type": "string",
       "title": "First Name",
       "group": "Customer Information",
       "pattern": "^[a-zA-Z.()]*$",
       "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+        "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
       }
     },
-
     "guardian_middle_name": {
       "type": "string",
       "title": "Middle Name",
@@ -111,18 +96,14 @@
         "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
       }
     },
-
-    "guardian_nationality": {
+    "guardian_grandfather_name": {
       "type": "string",
-      "title": "Nationality",
+      "title": "Grandfather Name",
       "group": "Customer Information",
-      "default": "NP"
-    },
-    "guardian_current_country": {
-      "type": "string",
-      "title": "Current Country",
-      "group": "Customer Information",
-      "default": "NP"
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      }
     },
 
     "guardian_dedup_identification": {
@@ -131,23 +112,14 @@
       "group": "Customer Information",
       "default": "CTZN"
     },
-
-    "guardian_issuing_authority": {
-      "type": "string",
-      "title": "Issuing Authority",
-      "group": "Customer Information",
-      "default": "DAO"
-    },
-    "guardian_place_of_issue": {
-      "type": "string",
-      "title": "Place of Issue",
-      "group": "Customer Information"
-    },
-
     "guardian_dedup_id_number": {
       "type": "string",
       "title": "Identification Number",
-      "group": "Customer Information"
+      "group": "Customer Information",
+      "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
+      "errorMessage": {
+        "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+      }
     },
     "guardian_date_of_birth_ad": {
       "type": "string",
@@ -159,6 +131,22 @@
       "group": "Customer Information",
       "title": "Date of Birth (B.S.)"
     },
+    "guardian_existing_permanent_address": {
+      "type": "string",
+      "title": "Existing Permanent Address",
+      "group": "Customer Information"
+    },
+    "guardian_related_party_family_account_holder": {
+      "type": "string",
+      "title": "Is s/he family member of account holder?",
+      "enum": ["Yes", "No"],
+      "group": "Customer Information"
+    },
+    "guardian_related_party_relation_with_account_holder": {
+      "type": "string",
+      "title": "Relationship with the Account holder ?",
+      "group": "Customer Information"
+    },
 
     "guardian_dedup_check": {
       "type": "string",
@@ -167,6 +155,7 @@
       "additionalProperties": true,
       "width": "full"
     },
+
     "guardian_dedup_module_data": {
       "type": "string",
       "width": "full",
@@ -190,84 +179,11 @@
         }
       ]
     },
-    "guardian_has_cif": {
-      "type": "boolean",
-      "title": "Has CIF Number?",
-      "group": "Guardian Information",
-      "width": "full",
-      "default": true,
-      "readOnly": true
-    },
-    "guardian_salutation": {
-      "type": "string",
-      "title": "Salutation",
-      "width": "full",
-      "group": "Personal Information"
-    },
-    "guardian_gender": {
-      "type": "string",
-      "title": "Gender",
-      "group": "Personal Information"
-    },
-    "guardian_marital_status": {
-      "type": "string",
-      "title": "Marital Status",
-      "group": "Personal Information"
-    },
-    "guardian_email_not_available": {
-      "type": "boolean",
-      "title": "If email not available?",
-      "group": "Personal Information"
-    },
-    "guardian_email": {
-      "type": "string",
-      "title": "Email",
-      "group": "Personal Information",
-      "pattern": "^(N/A|\\.|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$",
-      "errorMessage": {
-        "pattern": "Invalid Email Address"
-      }
-    },
-    "guardian_family_information": {
-      "type": "array",
-      "title": "Family Information",
-      "minItems": 3,
-      "maxItems": 3,
-      "default": [
-        {
-          "guardian_family_member_relation": "FATHE"
-        },
-        {
-          "guardian_family_member_relation": "MOTHE"
-        },
-        {
-          "guardian_family_member_relation": "GRANF"
-        }
-      ],
-      "items": {
-        "type": "object",
-        "properties": {
-          "guardian_family_member_relation": {
-            "type": "string",
-            "title": "Relationship"
-          },
-          "guardian_family_member_full_name": {
-            "type": "string",
-            "title": "Full Name"
-          },
-          "guardian_is_family_name_not_available": {
-            "type": "boolean",
-            "title": "Family Not Available?"
-          }
-        }
-      },
-      "group": "Family Information"
-    },
 
     "guardian_personal_screening_data": {
       "type": "string",
       "width": "full",
-      "group": "Customer Information",
+      "group": "",
       "additionalProperties": true,
       "columns": [
         { "key": "name", "label": "Name" },
@@ -289,40 +205,87 @@
       "title": "Screening",
       "group": ""
     },
-    "guardian_is_us_person": {
+
+    "guardian_hpp": {
       "type": "string",
-      "title": "FATCA Declaration",
-      "group": "Personal Information",
-      "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
-      "default": "None"
+      "title": "Highly Positioned Person (HPP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "default": "No"
+    },
+
+    "guardian_pep": {
+      "type": "string",
+      "title": "Politically Exposed Person (PEP) ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "guardian_family_pep_declaration": {
+      "type": "string",
+      "title": "Customer declares family member as PEP or as associate PEP ?",
+      "group": "Declaration",
+      "enum": ["Yes", "No"],
+      "width": 10
+    },
+    "guardian_adverse_media": {
+      "type": "string",
+      "title": "Adverse Media",
+      "group": "Declaration",
+      "enum": ["Yes", "No"]
+    },
+
+    "guardian_loan_status": {
+      "type": "string",
+      "title": "Has the customer taken any loan with us in the past ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "guardian_is_blacklisted": {
+      "type": "string",
+      "title": "Has the customer being blacklisted by us ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+
+    "guardian_customer_introduce_by": {
+      "type": "string",
+      "title": "Introducer Name",
+      "group": "statusOfClient",
+      "enum": [
+        "Bank Staff",
+        "Other Account Holder",
+        "Walk-in Customer",
+        "Local Government Bodies"
+      ],
+      "width": 8
+    },
+
+    "guardian_met_in_person": {
+      "type": "string",
+      "title": "Has the customer been met in-person (face-to-face) ?",
+      "group": "statusOfClient",
+      "enum": ["Yes", "No"],
+      "width": 8
+    },
+    "guardian_risk_level": {
+      "type": "string",
+      "group": "Risk",
+      "title": "Risk Level",
+      "enum": ["Low Risk", "Medium Risk", "High Risk"],
+      "readOnly": true
+    },
+
+    "guardian_calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
     }
   },
 
   "dependencies": {
-    "guardian_last_name_not_available": {
-      "if": {
-        "properties": {
-          "guardian_last_name_not_available": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "guardian_last_name": {
-            "readOnly": true
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "guardian_last_name": {
-            "readOnly": false
-          }
-        }
-      }
-    },
-
     "guardian_has_cif": {
       "if": {
         "properties": {
@@ -349,28 +312,166 @@
         "required": ["guardian_cif_number"]
       }
     },
-
-    "guardian_email_not_available": {
+    "guardian_last_name_not_available": {
       "if": {
         "properties": {
-          "guardian_email_not_available": {
+          "guardian_last_name_not_available": {
             "const": true
           }
         }
       },
       "then": {
         "properties": {
-          "guardian_email": {
+          "guardian_last_name": {
             "readOnly": true
           }
         }
       },
       "else": {
         "properties": {
-          "guardian_email": {
+          "guardian_last_name": {
             "readOnly": false
           }
         }
+      }
+    },
+
+    "guardian_customer_introduce_by": {
+      "oneOf": [
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Bank Staff"]
+            },
+            "guardian_employee_id": {
+              "type": "string",
+              "title": "Bank Staff CIF Number",
+              "group": "statusOfClient",
+              "width": 8
+            }
+          },
+          "required": ["guardian_employee_id"]
+        },
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Other Account Holder"]
+            },
+            "guardian_introducer_account_number": {
+              "type": "string",
+              "title": "Introducer Account Number",
+              "group": "statusOfClient",
+              "pattern": "^[0-9]{14}$",
+              "message": "Must be of 14 Digits",
+              "width": 8,
+              "errorMessage": {
+                "pattern": "Must be of 14 Digits"
+              }
+            }
+          },
+          "required": ["guardian_introducer_account_number"]
+        },
+        {
+          "properties": {
+            "guardian_customer_introduce_by": {
+              "enum": ["Walk-in Customer", "Local Government Bodies"]
+            }
+          },
+          "required": []
+        }
+      ]
+    },
+
+    "guardian_hpp": {
+      "if": {
+        "properties": {
+          "guardian_hpp": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_hpp_category": {
+            "type": "string",
+            "title": "HPP Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["guardian_hpp_category"],
+        "dependencies": {
+          "guardian_hpp_category": {
+            "if": {
+              "properties": {
+                "guardian_hpp_category": {
+                  "enum": ["CDHPP", "PDHPP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "guardian_hpp_sub_category": {
+                  "type": "string",
+                  "title": "HPP Sub Category",
+                  "group": "Declaration"
+                }
+              },
+              "required": ["guardian_hpp_sub_category"]
+            }
+          }
+        }
+      }
+    },
+    "guardian_pep": {
+      "if": {
+        "properties": {
+          "guardian_pep": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_pep_category": {
+            "type": "string",
+            "enum": [
+              "Existing PEPs",
+              "Former PEPs",
+              "High-ranking officials from neighboring or nearby countries",
+              "Other foreign PEPs",
+              "International PEPs"
+            ],
+            "title": "Pep Category",
+            "group": "Declaration"
+          }
+        },
+        "required": ["guardian_pep_category"]
+      }
+    },
+
+    "guardian_adverse_media": {
+      "if": {
+        "properties": {
+          "guardian_adverse_media": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "guardian_adverse_category": {
+            "type": "string",
+            "enum": [
+              "Money Laundering",
+              "Terrorist Financing",
+              "Financial Fraud",
+              "Organized Crime"
+            ],
+            "title": "Category of Adverse",
+            "group": "Declaration"
+          }
+        },
+        "required": ["guardian_adverse_category"]
       }
     }
   }

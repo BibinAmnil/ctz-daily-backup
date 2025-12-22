@@ -1234,11 +1234,11 @@
 
           "issue_country",
 
-          "occupation_type",
-          "source_of_income",
-          "other_source_of_income",
           "employment_type",
           "other_employment_type",
+          "source_of_income",
+          "other_source_of_income",
+          "occupation_type",
           "occupation_detail",
 
           "has_nominee",

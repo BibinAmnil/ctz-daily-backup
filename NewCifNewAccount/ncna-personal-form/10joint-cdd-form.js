@@ -51,6 +51,8 @@
         business_type: "business_type",
         existing_risk_rating: "risk_categories",
         account_info: "account_category",
+        hpp_category: "hpp_categories",
+        hpp_sub_category: "hpp_sub_categories",
       };
       const dataKey = fieldMapping[fieldKey] || fieldKey;
       let fieldOptions = optionsData[dataKey] || [];
@@ -161,7 +163,7 @@
           const resp = response?.data;
           this.setFormData((prevData) => ({
             ...prevData,
-            cdd_risk_level: resp?.risk_level,
+            risk_level: resp?.risk_level,
             cdd_risk_score: resp?.risk_score,
             is_high_risk_acc: resp?.is_high_risk_acc,
             is_high_risk_account: resp?.is_high_risk_account ? "Yes" : "No",
@@ -312,6 +314,8 @@
         "business_type",
         "existing_risk_rating",
         "account_info",
+        "hpp_category",
+        "hpp_sub_category",
       ];
 
       for (const fieldKey of fieldsToUpdate) {
@@ -442,6 +446,9 @@
         "ui:ObjectFieldTemplate": ObjectFieldTemplate,
         "ui:order": [
           "is_minor_account",
+          "hpp",
+          "hpp_category",
+          "hpp_sub_category",
           "pep",
           "pep_category",
           "pep_declaration",
@@ -450,10 +457,25 @@
           "adverse_category",
           "nationality",
           "permanent_country",
+
           "permanent_province",
+
           "permanent_district",
+
+          "permanent_municipality",
+
+          "permanent_ward_number",
+
+          "permanent_street_name",
+
+          "permanent_town",
+
+          "permanent_house_number",
+
           "permanent_outside_town",
+
           "permanent_outside_street_name",
+
           "permanent_postal_code",
           "has_related_party",
           "related_party",
@@ -461,6 +483,8 @@
           "entitled_with_fund",
           "occupation_type",
           "source_of_income",
+          "source_of_income_text",
+          "occupation_detail",
           "business_type",
           "existing_risk_rating",
           "loan_status",
@@ -470,18 +494,19 @@
           "customer_name",
           "employee_id",
           "met_in_person",
-          "declared_anticipated_annual_transaction",
-          "expected_anticipated_annual_transaction",
-          "number_of_transaction",
+
+          "annual_volume_of_transactions",
+          "annual_number_of_transactions",
+          "monthly_volume_of_transactions",
+          "monthly_number_of_transactions",
           "yearly_income",
           "transaction_justification",
           "transaction_fund_details",
-
-          "cdd_risk_level",
+          "screening_ref_number",
+          "external_cdd_id",
+          "risk_level",
           "is_high_risk_account",
           "calculate_risk",
-
-          "cdd_risk_score",
           "acknowledge",
           "approval_status",
           "revert_to",
@@ -491,51 +516,6 @@
           "is_cib_list",
           "is_block_list",
         ],
-
-        related_party: {
-          "ui:options": {
-            fieldKeys: [
-              "related_party_designation",
-              "related_party_first_name",
-              "related_party_middle_name",
-              "related_party_last_name",
-              "related_party_family_account_holder",
-              "related_party_relation_with_account_holder",
-              "related_party_detail",
-            ],
-          },
-          "ui:options": {
-            addable: false,
-            removable: false,
-          },
-          items: {
-            "ui:order": [
-              "related_party_designation",
-              "related_party_first_name",
-              "related_party_middle_name",
-              "related_party_last_name",
-              "related_party_family_account_holder",
-              "related_party_relation_with_account_holder",
-              "related_party_detail",
-            ],
-            related_party_detail: {
-              "ui:options": {
-                addable: false,
-                removable: false,
-              },
-              items: {
-                "ui:order": [
-                  "related_party_designation",
-                  "related_party_first_name",
-                  "related_party_middle_name",
-                  "related_party_last_name",
-                  "related_party_family_account_holder",
-                  "related_party_relation_with_account_holder",
-                ],
-              },
-            },
-          },
-        },
         account_info: {
           "ui:widget": "hidden",
         },
@@ -553,68 +533,67 @@
           "ui:widget": "hidden",
         },
         nationality: {
-          "ui:widget": "hidden",
-        },
-        permanent_country: {
-          "ui:widget": "hidden",
-        },
-        permanent_province: {
-          "ui:widget": "hidden",
-        },
-        permanent_district: {
-          "ui:widget": "hidden",
-        },
-        permanent_outside_town: {
-          "ui:widget": "hidden",
-        },
-        permanent_outside_street_name: {
-          "ui:widget": "hidden",
-        },
-        permanent_postal_code: {
-          "ui:widget": "hidden",
-        },
-
-        declared_anticipated_annual_transaction: {
           "ui:options": {
-            addonBefore: "Customer",
-            amount: true,
-          },
-        },
-        expected_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Branch",
-            amount: true,
-          },
-        },
-        occupation_type: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
-            onChange: (value) =>
+            onChange: async (value) => {
               this.dropdownReset({
-                occupation_type: value,
-                source_of_income: this.optionsData["occupation_rule"]?.[
-                  `source_of_income_list`
-                ]?.find((item) => item?.cascade_id?.includes(value))?.id,
-              }),
+                nationality: value,
+                dedup_identification:
+                  value === "NP" ? "CTZN" : value === "IN" ? null : "PP",
+                permanent_country:
+                  value === "NP" ? "NP" : this.formData?.permanent_country,
+                currency: null,
+                account_scheme_id: null,
+                customer_type_id: null,
+
+                id_type_details:
+                  value === "NP" || value === "IN"
+                    ? [{}]
+                    : [
+                        {
+                          id_type_id: "PP",
+                        },
+                        {
+                          removable: false,
+                          id_type_id: "TRDOC",
+                          issue_country: "NP",
+                        },
+                      ],
+                national_id_number: "",
+                national_id_issue_date_ad: undefined,
+                national_id_issue_date_bs: undefined,
+                national_id_issue_place: null,
+              });
+              (await value) !== "IN" && (this.nationalityChanged = true);
+              return null;
+            },
           },
         },
 
-        source_of_income: {
-          // "ui:widget": "CascadeDropdown",
+        hpp_sub_category: {
+          "ui:widget": "CascadeDropdown",
           "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.occupation_type
-            //   );
-            // },
+            getOptions: (formData) => {
+              return this.filterOptions(
+                "hpp_sub_categories",
+                formData?.hpp_category
+              );
+            },
+          },
+        },
+
+        annual_volume_of_transactions: {
+          "ui:options": {
+            amount: true,
+          },
+        },
+        monthly_volume_of_transactions: {
+          "ui:options": {
+            amount: true,
+          },
+        },
+        yearly_income: {
+          "ui:options": {
+            amount: true,
           },
         },
 
@@ -622,34 +601,19 @@
           "ui:classNames": "my-1",
           "ui:options": {
             addable: false,
-
             orderable: false,
-
             removable: false,
           },
 
           items: {
-            business_type: {
+            designation: {
               "ui:widget": "CascadeDropdown",
               "ui:options": {
-                getOptions: (formData) => {
-                  const filteredData = this.filterOptionsOccupation(
-                    "occupation_rule",
-                    "business_type_list",
-                    formData?.occupation_type
-                  );
-                  return [
-                    ...filteredData,
-                    { label: "Others", value: "others" },
-                  ];
-                },
+                getOptions: () => this.filterOptions("corporate_relation"),
               },
             },
+            business_type: {},
           },
-        },
-
-        cdd_risk_score: {
-          "ui:widget": "hidden",
         },
 
         calculate_risk: {
@@ -752,6 +716,25 @@
           "ui:options": {
             rows: 5,
           },
+        },
+        permanent_municipality: {
+          "ui:widget": "hidden",
+        },
+
+        permanent_ward_number: {
+          "ui:widget": "hidden",
+        },
+
+        permanent_street_name: {
+          "ui:widget": "hidden",
+        },
+
+        permanent_town: {
+          "ui:widget": "hidden",
+        },
+
+        permanent_house_number: {
+          "ui:widget": "hidden",
         },
       };
     }

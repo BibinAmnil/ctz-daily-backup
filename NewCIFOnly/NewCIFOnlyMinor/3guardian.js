@@ -59,55 +59,6 @@
       //   this.toast.error("View all Screening Data To Continue");
       // }
 
-      function isValidMobileNumber(number, country) {
-        if (typeof number === "number") {
-          number = number.toString();
-        }
-        if (typeof number !== "string") return false;
-        if (country === "NEPAL") {
-          // Must be exactly 10 digits
-          return /^\d{10}$/.test(number);
-        } else {
-          // Must be 7 to 12 digits
-          return /^\d{7,12}$/.test(number);
-        }
-      }
-      function isValidPhoneNumber(number) {
-        if (typeof number === "number") {
-          number = number.toString();
-        }
-        if (typeof number !== "string") return false;
-        // Must be 7 to 12 digits
-        return /^\d{7,12}$/.test(number);
-      }
-
-      if (
-        formData.guardian_phone_number &&
-        !isValidPhoneNumber(formData.guardian_phone_number)
-      ) {
-        errors.phone_number.addError("Phone number must be 7 to 12 digits.");
-      }
-
-      if (
-        formData?.guardian_mobile_number &&
-        formData?.guardian_mobile_country_code
-      ) {
-        if (
-          formData?.guardian_mobile_number !== undefined &&
-          !isValidMobileNumber(
-            formData.guardian_mobile_number,
-            formData.guardian_mobile_country_code
-          )
-        ) {
-          if (formData.guardian_mobile_country_code === "NEPAL") {
-            errors.mobile_number.addError("Mobile number must be 10 digits.");
-          } else {
-            errors.mobile_number.addError(
-              "Mobile number must be 7 to 12 digits."
-            );
-          }
-        }
-      }
       return errors;
     }
 
@@ -215,15 +166,6 @@
       }, 100);
     };
 
-    lookupValue(value, key) {
-      if (!this.optionsData[value]) return null;
-      const foundItem = this.optionsData[value].find(
-        (item) => item.cbs_code === key || item.title === key
-      );
-      if (!foundItem) return null;
-      return founditem?.fg_code || item?.cbs_code || item?.id;
-    }
-
     async updateFormAndSchema(formData, schemaConditions) {
       this.formData = formData;
       if (!this.form_status?.includes("case-init")) {
@@ -234,44 +176,6 @@
           };
         });
       }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-
-        const flatEntry = { key: index };
-
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-
-        return acc;
-      }, {});
     }
 
     async calculateRisk(value) {
@@ -311,24 +215,6 @@
         return {};
       } finally {
         this.addLoader("guardian_calculate_risk", false);
-      }
-    }
-
-    async fetchMasterData(url, axios) {
-      try {
-        const response = await axios.get(url);
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
-        const data = response?.data;
-
-        this.isMasterDataLoaded = true;
-        this.optionsData = data.data;
-
-        return data.data;
-      } catch (error) {
-        console.error("Error fetching options:", error);
-        return {};
       }
     }
 
@@ -505,6 +391,8 @@
         guardian_place_of_issue: "districts",
         guardian_literacy: "literacy",
         guardian_educational_qualification: "education_qualifications",
+        guardian_hpp_category: "hpp_categories",
+        guardian_hpp_sub_category: "hpp_sub_categories",
       };
       const dataKey = fieldMapping[fieldKey] || fieldKey;
       let fieldOptions = optionsData[dataKey] || [];
@@ -641,6 +529,7 @@
     }
 
     async initializeSchema(setJsonSchema, formData) {
+      if (!this.form_status?.includes("case-init")) this.setDivide(true);
       this.setNextStep("personal-cdd-form");
 
       if (this.form_status?.includes("review")) {
@@ -694,6 +583,8 @@
         "guardian_place_of_issue",
         "guardian_literacy",
         "guardian_educational_qualification",
+        "guardian_hpp_category",
+        "guardian_hpp_sub_category",
       ];
 
       for (const fieldKey of fieldsToUpdate) {
@@ -768,7 +659,7 @@
           guardian_date_of_birth_bs: resp?.date_of_birth_ad
             ? this.adToBs(resp?.date_of_birth_ad)
             : "",
-          guardian_cif_data: JSON.stringify(prefixAddedData),
+          guardian_guardian_cif_data: JSON.stringify(prefixAddedData),
         }));
         return;
       } catch (error) {
@@ -1137,10 +1028,6 @@
         widgets,
         jsonSchema,
       } = options;
-      !(
-        this.formData?.case_status !== "Draft" ||
-        this.formData?.case_status !== "Proceed"
-      ) && (this.nationalityChanged = true);
       const handleSetNotAvailable = (value, keyName) => {
         setTimeout(
           () =>
@@ -1159,71 +1046,6 @@
         );
       };
 
-      const sameAsPermanentOnChange = (value) => {
-        setTimeout(() => {
-          this.setFormData((prevFormData) => {
-            let updatedFormData = { ...prevFormData };
-            updatedFormData.guardian_same_as_permanent = value;
-
-            if (value) {
-              updatedFormData = {
-                ...updatedFormData,
-                guardian_current_country:
-                  updatedFormData.guardian_permanent_country || "NP",
-                guardian_current_province:
-                  updatedFormData.guardian_permanent_province || "",
-                guardian_current_district:
-                  updatedFormData.guardian_permanent_district || "",
-                guardian_current_municipality:
-                  updatedFormData.guardian_permanent_municipality || "",
-                guardian_current_ward_number:
-                  updatedFormData.guardian_permanent_ward_number || "",
-                guardian_current_street_name:
-                  updatedFormData.guardian_permanent_street_name || "",
-                guardian_current_town:
-                  updatedFormData.guardian_permanent_town || "",
-                guardian_current_house_number:
-                  updatedFormData.guardian_permanent_house_number || "",
-                guardian_current_outside_town:
-                  updatedFormData.guardian_permanent_outside_town || "",
-                guardian_current_outside_street_name:
-                  updatedFormData.guardian_permanent_outside_street_name,
-                guardian_current_postal_code:
-                  updatedFormData.guardian_permanent_postal_code,
-              };
-            } else {
-              updatedFormData = {
-                ...updatedFormData,
-                guardian_same_as_permanent: value,
-                guardian_current_country: "NP", // Default
-                guardian_current_province: "",
-                guardian_current_district: "",
-                guardian_current_municipality: "",
-                guardian_current_ward_number: "",
-                guardian_current_street_name: "",
-                guardian_current_town: "",
-                guardian_current_house_number: "",
-                guardian_current_outside_town: "",
-                guardian_current_outside_street_name: "",
-                guardian_current_postal_code: "",
-              };
-            }
-
-            return updatedFormData;
-          });
-        }, 100);
-      };
-
-      const defaultSelectedValue = (value) => {
-        const selectedValue = this.functionGroup?.getRequiredDocuments(
-          this.optionsData["multi_validation_mapping"],
-          {
-            document_type: value,
-          }
-        );
-        return selectedValue;
-      };
-
       this.initializeSchema(setJsonSchema, formData);
       return {
         "ui:ObjectFieldTemplate": ObjectFieldTemplate,
@@ -1231,118 +1053,35 @@
           "guardian_has_cif",
           "guardian_cif_number",
           "guardian_cif_enquiry",
-          "guardian_customer_type_id",
-          "account_info",
-          "is_minor_account",
 
           "guardian_first_name",
           "guardian_middle_name",
           "guardian_last_name",
           "guardian_last_name_not_available",
           "guardian_father_name",
+          "guardian_grandfather_name",
           "guardian_date_of_birth_ad",
           "guardian_date_of_birth_bs",
-          "guardian_is_nrn",
-          "guardian_is_refugee",
-          "guardian_nationality",
-          "guardian_dedup_current_country",
           "guardian_dedup_identification",
-          "guardian_issuing_authority",
-          "guardian_place_of_issue",
           "guardian_dedup_id_number",
+          "guardian_existing_permanent_address",
+          "guardian_related_party_family_account_holder",
+          "guardian_related_party_relation_with_account_holder",
 
           "guardian_dedup_check",
           "guardian_dedup_module_data",
           "guardian_personal_screening_data",
           "guardian_screening_ref_code",
 
-          "guardian_salutation",
-          "guardian_gender",
-          "guardian_marital_status",
-          "guardian_email",
-          "guardian_email_not_available",
-          "guardian_literacy",
-          "guardian_educational_qualification",
-          "guardian_is_bank_staff",
-          "guardian_staff_id",
-          "guardian_is_us_person",
-
-          "guardian_related_party_family_account_holder",
-          "guardian_related_party_relation_with_account_holder",
-
-          "guardian_family_information",
-
-          "guardian_permanent_country",
-          "guardian_permanent_province",
-          "guardian_permanent_district",
-          "guardian_permanent_municipality",
-          "guardian_permanent_ward_number",
-          "guardian_permanent_street_name",
-          "guardian_permanent_town",
-          "guardian_permanent_house_number",
-          "guardian_permanent_outside_town",
-          "guardian_permanent_outside_street_name",
-          "guardian_permanent_postal_code",
-          "guardian_residential_status",
-
-          "guardian_same_as_permanent",
-          "guardian_current_country",
-          "guardian_current_province",
-          "guardian_current_district",
-          "guardian_current_municipality",
-          "guardian_current_ward_number",
-          "guardian_current_street_name",
-          "guardian_current_town",
-          "guardian_current_house_number",
-          "guardian_current_outside_town",
-          "guardian_current_outside_street_name",
-          "guardian_current_postal_code",
-          "guardian_contact_type",
-
-          "guardian_mobile_country_code",
-          "guardian_mobile_number",
-          "guardian_phone_country_code",
-          "guardian_phone_number",
-
-          "guardian_is_customer_disabled",
-          "guardian_national_id_number",
-          "guardian_national_id_issue_date_ad",
-          "guardian_national_id_issue_date_bs",
-          "guardian_national_id_issue_place",
-          "guardian_national_id_issuing_authority",
-          "guardian_nid_verified",
-          "guardian_nid_verify",
-          "guardian_nid_reset",
-          "guardian_id_type_details",
-
-          "guardian_occupation_type",
-          "guardian_source_of_income",
-          "guardian_other_source_of_income",
-          "guardian_employment_type",
-          "guardian_other_employment_type",
-          "guardian_occupation_detail",
-          "guardian_business_type",
-          "guardian_personal_info_screening",
-          "screening_filter",
-          "guardian_personal_screening_data",
-          "guardian_screening_ref_code",
-
-          "guardian_annual_volume_of_transactions",
-          "guardian_annual_number_of_transactions",
-          "guardian_monthly_volume_of_transactions",
-          "guardian_monthly_number_of_transactions",
-          "guardian_yearly_income",
-          "guardian_transaction_justification",
-          "guardian_transaction_fund_details",
-
+          "guardian_hpp",
+          "guardian_hpp_category",
+          "guardian_hpp_sub_category",
           "guardian_pep",
           "guardian_pep_category",
           "guardian_pep_declaration",
           "guardian_family_pep_declaration",
           "guardian_adverse_media",
           "guardian_adverse_category",
-          "entitled_with_fund",
-          "guardian_existing_risk_rating",
           "guardian_loan_status",
           "guardian_is_blacklisted",
           "guardian_customer_introduce_by",
@@ -1350,30 +1089,32 @@
           "guardian_introducer_account_number",
           "guardian_met_in_person",
 
-          "blacklist_min_score",
-          "sanction_min_score",
-          "pep_min_score",
-          "adverse_media_min_score",
-          "max_result",
-
-          "guardian_is_existing_cif",
-          "guardian_is_block_list",
-          "guardian_scheme_check",
-          "guardian_is_cib_list",
-          "guardian_is_sanction",
-          "guardian_screening_ref_number",
-          "guardian_external_cdd_id",
           "guardian_risk_level",
           "guardian_calculate_risk",
-          "guardian_risk_score",
 
-          "cif_data",
+          "guardian_cif_data",
+          "account_info",
+          "is_minor_account",
         ],
         connectedPairs: [
           ["guardian_last_name", "guardian_last_name_not_available"],
           ["guardian_email", "guardian_email_not_available"],
         ],
-
+        guardian_has_cif: {
+          "ui:widget": "CustomCheckBoxWidget",
+          "ui:label": false,
+          "ui:options": {
+            onChange: (value) =>
+              !value &&
+              setTimeout(
+                () =>
+                  setFormData((prev) => ({
+                    account_info: prev?.account_info,
+                  })),
+                100
+              ),
+          },
+        },
         guardian_first_name: {
           "ui:options": {
             maxLength: 30,
@@ -1395,104 +1136,9 @@
             maxLength: 50,
           },
         },
-
-        guardian_marital_status: {
+        guardian_grandfather_name: {
           "ui:options": {
-            onChange: (value) => {
-              this.updateFamilyInformation(value);
-            },
-          },
-        },
-
-        guardian_is_customer_disabled: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-        },
-        guardian_nid_verify: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonPopupWidget"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames": "mt-2 w-100",
-          // "ui:options": {
-          //   disableButton: (formData) => !formData?.guardian_national_id_number,
-          //   buttonClassName: "w-100",
-          //   onClick: async (formData) => {
-          //     this.addLoader("guardian_nid_verify", true);
-          //     let nidVerifiedValue = "No";
-
-          //     try {
-          //       const response = await this.axios.post(
-          //         `${this.mainRouteURL}/external-api/verify-nid`,
-          //         {
-          //           nin: formData?.guardian_national_id_number,
-          //           first_name: formData?.guardian_first_name,
-          //           last_name: formData?.guardian_last_name,
-          //           middle_name: formData?.guardian_middle_name,
-          //           date_of_birth: formData?.guardian_date_of_birth_ad,
-          //         }
-          //       );
-
-          //       const responseData = response?.data;
-          //       nidVerifiedValue = responseData?.resCod == "200" ? "Yes" : "No";
-          //       this.setModalOpen({
-          //         open: true,
-          //         message: responseData?.data?.message,
-          //         close: "Close",
-          //         status: "success",
-          //       });
-          //     } catch (err) {
-          //       nidVerifiedValue = "No";
-          //       this.setModalOpen({
-          //         open: true,
-          //         message: err?.response?.data?.message,
-          //         close: "Close",
-          //         status: "error",
-          //       });
-          //     } finally {
-          //       this.addLoader("guardian_nid_verify", false);
-          //       this.setFormData((prevForm) => ({
-          //         ...prevForm,
-          //         guardian_nid_verified: nidVerifiedValue,
-          //       }));
-          //     }
-          //   },
-          // },
-        },
-        guardian_nid_reset: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames": "mt-5 w-100",
-          "ui:options": {
-            disableButton: (formData) => !formData?.guardian_nid_verified,
-            buttonClassName: "w-100",
-            onClick: async (formData) => {
-              this.dropdownReset({
-                guardian_national_id_number: null,
-                guardian_national_id_issue_date_ad: "",
-                guardian_national_id_issue_date_bs: "",
-                guardian_national_id_issue_place: "",
-                guardian_nid_verified: "",
-              });
-            },
-          },
-        },
-
-        guardian_annual_volume_of_transactions: {
-          "ui:options": {
-            amount: true,
-          },
-        },
-        guardian_monthly_volume_of_transactions: {
-          "ui:options": {
-            amount: true,
-          },
-        },
-        guardian_yearly_income: {
-          "ui:options": {
-            amount: true,
+            maxLength: 50,
           },
         },
 
@@ -1505,291 +1151,22 @@
         guardian_screening_ref_code: {
           "ui:widget": "hidden",
         },
-        cif_data: {
+        guardian_cif_data: {
           "ui:widget": "hidden",
-        },
-        guardian_customer_type_id: {},
-
-        guardian_has_cif: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) =>
-              !value &&
-              setTimeout(
-                () =>
-                  setFormData((prev) => ({
-                    account_info: prev?.account_info,
-                  })),
-                100
-              ),
-          },
-        },
-
-        guardian_father_name: {
-          "ui:options": {
-            onChange: (value) => {
-              this.convertToArray(
-                value,
-                "guardian_family_member_full_name",
-                "guardian_family_information"
-              );
-            },
-          },
-        },
-        declared_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Customer",
-            amount: true,
-          },
-        },
-        guardian_dedup_check: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames":
-            "d-flex justify-content-end align-items-end h-100 my-1",
-          "ui:options": {
-            disableButton: (formData) =>
-              !(
-                formData?.guardian_first_name?.trim() &&
-                formData?.guardian_last_name?.trim() &&
-                formData?.guardian_father_name?.trim() &&
-                formData?.guardian_dedup_id_number?.trim() &&
-                formData?.guardian_date_of_birth_ad?.trim() &&
-                formData?.guardian_date_of_birth_bs?.trim()
-              ),
-            onClick: (formData) => {
-              this.getDedupCheck(formData);
-            },
-          },
-        },
-
-        guardian_is_nrn: {
-          "ui:options": {
-            onChange: (value) => {
-              this.dropdownReset({
-                guardian_is_nrn: value,
-                guardian_dedup_identification: value === "Yes" ? "NRN" : null,
-                guardian_issuing_authority: value === "Yes" ? "MOEXA" : null,
-                guardian_place_of_issue: null,
-                guardian_dedup_id_number: "",
-              });
-            },
-          },
-        },
-
-        guardian_is_refugee: {
-          "ui:options": {
-            onChange: (value) => {
-              this.dropdownReset({
-                guardian_is_refugee: value,
-                guardian_dedup_identification: value === "Yes" ? "REF" : null,
-                guardian_issuing_authority: value === "Yes" ? "NUCRA" : null,
-                guardian_place_of_issue: null,
-                guardian_dedup_id_number: "",
-              });
-            },
-          },
-        },
-
-        guardian_nationality: {
-          "ui:options": {
-            onChange: async (value) => {
-              this.dropdownReset({
-                guardian_nationality: value,
-                guardian_current_country: value === "NP" ? "NP" : null,
-                guardian_dedup_identification:
-                  this.formData?.guardian_is_nrn?.includes("Yes")
-                    ? this.formData?.guardian_dedup_identification
-                    : this.formData?.guardian_is_refugee?.includes("Yes")
-                    ? this.formData?.guardian_dedup_identification
-                    : null,
-                guardian_issuing_authority:
-                  this.formData?.guardian_is_nrn?.includes("Yes")
-                    ? this.formData?.guardian_issuing_authority
-                    : this.formData?.guardian_is_refugee?.includes("Yes")
-                    ? this.formData?.guardian_issuing_authority
-                    : null,
-                guardian_place_of_issue: value === "NP" ? null : "FORCT",
-                guardian_dedup_id_number: "",
-              });
-            },
-          },
-        },
-
-        guardian_dedup_current_country: {
-          "ui:options": {
-            onChange: (value) => {
-              this.dropdownReset({
-                guardian_dedup_current_country: value,
-                guardian_current_country: value,
-                guardian_dedup_identification:
-                  this.formData?.guardian_is_nrn?.includes("Yes")
-                    ? this.formData?.guardian_dedup_identification
-                    : this.formData?.guardian_is_refugee?.includes("Yes")
-                    ? this.formData?.guardian_dedup_identification
-                    : null,
-                guardian_issuing_authority:
-                  this.formData?.guardian_is_nrn?.includes("Yes")
-                    ? this.formData?.guardian_issuing_authority
-                    : this.formData?.guardian_is_refugee?.includes("Yes")
-                    ? this.formData?.guardian_issuing_authority
-                    : null,
-                guardian_place_of_issue: value === "NP" ? null : "FORCT",
-                guardian_dedup_id_number: "",
-              });
-            },
-          },
         },
 
         guardian_dedup_identification: {
-          "ui:widget": "CascadeDropdown",
+          // "ui:widget": "CascadeDropdown",
           "ui:options": {
-            getOptions: (formData, index) => {
-              const filterOption = this.functionGroup?.getRequiredDocuments(
-                this.optionsData["multi_validation_mapping"],
-                {
-                  nationality:
-                    formData?.guardian_nationality ||
-                    this.formData?.guardian_nationality,
-                  account_type: "INDIVIDUAL",
-                  ...((formData?.guardian_nationality ||
-                    this.formData?.guardian_nationality) === "NP" && {
-                    current_country:
-                      formData?.guardian_current_country ||
-                      this.formData?.guardian_current_country,
-                  }),
-                }
-              );
-
-              return filterOption || [];
-            },
             onChange: (value) => {
               this.dropdownReset({
                 guardian_dedup_identification: value,
-                guardian_issuing_authority:
-                  defaultSelectedValue(value)?.[0]?.value,
-                guardian_place_of_issue:
-                  this.formData?.guardian_nationality === "NP" ? null : "FORCT",
                 guardian_dedup_id_number: "",
               });
-              // this.convertToArray(
-              //   value,
-              //   "id_type_id",
-              //   "guardian_id_type_details",
-              //   ["guardian_dedup_identification", "id_type_id"]
-              // );
             },
           },
         },
 
-        guardian_issuing_authority: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            setDisabled: (formData, index) => {
-              return (formData?.guardian_nationality === "IN" &&
-                formData?.guardian_dedup_identification === "DL") ||
-                (formData?.guardian_nationality !== "IN" &&
-                  formData?.guardian_dedup_identification === "DL")
-                ? true
-                : defaultSelectedValue(
-                    formData?.guardian_dedup_identification ||
-                      this.formData?.guardian_dedup_identification
-                  )?.length === 1
-                ? true
-                : false;
-            },
-            getOptions: (formData, index) => {
-              return defaultSelectedValue(
-                formData?.guardian_dedup_identification ||
-                  this.formData?.guardian_dedup_identification
-              );
-            },
-            onChange: (value) => {
-              this.dropdownReset({
-                guardian_issuing_authority: value,
-                guardian_place_of_issue: null,
-                guardian_dedup_id_number: "",
-              });
-              // this.convertToArray(
-              //   value,
-              //   "issuing_authority",
-              //   "guardian_id_type_details",
-              //   ["guardian_issuing_authority", "issuing_authority"]
-              // );
-            },
-          },
-        },
-
-        guardian_dedup_id_number: {
-          "ui:options": {
-            onChange: (value) => {
-              // this.convertToArray(
-              //   value,
-              //   "identification_number",
-              //   "guardian_id_type_details",
-              //   ["guardian_dedup_identification", "id_type_id"]
-              // );
-            },
-          },
-        },
-
-        guardian_national_id_issue_date_ad: {
-          "ui:widget": widgets.CustomDatePicker,
-          "ui:placeholder": "Select Issued Date (A.D)",
-          "ui:help": "Date Format: YYYY-MM-DD",
-          "ui:options": {
-            enforceAgeRestriction: false,
-            validAge: 0,
-            name: "guardian_national_id_issue_date_ad",
-            enforceAgeRestriction: true,
-            disableFutureDates: true,
-            minimumDate: (formData) => {
-              return (
-                formData?.guardian_date_of_birth_ad &&
-                this.moment(formData?.guardian_date_of_birth_ad)
-                  .add(1, "day")
-                  .format("YYYY-MM-DD")
-              );
-            },
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                true,
-                "guardian_national_id_issue_date_ad"
-              );
-            },
-          },
-        },
-        guardian_national_id_issue_date_bs: {
-          "ui:widget": widgets.NepaliDatePickerR,
-          "ui:help": "Date Format: YYYY-MM-DD",
-          "ui:options": {
-            enforceAgeRestriction: true,
-            disableFutureDates: true,
-            validAge: 0,
-            name: "guardian_national_id_issue_date_bs",
-            minimumDate: (formData) => {
-              return (
-                formData?.guardian_date_of_birth_bs &&
-                this.moment(formData?.guardian_date_of_birth_bs).format(
-                  "YYYY-MM-DD"
-                )
-              );
-            },
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                false,
-                "guardian_national_id_issue_date_bs"
-              );
-            },
-          },
-        },
         guardian_dedup_module_data: {
           "ui:widget": "ScreeningReportCard",
           "ui:label": false,
@@ -1832,105 +1209,7 @@
             },
           },
         },
-        guardian_related_party_relation_with_account_holder: {
-          // "ui:widget": "CascadeDropdown",
-          // "ui:options": {
-          //   getOptions: (formData) => {
-          //     return this.filterOptions(
-          //       "relationships",
-          //       "MINOR"
-          //     );
-          //   },
-          // },
-        },
-
-        guardian_salutation: {
-          "ui:widget": "CustomRadioWidget",
-          "ui:options": {
-            onChange: (value) =>
-              setTimeout(() => {
-                this.dropdownReset({
-                  guardian_salutation: value,
-                  guardian_gender: value === "MR." ? "M" : "F",
-                });
-              }, 600),
-          },
-        },
-        guardian_permanent_country: {
-          "ui:options": {
-            onChange: (value) => {
-              return this.dropdownReset({
-                guardian_permanent_country: value,
-                guardian_permanent_province: null,
-                guardian_permanent_district: null,
-                guardian_permanent_municipality: null,
-                guardian_permanent_house_number: "",
-                guardian_permanent_ward_number: "",
-                guardian_permanent_town: "",
-                guardian_permanent_street_name: "",
-                guardian_permanent_outside_town: "",
-                guardian_permanent_outside_street_name: "",
-                guardian_permanent_postal_code: "",
-              });
-            },
-          },
-        },
-        account_type_id: {
-          "ui:options": {
-            onChange: (value) => {
-              return this.dropdownReset({
-                account_type_id: value,
-                account_scheme_id: null,
-              });
-            },
-          },
-        },
-        account_scheme_id: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "scheme_type",
-                formData?.account_type_id
-              );
-            },
-          },
-        },
-        guardian_gender: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "genders",
-                formData?.guardian_salutation
-              );
-            },
-          },
-        },
-
-        guardian_mobile_number: {
-          "ui:options": {
-            inputMode: "decimal",
-            onInput: (e) => {
-              e.currentTarget.value = e.currentTarget.value.replace(
-                /[^0-9]/g,
-                ""
-              );
-            },
-          },
-        },
-
-        guardian_phone_number: {
-          "ui:options": {
-            inputMode: "decimal",
-            onInput: (e) => {
-              e.currentTarget.value = e.currentTarget.value.replace(
-                /[^0-9]/g,
-                ""
-              );
-            },
-          },
-        },
+        guardian_related_party_relation_with_account_holder: {},
 
         guardian_cif_enquiry: {
           "ui:widget": "ButtonField",
@@ -2033,596 +1312,29 @@
           },
         },
 
-        guardian_same_as_permanent: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => sameAsPermanentOnChange(value),
-            preserveValue: true,
-          },
-        },
-        guardian_email_not_available: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => handleSetNotAvailable(value, "guardian_email"),
-            preserveValue: true,
-          },
-        },
-
-        guardian_permanent_province: {
-          "ui:options": {
-            onChange: (value) =>
-              this.dropdownReset({
-                guardian_permanent_province: value,
-                guardian_permanent_district: null,
-                guardian_permanent_municipality: null,
-                guardian_permanent_house_number: "",
-                guardian_permanent_ward_number: "",
-                guardian_permanent_town: "",
-                guardian_permanent_street_name: "",
-                guardian_permanent_outside_town: "",
-                guardian_permanent_outside_street_name: "",
-              }),
-          },
-        },
-        guardian_permanent_district: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "districts",
-                formData?.guardian_permanent_province
-              );
-            },
-            onChange: (value) =>
-              this.dropdownReset({
-                guardian_permanent_district: value,
-                guardian_permanent_municipality: null,
-                guardian_permanent_house_number: "",
-                guardian_permanent_ward_number: "",
-                guardian_permanent_town: "",
-                guardian_permanent_street_name: "",
-                guardian_permanent_outside_town: "",
-                guardian_permanent_outside_street_name: "",
-              }),
-          },
-        },
-        guardian_permanent_municipality: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "local_bodies",
-                formData?.guardian_permanent_district
-              );
-            },
-          },
-        },
-
-        guardian_id_type_details: {
-          "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-            orderable: false,
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-          },
-          items: {
-            "ui:order": [
-              "id_type_id",
-              "issuing_authority",
-              "identification_number",
-              "issue_country",
-              "issued_district",
-              "id_issued_date_ad",
-              "id_issued_date_bs",
-              "id_expiry_date_ad",
-              "id_expiry_date_bs",
-              "disable",
-              "removable",
-              "nationality",
-              "national_id_number",
-              "comment",
-              "citizenship_number",
-            ],
-            disable: {
-              "ui:widget": "hidden",
-            },
-            removable: {
-              "ui:widget": "hidden",
-            },
-            nationality: {
-              "ui:widget": "hidden",
-            },
-
-            id_type_id: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData, index) => {
-                  const newSelectedData =
-                    formData?.guardian_id_type_details?.map((item, idx) =>
-                      idx !== index ? item?.id_type_id : null
-                    );
-                  const filterOption =
-                    this.formData?.guardian_is_nrn === "Yes"
-                      ? this.functionGroup?.getRequiredDocuments(
-                          this.optionsData["multi_validation_mapping"],
-                          { non_resident_nepali: "default" }
-                        )
-                      : this.formData?.guardian_is_refugee === "Yes"
-                      ? this.functionGroup?.getRequiredDocuments(
-                          this.optionsData["multi_validation_mapping"],
-                          { non_nepali: "default" }
-                        )
-                      : this.functionGroup?.getRequiredDocuments(
-                          this.optionsData["multi_validation_mapping"],
-                          {
-                            nationality:
-                              formData?.guardian_nationality ||
-                              this.formData?.guardian_nationality,
-                            account_type:
-                              formData?.guardian_account_info ||
-                              this.formData?.guardian_account_info,
-                            ...((formData?.guardian_nationality ||
-                              this.formData?.guardian_nationality) === "NP" && {
-                              current_country:
-                                formData?.guardian_current_country ||
-                                this.formData?.guardian_urrent_country,
-                            }),
-                          }
-                        );
-
-                  const currentSelectedValue =
-                    this.formData?.guardian_id_type_details?.[index]
-                      ?.id_type_id;
-                  const dropdownOptions = filterOption?.filter((item) => {
-                    if (!item || !item.value || item.value.trim() === "")
-                      return false;
-                    return (
-                      item.value === currentSelectedValue ||
-                      !newSelectedData?.includes(item.value)
-                    );
-                  });
-                  return dropdownOptions || [];
-                },
-                onChange: (value, index) => {
-                  this.dropdownReset(
-                    {
-                      id_type_id: value,
-                      issuing_authority:
-                        defaultSelectedValue(value)?.[0]?.value,
-                    },
-                    "guardian_id_type_details",
-                    index
-                  );
-                },
-              },
-            },
-            issuing_authority: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                setDisabled: (formData, index) => {
-                  return index === 0
-                    ? true
-                    : (formData?.guardian_nationality === "IN" &&
-                        formData?.guardian_id_type_details?.[index]
-                          ?.id_type_id === "DL") ||
-                      (formData?.guardian_nationality !== "IN" &&
-                        formData?.guardian_id_type_details?.[index]
-                          ?.id_type_id === "DL")
-                    ? true
-                    : defaultSelectedValue(
-                        formData?.guardian_id_type_details?.[index]
-                          ?.id_type_id ||
-                          this.formData?.guardian_id_type_details?.[index]
-                            ?.id_type_id
-                      )?.length === 1
-                    ? true
-                    : false;
-                },
-                getOptions: (formData, index) => {
-                  return defaultSelectedValue(
-                    formData?.guardian_id_type_details?.[index]?.id_type_id ||
-                      this.formData?.guardian_id_type_details?.[index]
-                        ?.id_type_id
-                  );
-                },
-              },
-            },
-
-            identification_number: {
-              "ui:options": {
-                maxLength: 30,
-              },
-            },
-
-            issue_country: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData, index) => {
-                  return this.filterOptions("countries");
-                },
-                onChange: (value, index) => {
-                  this.dropdownReset(
-                    {
-                      issue_country: value,
-                      issued_district: value === "NP" ? null : "FORCT",
-                    },
-                    "guardian_id_type_details",
-                    index
-                  );
-                },
-              },
-            },
-
-            issued_district: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData, index) => {
-                  return this.filterOptions("districts");
-                },
-              },
-            },
-
-            id_issued_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:placeholder": "Select Issued Date (A.D)",
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:options": {
-                name: "id_issued_date_ad",
-                enforceAgeRestriction: false,
-                validAge: 0,
-                disableFutureDates: true,
-                minimumDate: (formData) => {
-                  const minDateValue = this.moment(
-                    formData?.guardian_date_of_birth_ad
-                  )
-                    .add(16, "years")
-                    .format("YYYY-MM-DD");
-                  return minDateValue && minDateValue;
-                },
-
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    true,
-                    "id_issued_date_ad",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-
-            id_issued_date_bs: {
-              "ui:widget": widgets.NepaliDatePickerR,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:options": {
-                name: "id_issued_date_bs",
-                enforceAgeRestriction: false,
-                validAge: 0,
-                disableFutureDates: true,
-                minimumDate: (formData) => {
-                  const minDateValue = this.moment(
-                    formData?.guardian_date_of_birth_bs
-                  )
-                    .add(16, "years")
-                    .format("YYYY-MM-DD");
-                  return minDateValue && minDateValue;
-                },
-
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    false,
-                    "id_issued_date_bs",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-
-            id_expiry_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:placeholder": "Select Expiry Date (A.D)",
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:options": {
-                enforceAgeRestriction: false,
-                validAge: 0,
-                name: "id_expiry_date_ad",
-                enforceAgeRestriction: true,
-                enableFutureDates: true,
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    true,
-                    "id_expiry_date_ad",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-
-            id_expiry_date_bs: {
-              "ui:widget": widgets.NepaliDatePickerR,
-              "ui:help": "Date Format: YYYY-MM-DD",
-              "ui:options": {
-                enforceAgeRestriction: true,
-                name: "id_expiry_date_bs",
-                validAge: 0,
-                enableFutureDates: true,
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    false,
-                    "id_expiry_date_bs",
-                    "guardian_id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-
-            comment: {
-              "ui:widget": "textarea",
-              "ui:options": {
-                rows: 5,
-              },
-            },
-          },
-        },
-
-        guardian_occupation_type: {
-          "ui:options": {
-            onChange: (value) =>
-              this.dropdownReset({
-                guardian_occupation_type: value,
-                guardian_source_of_income: null,
-                guardian_employment_type: null,
-              }),
-          },
-        },
-
-        guardian_source_of_income: {},
-
-        guardian_occupation_detail: {
-          "ui:classNames": "my-1",
-          "ui:options": {
-            addable: false,
-            orderable: false,
-            removable: false,
-          },
-
-          items: {
-            guardian_business_type: {},
-          },
-        },
-
-        guardian_family_information: {
-          "ui:widget": "EditableTableWidget",
-          "ui:label": false,
-          "ui:options": {
-            orderable: false,
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-            fieldKeys: ["guardian_family_member_relation"],
-            disableSpecificKeys: this.form_status?.includes("init")
-              ? [
-                  { guardian_family_member_relation: 0 },
-                  { guardian_family_member_relation: 1 },
-                  { guardian_family_member_relation: 2 },
-                ]
-              : [
-                  {
-                    guardian_family_member_relation: 0,
-                    guardian_family_member_full_name: 0,
-                    guardian_is_family_name_not_available: 0,
-                  },
-                  {
-                    guardian_family_member_relation: 1,
-                    guardian_family_member_full_name: 1,
-                    guardian_is_family_name_not_available: 1,
-                  },
-                  {
-                    guardian_family_member_relation: 2,
-                    guardian_family_member_full_name: 2,
-                    guardian_is_family_name_not_available: 2,
-                  },
-                ],
-          },
-          items: {
-            guardian_family_member_relation: {
-              "ui:widget": "CascadeDropdown",
-              "ui:placeholder": "Select Relationship",
-              "ui:disabled": true,
-              "ui:options": {
-                getOptions: (formData, rowIndex) => {
-                  const familyInfo =
-                    formData?.guardian_family_information || [];
-
-                  const currentValue =
-                    familyInfo[
-                      rowIndex
-                    ]?.guardian_family_member_relation?.trim() || "";
-
-                  const usedBefore = familyInfo
-                    .slice(0, rowIndex)
-                    .map((item) =>
-                      item?.guardian_family_member_relation?.trim()
-                    )
-                    .filter(Boolean);
-
-                  return (this.filterOptions("relationships") || []).filter(
-                    (opt) => {
-                      const val = opt?.value?.trim();
-                      if (!val) return false;
-                      if (val === currentValue) return true;
-                      return !usedBefore.includes(val);
-                    }
-                  );
-                },
-              },
-            },
-            guardian_family_member_full_name: {
-              "ui:placeholder": "Enter Full Name",
-              "ui:options": {
-                setDisabled: (formData, index) =>
-                  this.form_status.includes("init") ||
-                  this.form_status.includes("update")
-                    ? formData?.guardian_family_information?.[index ?? 0]
-                        ?.guardian_is_family_name_not_available ??
-                      (formData?.guardian_family_information?.[index ?? 0]
-                        ?.guardian_family_member_relation === "FATHE" &&
-                      formData?.guardian_father_name
-                        ? true
-                        : false)
-                    : true,
-              },
-            },
-
-            guardian_is_family_name_not_available: {
-              "ui:widget": "CustomCheckBoxWidget",
-              "ui:options": {
-                setDisabled: (formData, index) =>
-                  this.form_status.includes("init") ||
-                  this.form_status.includes("update")
-                    ? formData?.guardian_family_information?.[index ?? 0]
-                        ?.guardian_family_member_relation === "FATHE" &&
-                      formData?.guardian_father_name
-                      ? true
-                      : false
-                    : true,
-                onChange: (value, index) => {
-                  this.familyNameChange(
-                    "guardian_family_member_full_name",
-                    value,
-                    "guardian_family_information",
-                    index ?? 0
-                  );
-                },
-              },
-            },
-          },
-        },
-
-        guardian_annual_income: {
-          "ui:options": {
-            amount: true,
-          },
-        },
-
-        screening_filter: {
+        guardian_dedup_check: {
           "ui:widget": this.form_status?.includes("init")
             ? "ButtonField"
             : "hidden",
           "ui:label": false,
+          "ui:classNames":
+            "d-flex justify-content-end align-items-end h-100 my-1",
           "ui:options": {
-            disableButton: (formData) => {
-              let requiredFields = jsonSchema.required || [];
-              const allFilled = requiredFields.every((field) => {
-                const value = formData?.[field];
-                return value !== undefined && value !== null && value !== "";
-              });
-
-              const isDedupCheck = !!formData?.guardian_dedup_module_data;
-
-              const isTrue = !(allFilled && isDedupCheck);
-              return this.form_status?.includes("init") && isTrue;
-            },
-            onClick: (event) => {
-              setFormData((prevData) => {
-                const currentValue = prevData?.screening_filter;
-
-                function toggleFilter(value) {
-                  if (value === undefined) return "true";
-                  if (value === "true") return "false";
-                  return "true";
-                }
-
-                return {
-                  ...prevData,
-                  screening_filter: toggleFilter(currentValue),
-                };
-              });
+            disableButton: (formData) =>
+              !(
+                formData?.guardian_first_name?.trim() &&
+                formData?.guardian_last_name?.trim() &&
+                formData?.guardian_father_name?.trim() &&
+                formData?.guardian_dedup_id_number?.trim() &&
+                formData?.guardian_date_of_birth_ad?.trim() &&
+                formData?.guardian_date_of_birth_bs?.trim()
+              ),
+            onClick: (formData) => {
+              this.getDedupCheck(formData);
             },
           },
         },
 
-        guardian_personal_info_screening: {
-          "ui:widget": "hidden",
-          "ui:label": false,
-          "ui:classNames": "my-1",
-          "ui:options": {
-            block: true,
-            disableButton: (formData) => {
-              let requiredFields = [
-                "guardian_first_name",
-                "guardian_last_name",
-                "guardian_father_name",
-                "guardian_date_of_birth_ad",
-                "guardian_date_of_birth_bs",
-                "guardian_dedup_identification",
-                "guardian_dedup_id_number",
-                "guardian_salutation",
-                "guardian_gender",
-                "guardian_marital_status",
-                "guardian_email",
-                "guardian_nationality",
-                "guardian_contact_type",
-                "guardian_occupation_type",
-                "guardian_source_of_income",
-                "guardian_related_party_family_account_holder",
-                "guardian_related_party_relation_with_account_holder",
-                "guardian_customer_type_id",
-              ];
-              const allFilled = requiredFields.every((field) => {
-                const value = formData?.[field];
-                return value !== undefined && value !== null && value !== "";
-              });
-
-              const isDedupCheck = !!formData?.guardian_dedup_module_data;
-
-              const isTrue = !(allFilled && isDedupCheck);
-              return this.form_status?.includes("init") && isTrue;
-            },
-            // onClick: () => {
-            //   this.fetchPersonalInfoScreening();
-            //   setFormData((prevData) => ({
-            //     ...prevData,
-            //     guardian_is_existing_cif: false,
-            //     guardian_scheme_check: false,
-            //     guardian_is_cib_list: false,
-            //     guardian_is_block_list: false,
-            //     guardian_is_sanction: false,
-            //   }));
-            // },
-          },
-        },
         guardian_personal_screening_data: {
           "ui:widget": "ScreeningReportCard",
           "ui:label": false,
