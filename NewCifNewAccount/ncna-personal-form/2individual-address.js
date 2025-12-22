@@ -31,46 +31,6 @@
 
     //Custom Validation Form Character Count and Screening Check
     customValidate(formData, errors, uiSchema) {
-      const hasUncheckedView = Object.keys(
-        formData?.personal_screening_data || {}
-      ).map((key) => {
-        const items = formData.personal_screening_data[key];
-
-        return (
-          Array.isArray(items) &&
-          items.every(
-            (item) =>
-              typeof item === "object" &&
-              item !== null &&
-              item.hasOwnProperty("isCheckedView")
-          )
-        );
-      });
-      const addHasUncheckedView = hasUncheckedView.some(
-        (value) => value === false
-      );
-      if (addHasUncheckedView) {
-        errors?.personal_screening_data?.addError(
-          "View all Screening Data To Continue"
-        );
-      }
-
-      const familyInfo = formData?.family_information;
-      const requiredFields = ["family_member_full_name"]; // Add more fields here as needesd
-      if (Array.isArray(familyInfo)) {
-        familyInfo.forEach((member, index) => {
-          requiredFields.forEach((field) => {
-            const value = member?.[field]?.toString().trim();
-            if (!value) {
-              errors.family_information ??= [];
-              errors.family_information[index] ??= {};
-              errors.family_information[index][field] ??= {};
-              errors.family_information[index][field].addError("Required");
-            }
-          });
-        });
-      }
-
       function isValidMobileNumber(number, country) {
         if (typeof number === "number") {
           number = number.toString();
@@ -171,11 +131,6 @@
     async updateFormAndSchema(formData, schemaConditions) {
       this.formData = formData;
       this.setNextStep("individual-identification");
-      // const next_step = schemaConditions?.accountInfo?.find(
-      //   (item) => item?.account_type === this.formData?.account_info
-      // )?.step_slug;
-      // if (next_step) {
-      // }
       if (!this.form_status?.includes("case-init")) {
         this.setJsonSchema((prevJsonSchema) => {
           return {
@@ -184,37 +139,6 @@
           };
         });
       }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-        const flatEntry = { key: index };
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-        return acc;
-      }, {});
     }
 
     filterOptionsByCascadeId(options, cascadeId) {
@@ -390,28 +314,6 @@
       });
     }
 
-    findInBranch(node, key, value) {
-      if (Array.isArray(node)) {
-        for (const item of node) {
-          const res = this.findInBranch(item, key, value);
-
-          if (res) return res;
-        }
-      } else if (node && typeof node === "object") {
-        if (node?.hasOwnProperty(key) && node[key] === value) {
-          return node;
-        }
-
-        for (const k in node) {
-          const res = this.findInBranch(node[k], key, value);
-
-          if (res) return res;
-        }
-      }
-
-      return null;
-    }
-
     async initializeSchema(setJsonSchema, formData) {
       if (!this.form_status?.includes("case-init")) this.setDivide(true);
       const fieldsToUpdate = [
@@ -511,8 +413,7 @@
 
         widgets,
       } = options;
-      // console.log(this.formData);
-      !this.formData?.case_status && (this.nationalityChanged = true);
+
       const sameAsPermanentOnChange = (value) => {
         setTimeout(
           () =>
@@ -612,40 +513,6 @@
 
         nationality: {
           "ui:widget": "hidden",
-          "ui:options": {
-            onChange: async (value) => {
-              this.dropdownReset({
-                nationality: value,
-                dedup_identification:
-                  value === "NP" ? "CTZN" : value === "IN" ? null : "PP",
-                permanent_country:
-                  value === "NP" ? "NP" : this.formData?.permanent_country,
-                currency: null,
-                account_scheme_id: null,
-                customer_type_id: null,
-
-                id_type_details:
-                  value === "NP" || value === "IN"
-                    ? [{}]
-                    : [
-                        {
-                          id_type_id: "PP",
-                        },
-                        {
-                          removable: false,
-                          id_type_id: "TRDOC",
-                          issue_country: "NP",
-                        },
-                      ],
-                national_id_number: "",
-                national_id_issue_date_ad: undefined,
-                national_id_issue_date_bs: undefined,
-                national_id_issue_place: null,
-              });
-              (await value) !== "IN" && (this.nationalityChanged = true);
-              return null;
-            },
-          },
         },
 
         permanent_country: {

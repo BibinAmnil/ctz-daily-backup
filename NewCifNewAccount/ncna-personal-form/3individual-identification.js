@@ -31,76 +31,6 @@
 
     //Custom Validation Form Character Count and Screening Check
     customValidate(formData, errors, uiSchema) {
-      const municipalityTitle = this.optionsData["local_bodies"]?.find(
-        (item) => item?.id === formData?.permanent_municipality
-      )?.title;
-
-      const clonedFormData = JSON.parse(JSON.stringify(formData));
-      clonedFormData.permanent_municipality = municipalityTitle;
-
-      this.functionGroup?.validateCombinedLength(clonedFormData, errors, {
-        type: "permanent",
-        fieldNames: {
-          town: "ward_number",
-          street: "street_name",
-          postalCode: "municipality",
-        },
-      });
-      this.functionGroup?.validateCombinedLength(formData, errors, {
-        type: "permanent",
-        fieldNames: {
-          town: "outside_town",
-          street: "outside_street_name",
-          postalCode: "postal_code",
-        },
-      });
-
-      const hasUncheckedView = Object.keys(
-        formData?.personal_screening_data || {}
-      ).map((key) => {
-        const items = formData.personal_screening_data[key];
-
-        return (
-          Array.isArray(items) &&
-          items.every(
-            (item) =>
-              typeof item === "object" &&
-              item !== null &&
-              item.hasOwnProperty("isCheckedView")
-          )
-        );
-      });
-      const addHasUncheckedView = hasUncheckedView.some(
-        (value) => value === false
-      );
-      if (addHasUncheckedView) {
-        errors?.personal_screening_data?.addError(
-          "View all Screening Data To Continue"
-        );
-      }
-
-      const familyInfo = formData?.family_information;
-      const requiredFields = ["family_member_full_name"]; // Add more fields here as needesd
-      if (Array.isArray(familyInfo)) {
-        familyInfo.forEach((member, index) => {
-          requiredFields.forEach((field) => {
-            const value = member?.[field]?.toString().trim();
-            if (!value) {
-              errors.family_information ??= [];
-              errors.family_information[index] ??= {};
-              errors.family_information[index][field] ??= {};
-              errors.family_information[index][field].addError("Required");
-            }
-          });
-        });
-      }
-
-      if (formData?.national_id_number == "999-999-999-9") {
-        return errors;
-      } else if (formData.nid_verified === "No") {
-        errors.nid_verified.addError("NID must be verified.");
-      }
-
       return errors;
     }
 
@@ -134,45 +64,6 @@
       }));
     }
 
-    filterMasterData(masterDataKey, formData) {
-      const strictKey = "account_type_id";
-      const softKeys = ["currency", "nationality"];
-
-      return this.optionsData?.[masterDataKey]
-        ?.filter((item) => {
-          const relationMatch =
-            item.individual === formData?.account_info ||
-            item.joint === formData?.account_info ||
-            item.minor === formData?.account_info;
-
-          if (!relationMatch) return false;
-
-          if (
-            formData?.[strictKey] &&
-            item?.[strictKey] !== formData?.[strictKey]
-          ) {
-            return false;
-          }
-
-          const softMatch = softKeys?.every((key) => {
-            if (!formData[key]) return true;
-            const itemValue = item[key];
-            if (itemValue == null) return true;
-            if (Array.isArray(itemValue)) {
-              return itemValue.includes(formData[key]);
-            }
-            return itemValue === formData?.[key];
-          });
-
-          return softMatch;
-        })
-        .map((item) => ({
-          label: `${item.title} - ${item?.cbs_code}`,
-
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
-    }
-
     //Dropdown Reset
     dropdownReset = async (dropdownClearObject, arrayName, index) => {
       this.setFormData((prevFormData) => {
@@ -202,37 +93,6 @@
           };
         });
       }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-        const flatEntry = { key: index };
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-        return acc;
-      }, {});
     }
 
     convertDate(
@@ -288,7 +148,7 @@
       const convertedDate = fromAdToBs
         ? this.adToBs(selectedDate)
         : this.bsToAd(selectedDate);
-      console.log("hell", convertedDate);
+
       setFormData((prevFormData) => {
         const updatedFormData = { ...prevFormData };
         if (arrayName && index !== null) {
@@ -566,74 +426,6 @@
       });
     }
 
-    async formDataCleaner(fields) {
-      if (typeof this.formData !== "object" || this.formData === null)
-        return {};
-
-      const result = {};
-
-      // Keep only specified fields
-
-      for (const key of fields) {
-        if (key in this.formData) {
-          result[key] = this.formData[key];
-        }
-      }
-
-      // Handle family_information cleanup
-
-      if (
-        "family_information" in this.formData &&
-        Array.isArray(this.formData.family_information) &&
-        this.formData.family_information.length > 0
-      ) {
-        const cleanedFamilyInfo = this.formData.family_information.map(
-          (item, index) => {
-            if (index === 0) return item;
-
-            const cleaned = { ...item };
-
-            delete cleaned.family_member_full_name;
-
-            delete cleaned.family_not_available;
-
-            return cleaned;
-          }
-        );
-
-        result.family_information = cleanedFamilyInfo;
-      }
-
-      // Handle id_type_details cleanup (only keep first item)
-
-      const validId = "WPERM";
-
-      if (
-        "id_type_details" in this.formData &&
-        Array.isArray(this.formData.id_type_details) &&
-        this.formData.id_type_details.length > 0
-      ) {
-        const [firstItem, ...restItems] = this.formData.id_type_details;
-
-        // // Filter remaining items for valid id_type_id
-        // const matchingItems = restItems.filter(
-        //   (item) => item?.id_type_id === validId
-        // );
-
-        // // Always include the first item, plus any valid matches from the rest
-        result.id_type_details = this.formData.id_type_details?.map(
-          (item, index) => ({
-            id_type_id: item?.id_type_id,
-            identification_number: index === 0 && item?.identification_number,
-            ...(item?.removable === false && { removable: item?.removable }),
-          })
-        );
-      }
-      /* setTimeout(() => */ this.setFormData(result) /* , 100) */;
-
-      return result;
-    }
-
     createUISchema(options) {
       const {
         setJsonSchema,
@@ -650,8 +442,6 @@
 
         widgets,
       } = options;
-      // console.log(this.formData);
-      !this.formData?.case_status && (this.nationalityChanged = true);
 
       const defaultSelectedValue = (value) => {
         const selectedValue = this.functionGroup?.getRequiredDocuments(
@@ -678,7 +468,6 @@
           "national_id_issuing_authority",
           "nid_verified",
           "nid_verify",
-          "nid_reset",
 
           "id_type_details",
           "id_type_id",
@@ -789,69 +578,6 @@
             : "hidden",
           "ui:label": false,
           "ui:classNames": "mt-2 w-100",
-          // "ui:options": {
-          //   disableButton: (formData) => !formData?.national_id_number,
-          //   buttonClassName: "w-100",
-          //   onClick: async (formData) => {
-          //     this.addLoader("nid_verify", true);
-          //     let nidVerifiedValue = "No";
-          //     try {
-          //       const response = await this.axios.post(
-          //         `${this.mainRouteURL}/external-api/verify-nid`,
-          //         {
-          //           nin: formData?.national_id_number,
-          //           first_name: formData?.first_name,
-          //           last_name: formData?.last_name,
-          //           middle_name: formData?.middle_name,
-          //           date_of_birth: formData?.date_of_birth_ad,
-          //         }
-          //       );
-
-          //       const responseData = response?.data;
-          //       nidVerifiedValue = responseData?.resCod == "200" ? "Yes" : "No";
-          //       this.setModalOpen({
-          //         open: true,
-          //         message: responseData?.data?.message,
-          //         close: "Close",
-          //         status: "success",
-          //       });
-          //     } catch (err) {
-          //       nidVerifiedValue = "No";
-          //       this.setModalOpen({
-          //         open: true,
-          //         message: err?.response?.data?.message,
-          //         close: "Close",
-          //         status: "error",
-          //       });
-          //     } finally {
-          //       this.addLoader("nid_verify", false);
-          //       this.setFormData((prevForm) => ({
-          //         ...prevForm,
-          //         nid_verified: nidVerifiedValue,
-          //       }));
-          //     }
-          //   },
-          // },
-        },
-        nid_reset: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames": "mt-5 w-100",
-          "ui:options": {
-            disableButton: (formData) => !formData?.nid_verified,
-            buttonClassName: "w-100",
-            onClick: async (formData) => {
-              this.dropdownReset({
-                national_id_number: null,
-                national_id_issue_date_ad: "",
-                national_id_issue_date_bs: "",
-                national_id_issue_place: "",
-                nid_verified: "",
-              });
-            },
-          },
         },
 
         id_type_details: {

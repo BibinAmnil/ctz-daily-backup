@@ -80,25 +80,6 @@
       }));
     }
 
-    filterOptionsCustomer(key, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const TARGET_CASCADE = "NP";
-
-      const filteredOptions = cascadeValue
-        ? cascadeValue === TARGET_CASCADE
-          ? this.optionsData[key].filter(
-              (item) => item.cascade_id === TARGET_CASCADE
-            )
-          : this.optionsData[key].filter((item) => item.cascade_id === "")
-        : this.optionsData[key];
-
-      return filteredOptions.map((item) => ({
-        label: item.title,
-        value: item?.fg_code || item?.cbs_code || item?.id,
-      }));
-    }
-
     filterMasterData(masterDataKey, formData) {
       const strictKey = "account_type_id";
       const softKeys = ["currency", "nationality"];
@@ -165,37 +146,6 @@
           };
         });
       }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-        const flatEntry = { key: index };
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-        return acc;
-      }, {});
     }
 
     convertToArray(value, key, parentKey, comparisionKey) {
@@ -297,7 +247,7 @@
       const convertedDate = fromAdToBs
         ? this.adToBs(selectedDate)
         : this.bsToAd(selectedDate);
-      console.log("hell", convertedDate);
+
       setFormData((prevFormData) => {
         const updatedFormData = { ...prevFormData };
         if (arrayName && index !== null) {
@@ -354,7 +304,6 @@
         issued_district: "districts",
         issuing_authority: "issuing_authorities",
         occupation_type: "occupations",
-        source_of_income: "income_sources",
         permanent_country: "countries",
         relation_to_nominee: "relationships",
         account_scheme_id: "scheme_type",
@@ -839,8 +788,6 @@
         widgets,
       } = options;
 
-      !this.formData?.case_status && (this.nationalityChanged = true);
-
       const handleSetNotAvailable = (value, keyName) => {
         setTimeout(
           () =>
@@ -940,14 +887,7 @@
         },
 
         currency: {
-          "ui:options": {
-            // onChange: (value) => {
-            //   this.dropdownReset({
-            //     account_scheme_id: null,
-            //     customer_type_id: null,
-            //   });
-            // },
-          },
+          "ui:options": {},
         },
 
         account_scheme_id: {
@@ -991,14 +931,10 @@
           "ui:options": {
             onChange: (value) =>
               !value &&
-              /*    setTimeout(
-                () => */
               setFormData((prev) => ({
                 account_info: prev?.account_info,
                 id_type_details: [{ id_type_id: "CTZN" }],
               })),
-            /*  100
-              ), */
           },
         },
 
@@ -1008,8 +944,6 @@
             getOptions: (formData) => {
               return this.filterOptions("education_qualifications");
             },
-            // onChange: (value) =>
-            //   districtOnChange(value, "permanent_municipality"),
           },
         },
         customer_type_id: {},
@@ -1029,63 +963,8 @@
         },
 
         father_name: {
-          "ui:options": {
-            onBlurCapture: (event) =>
-              this.convertToArray(
-                event?.target?.value,
-                "family_member_full_name",
-                "family_information"
-              ),
-          },
+          "ui:options": {},
         },
-
-        // dedup_module_data: {
-        //   "ui:widget": "ScreeningReportCard",
-        //   "ui:label": false,
-        //   showCheckbox: false,
-        //   showViewedColumn: false,
-        //   // showActionText: true,
-        //   fixedActionsColumn: true,
-        //   "ui:options": {
-        //     onCheckboxChange: (tableData, category, checked) => {
-        //       this.setFormData((prevData) => ({
-        //         ...prevData,
-        //         [category]: checked ? "Yes" : "No",
-        //         dedup_module_data: tableData,
-        //       }));
-        //     },
-        //     disabledButton: (this.form_status?.includes("review") ||
-        //       this.form_status?.includes("approval") ||
-        //       this.form_status?.includes("reporting") ||
-        //       this.form_status?.includes("Completed")) && ["match"],
-        //     actionHandlers: {
-        //       ...(!(
-        //         this.form_status?.includes("review") ||
-        //         this.form_status?.includes("approval") ||
-        //         this.form_status?.includes("reporting") ||
-        //         this.form_status?.includes("Completed")
-        //       ) && {
-        //         match: (record) => {
-        //           if (record?.cif_number !== "-") {
-        //             this.setFormData((prev) => ({
-        //               ...prev,
-        //               has_cif: true,
-        //               cif_number: record?.cif_number,
-        //             }));
-        //             this.fetchIndividualInfoCIFDetail(record?.cif_number);
-        //           } else {
-        //             this.setModalOpen({
-        //               open: true,
-        //               message: "CIF number unavailable",
-        //               close: "Close",
-        //               status: "info",
-        //             });
-        //           }
-        //         },
-        //       }),
-        //     },
-        //   },
-        // },
 
         personal_screening_data: {
           "ui:widget": "ScreeningReportCard",
@@ -1138,23 +1017,7 @@
           "ui:widget": "hidden",
           "ui:label": false,
           "ui:classNames": "d-flex h-100 mt-5 align-items-center",
-          "ui:options": {
-            disableButton: (formData) => !formData?.cif_number?.trim(),
-            onClick: (formData) => {
-              /*  setTimeout(
-                () => */
-              setFormData({
-                account_info: formData?.account_info,
-                has_cif: formData?.has_cif,
-                cif_number: formData?.cif_number,
-                id_type_details: [{ id_type_id: "CTZN" }],
-              });
-
-              /*  100
-              ), */
-              this.fetchIndividualInfoCIFDetail(null);
-            },
-          },
+          "ui:options": {},
         },
 
         last_name_not_available: {
@@ -1227,42 +1090,7 @@
           },
         },
 
-        nationality: {
-          "ui:options": {
-            onChange: async (value) => {
-              this.dropdownReset({
-                nationality: value,
-                dedup_identification:
-                  value === "NP" ? "CTZN" : value === "IN" ? null : "PP",
-                permanent_country:
-                  value === "NP" ? "NP" : this.formData?.permanent_country,
-                currency: null,
-                account_scheme_id: null,
-                customer_type_id: null,
-
-                id_type_details:
-                  value === "NP" || value === "IN"
-                    ? [{}]
-                    : [
-                        {
-                          id_type_id: "PP",
-                        },
-                        {
-                          removable: false,
-                          id_type_id: "TRDOC",
-                          issue_country: "NP",
-                        },
-                      ],
-                national_id_number: "",
-                national_id_issue_date_ad: undefined,
-                national_id_issue_date_bs: undefined,
-                national_id_issue_place: null,
-              });
-              (await value) !== "IN" && (this.nationalityChanged = true);
-              return null;
-            },
-          },
-        },
+        nationality: {},
 
         family_information: {
           "ui:widget": "EditableTableWidget",
@@ -1399,9 +1227,6 @@
           },
         },
         cif_data: {
-          "ui:widget": "hidden",
-        },
-        source: {
           "ui:widget": "hidden",
         },
       };

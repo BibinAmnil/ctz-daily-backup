@@ -31,68 +31,9 @@
       this.case_id = options.case_id;
       this.nationalityChanged = false;
     }
-    addLoader = (field, loading) => {
-      this.setUiSchema((prevUiSchema) => ({
-        ...prevUiSchema,
-        [field]: {
-          ...prevUiSchema[field],
-          "ui:options": {
-            ...prevUiSchema[field]["ui:options"],
-            show_loader: loading,
-          },
-        },
-      }));
-    };
+
+    //Custom Validation Form Character Count and Screening Check
     customValidate(formData, errors, uiSchema) {
-      const municipalityTitle = this.optionsData["local_bodies"]?.find(
-        (item) => item?.id === formData?.permanent_municipality
-      )?.title;
-
-      const clonedFormData = JSON.parse(JSON.stringify(formData));
-      clonedFormData.permanent_municipality = municipalityTitle;
-      this.functionGroup?.validateCombinedLength(clonedFormData, errors, {
-        type: "permanent",
-        fieldNames: {
-          town: "town",
-          street: "street_name",
-          postalCode: "municipality",
-        },
-      });
-
-      this.functionGroup?.validateCombinedLength(formData, errors, {
-        type: "permanent",
-        fieldNames: {
-          town: "outside_town",
-          street: "outside_street_name",
-          postalCode: "postal_code",
-        },
-      });
-      const hasUncheckedView = Object.keys(
-        formData?.personal_screening_data || {}
-      ).map((key) => {
-        const items = formData.personal_screening_data[key];
-
-        return (
-          Array.isArray(items) &&
-          items.every(
-            (item) =>
-              typeof item === "object" &&
-              item !== null &&
-              item.hasOwnProperty("isCheckedView")
-          )
-        );
-      });
-
-      const addHasUncheckedView = hasUncheckedView.some(
-        (value) => value === false
-      );
-
-      if (addHasUncheckedView) {
-        errors?.personal_screening_data?.addError(
-          "View all Screening Data To Continue"
-        );
-      }
-
       const familyInfo = formData?.family_information;
       const requiredFields = ["family_member_full_name"]; // Add more fields here as needesd
       if (Array.isArray(familyInfo)) {
@@ -107,12 +48,6 @@
             }
           });
         });
-      }
-
-      if (formData?.national_id_number == "999-999-999-9") {
-        return errors;
-      } else if (formData.nid_verified === "No") {
-        errors.nid_verified.addError("NID must be verified.");
       }
 
       return errors;
@@ -130,164 +65,6 @@
         },
       }));
     };
-    // FUNCTION TO SPLIT FULL NAME
-    splitFullName(fullName) {
-      const parts = fullName?.trim()?.split(/\s+/); // Split by spaces
-      let firstName = parts[0] || "";
-      let middleName = parts.length > 2 ? parts.slice(1, -1).join(" ") : "";
-      let lastName = parts.length > 1 ? parts[parts.length - 1] : "";
-
-      return { firstName, middleName, lastName };
-    }
-
-    async handleSchemeCheck(payload) {
-      try {
-        if (
-          !(payload.account_scheme_id && payload.cif_number && payload.currency)
-        )
-          return;
-        else {
-          await this.axios.post(
-            `${this.mainRouteURL}/external-api/scheme-check`,
-            {
-              scheme: payload.account_scheme_id,
-              cif_number: payload.cif_number,
-              currency: payload.currency,
-            }
-          );
-          return;
-        }
-      } catch (error) {
-        this.setModalOpen({
-          open: true,
-          message: error
-            ? `${error.response?.data?.message || error?.response?.statusText}`
-            : `${error || "Unknown Error"}`,
-          subTitle: Array.isArray(error?.response?.data?.errors)
-            ? error?.response?.data?.errors
-                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
-                .join("\n")
-            : "",
-
-          status: "error",
-          close: "Close",
-        });
-        return {};
-      }
-    }
-
-    convertToArray(value, key, parentKey, comparisionKey) {
-      setTimeout(() => {
-        this.setFormData((prevData) => {
-          if (!prevData[parentKey]) return prevData;
-
-          // const previousData = {
-          //   ...prevData,
-          //   id_type_details:
-          //     prevData?.nationality ===
-          //       "NP" ||
-          //     prevData?.nationality === "IN"
-          //       ? [{}]
-          //       : [
-          //           {
-          //             id_type_id: "PP",
-          //           },
-          //           {
-          //             removable: false,
-          //             id_type_id: "TRDOC",
-          //           },
-          //         ],
-          // };
-
-          if (!comparisionKey || comparisionKey.length === 0) {
-            return {
-              ...prevData,
-
-              [parentKey]: prevData[parentKey]?.map((data, index) =>
-                index === 0 ? { [key]: value } : data
-              ),
-            };
-          }
-
-          const updatedArray = prevData[parentKey].map((item) => {
-            if (Object.keys(item).length === 0) return { [key]: value };
-
-            if (
-              comparisionKey &&
-              item[comparisionKey[1]] === prevData[comparisionKey[0]]
-            ) {
-              return { ...item, [key]: value };
-            }
-
-            return item;
-          });
-
-          if (
-            comparisionKey &&
-            !updatedArray.some(
-              (item) => item[comparisionKey[1]] === prevData[comparisionKey[0]]
-            )
-          ) {
-            updatedArray.push({
-              [comparisionKey[1]]: prevData[comparisionKey[0]],
-              [key]: value,
-            });
-          }
-
-          return {
-            ...prevData,
-            [parentKey]: updatedArray,
-          };
-        });
-      }, 100);
-    }
-    // convertToArray(value, key, parentKey, comparisionKey) {
-    //   setTimeout(() => {
-    //     this.setFormData((prevData) => {
-    //       if (!prevData[parentKey]) return prevData;
-
-    //       if (!comparisionKey || comparisionKey.length === 0) {
-    //         return {
-    //           ...prevData,
-
-    //           [parentKey]: prevData[parentKey]?.map((data, index) =>
-    //             index === 0 ? { [key]: value } : data
-    //           ),
-    //         };
-    //       }
-
-    //       const updatedArray = prevData[parentKey].map((item) => {
-    //         if (Object.keys(item).length === 0) return { [key]: value };
-
-    //         if (
-    //           comparisionKey &&
-    //           item[comparisionKey[1]] === prevData[comparisionKey[0]]
-    //         ) {
-    //           return { ...item, [key]: value };
-    //         }
-
-    //         return item;
-    //       });
-
-    //       if (
-    //         comparisionKey &&
-    //         !updatedArray.some(
-    //           (item) => item[comparisionKey[1]] === prevData[comparisionKey[0]]
-    //         )
-    //       ) {
-    //         updatedArray.push({
-    //           [comparisionKey[1]]: prevData[comparisionKey[0]],
-    //           [key]: value,
-    //         });
-    //       }
-
-    //       return {
-    //         ...prevData,
-    //         [parentKey]: updatedArray,
-    //       };
-    //     });
-    //   }, 100);
-    // }
 
     // FUNCTION TO FILTER OPTIONS AS PER CASCADE
     filterOptions(key, cascadeValue) {
@@ -309,6 +86,7 @@
         value: item?.fg_code || item?.cbs_code || item?.id,
       }));
     }
+
     filterOptionsCustomer(key, cascadeValue) {
       if (!this.optionsData[key]) return [];
 
@@ -408,180 +186,8 @@
       }, 100);
     };
 
-    async handleSchemeChange() {
-      const schemaDependenciesMap = await Object.fromEntries(
-        this.schemaConditions?.schemaDependencies?.map((entry) => [
-          Object.keys(entry)[0],
-          Object.values(entry)[0],
-        ]) || []
-      );
-      const findCBSCode = (id) => {
-        for (const key in this.optionsData) {
-          const match =
-            this.optionsData[key]?.length > 0 &&
-            this.optionsData[key]?.find(
-              (item) => item?.fg_code || item?.cbs_code || item?.id === id
-            );
-          if (match) return match.cbs_code;
-        }
-        return null;
-      };
-
-      const accountCBSCode = await findCBSCode(this.formData.account_scheme_id);
-
-      const schemaDependentValues =
-        (await schemaDependenciesMap[accountCBSCode]) || {};
-
-      const resolveValue = (key, value) => {
-        if (!value) return value;
-
-        const optionSet = this.optionsData[key] || [];
-        const match = optionSet.find((item) =>
-          item.cbs_code ? item.cbs_code === value : item.title === value
-        );
-
-        return match ? match.id : value;
-      };
-
-      await this.setFormData((prevFormData) => ({
-        ...prevFormData,
-        gender: schemaDependentValues?.gender || this.formData?.gender || null,
-        // occupation_type: resolveValue(
-        //   "occupations",
-        //   schemaDependentValues?.occupation_type ||
-        //     this.formData?.occupation_type ||
-        //     null
-        // ),
-        nationality: resolveValue(
-          "nationalities",
-          schemaDependentValues?.nationality ||
-            this.formData?.nationality ||
-            null
-        ),
-        // source_of_income: resolveValue(
-        //   "income_sources",
-        //   schemaDependentValues?.source_of_income ||
-        //     this.formData?.source_of_income ||
-        //     null
-        // ),
-        business_type: resolveValue(
-          "business_type",
-          schemaDependentValues?.business_type ||
-            this.formData?.business_type ||
-            null
-        ),
-        province: resolveValue(
-          "provinces",
-          schemaDependentValues?.province || this.formData?.province || null
-        ),
-      }));
-
-      await this.setUiSchema((prevSchema) => ({
-        ...prevSchema,
-        date_of_birth_ad: {
-          ...prevSchema?.date_of_birth_ad,
-          "ui:options": {
-            ...prevSchema?.date_of_birth_ad?.["ui:options"],
-            validAge: this.formData?.is_minor_account
-              ? 0
-              : schemaDependentValues?.date_of_birth_ad || 18,
-          },
-        },
-        date_of_birth_bs: {
-          ...prevSchema?.date_of_birth_bs,
-          "ui:options": {
-            ...prevSchema?.date_of_birth_bs?.["ui:options"],
-            validAge: this.formData?.is_minor_account
-              ? 0
-              : schemaDependentValues?.date_of_birth_bs || 18,
-            minAge: !this.formData?.is_minor_account && 0,
-            maxAge: this.formData?.is_minor_account && 18,
-          },
-        },
-      }));
-    }
-
-    async calculateRisk(value) {
-      try {
-        this.setUiSchema((prevUiSchema) => ({
-          ...prevUiSchema,
-          calculate_risk: {
-            ...prevUiSchema.calculate_risk,
-            "ui:options": {
-              ...prevUiSchema.calculate_risk?.["ui:options"],
-              show_loader: true,
-            },
-          },
-        }));
-        const response = await this.axios.post(
-          `${this.mainRouteURL}/external-api/risk-check`,
-          {
-            ...this.formData,
-            category: "individual",
-            id: this.case_id,
-          }
-        );
-
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
-        const resp = response?.data;
-
-        this.setFormData((prevData) => ({
-          ...prevData,
-          risk_level: resp?.risk_level,
-          risk_score: resp?.risk_score,
-          risk_message: resp?.risk_message,
-        }));
-
-        this.setJsonSchema((prevJsonSchema) => ({
-          ...prevJsonSchema,
-          isDisabled: false,
-        }));
-
-        return;
-      } catch (error) {
-        this.setModalOpen({
-          open: true,
-          message: error
-            ? `${error.response?.data?.message || error?.response?.statusText}`
-            : `${error || "Unknown Error"}`,
-          subTitle: Array.isArray(error?.response?.data?.errors)
-            ? error?.response?.data?.errors
-                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
-                .join("\n")
-            : "",
-
-          status: "error",
-          close: "Close",
-        });
-        return {};
-      } finally {
-        this.setUiSchema((prevUiSchema) => ({
-          ...prevUiSchema,
-          calculate_risk: {
-            ...prevUiSchema.calculate_risk,
-            "ui:options": {
-              ...prevUiSchema.calculate_risk?.["ui:options"],
-              show_loader: false,
-            },
-          },
-        }));
-      }
-    }
-
-    lookupValue(value, key) {
-      if (!this.optionsData[value]) return null;
-      const foundItem = this.optionsData[value].find(
-        (item) => item.cbs_code === key || item.title === key
-      );
-      if (!foundItem) return null;
-      return founditem?.fg_code || item?.cbs_code || item?.id;
-    }
-
     async updateFormAndSchema(formData, schemaConditions) {
       this.formData = formData;
-
       if (!this.form_status?.includes("case-init")) {
         this.setJsonSchema((prevJsonSchema) => {
           return {
@@ -589,151 +195,6 @@
             isDisabled: false,
           };
         });
-      }
-
-      // const next_step = schemaConditions?.accountInfo?.find(
-      //   (item) => item?.account_type === this.formData?.account_info
-      // )?.step_slug;
-
-      // if (next_step) {
-      //   this.setNextStep(next_step);
-      // }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-
-        const flatEntry = { key: index };
-
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({
-              value: item,
-              confirmation: item.confirmation || null,
-            }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-
-        return acc;
-      }, {});
-    }
-
-    async fetchMasterData(url, axios) {
-      try {
-        const response = await axios.get(url);
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
-        const data = response?.data;
-
-        this.isMasterDataLoaded = true;
-        this.optionsData = data.data;
-
-        return data.data;
-      } catch (error) {
-        console.error("Error fetching options:", error);
-        return {};
-      }
-    }
-
-    async fetchPersonalInfoScreening() {
-      this.addLoader("personal_info_screening", true);
-      try {
-        if (!this.formData?.first_name?.trim()) {
-          this.toast.error("Please enter a First Name");
-          return;
-        }
-        let payload = {
-          first_name: this.formData.first_name,
-          middle_name: this.formData.middle_name,
-          last_name: this.formData.last_name,
-          father_name: this.formData.father_name,
-          identification_number: this.formData.identification_number,
-          blacklist_min_score: Number(this.formData.blacklist_min_score),
-          sanction_min_score: Number(this.formData.sanction_min_score),
-          pep_min_score: Number(this.formData.pep_min_score),
-          adverse_media_min_score: Number(
-            this.formData.adverse_media_min_score
-          ),
-          max_results: Number(this.formData.max_result),
-        };
-
-        const response = await this.axios.post(
-          `${this.mainRouteURL}/external-api/screening-check`,
-          payload
-        );
-
-        const responseData =
-          response?.data?.data?.realTimeScreeningResult?.responseData;
-        const responseD = response?.data?.data?.realTimeScreeningResult;
-        const screeningLists = responseData?.ResultedRecords;
-        const data = screeningLists?.map((item) => ({
-          ...item,
-          source: item?.listName.includes("LNACCUITYLIST_PEP")
-            ? "pep"
-            : item?.listName.includes("LNACCUITYLIST_GWL")
-            ? "sanction"
-            : item?.listName.includes("KSKLLIST")
-            ? "blacklist"
-            : item?.listName.includes("LNACCUITYLIST_EDD")
-            ? "adverse_media"
-            : item?.listName.includes("NBAPEPLIST")
-            ? "pep_nba"
-            : item?.listName.includes("BLOCKLIST")
-            ? "blocklist"
-            : item?.listName,
-          listIdDetails: [{ ...item?.listIdDetails }],
-        }));
-
-        this.setFormData((prevData) => ({
-          ...prevData,
-          personal_screening_data: this.preprocessData(data),
-          screening_ref_code: responseD.uniqueRequestId,
-        }));
-        this.setRenderFormKey((prev) => prev + 1);
-        return;
-      } catch (error) {
-        this.setModalOpen({
-          open: true,
-          message: error
-            ? `${error.response?.data?.message || error?.response?.statusText}`
-            : `${error || "Unknown Error"}`,
-          subTitle: Array.isArray(error?.response?.data?.errors)
-            ? error?.response?.data?.errors
-                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
-                .join("\n")
-            : "",
-
-          status: "error",
-          close: "Close",
-        });
-
-        return {};
-      } finally {
-        this.addLoader("personal_info_screening", false);
       }
     }
 
@@ -815,7 +276,9 @@
       cascadeId = null
     ) {
       const fieldMapping = {
+        branch: "branches",
         account_type_id: "account_types",
+        account_purpose: "account_purposes",
         business_type: "business_type",
         nationality: "nationalities",
         permanent_province: "provinces",
@@ -827,13 +290,9 @@
         current_municipality: "local_bodies",
         id_type_id: "document_types",
         issue_country: "countries",
-        issued_district_text: "countries",
         issued_district: "districts",
         issuing_authority: "issuing_authorities",
-        family_member_relation: "relationships",
         occupation_type: "occupations",
-        designation: "corporate_relation",
-        source_of_income: "income_sources",
         permanent_country: "countries",
         relation_to_nominee: "relationships",
         account_scheme_id: "scheme_type",
@@ -843,15 +302,22 @@
         mobile_country_code: "country_codes",
         phone_country_code: "country_codes",
         dedup_identification: "document_types",
-        existing_risk_rating: "risk_categories",
-        marital_status: "marital_status",
-        customer_type_id: "customer_types",
-        constitution_code_id: "constitution_types",
         currency: "currencies",
+        constitution_code_id: "constitution_types",
+        customer_type_id: "customer_types",
+        marital_status: "marital_status",
+        source_of_income: "income_sources",
+        issued_district_text: "countries",
+        designation: "corporate_relation",
         national_id_issuing_authority: "issuing_authorities",
         national_id_issue_place: "districts",
+        beneficial_relationship: "relationships",
         literacy: "literacy",
         educational_qualification: "education_qualifications",
+        locker_type: "locker_type",
+        nominee_id_issuing_authority: "issuing_authorities",
+        beneficial_id_issuing_authority: "issuing_authorities",
+        religion: "religion",
       };
       const dataKey = fieldMapping[fieldKey] || fieldKey;
       let fieldOptions = optionsData[dataKey] || [];
@@ -998,12 +464,15 @@
       this.setNextStep("joint-address");
 
       const fieldsToUpdate = [
+        "branch",
+        "literacy",
+        "locker_type",
         "account_type_id",
+        "account_purpose",
         "nationality",
         "joint_nationality",
         "guardian_nationality",
         "permanent_province",
-        "family_member_relation",
         "permanent_district",
         "permanent_municipality",
         "current_country",
@@ -1017,27 +486,28 @@
         "mobile_country_code",
         "phone_country_code",
         "occupation_type",
-        "family_member_relation",
         "permanent_country",
         "account_scheme_id",
         "business_type",
         "gender",
         "salutation",
         "account_info",
-        "relation_to_nominee",
         "dedup_identification",
-        "national_id_issuing_authority",
-        "existing_risk_rating",
-        "marital_status",
+        "currency",
+        "religion",
         "customer_type_id",
         "constitution_code_id",
-        "currency",
+        "marital_status",
         "source_of_income",
         "issued_district_text",
+        "relation_to_nominee",
         "designation",
+        "national_id_issuing_authority",
         "national_id_issue_place",
-        "literacy",
+        "beneficial_relationship",
         "educational_qualification",
+        "nominee_id_issuing_authority",
+        "beneficial_id_issuing_authority",
       ];
 
       for (const fieldKey of fieldsToUpdate) {
@@ -1071,111 +541,6 @@
           properties: updatedProperties,
         };
       });
-    }
-
-    async fetchIndividualInfoCIFDetail(cifId) {
-      this.setUiSchema((prevUiSchema) => ({
-        ...prevUiSchema,
-        cif_enquiry: {
-          ...prevUiSchema.cif_enquiry,
-          "ui:disabled": true,
-          "ui:options": {
-            ...prevUiSchema.cif_enquiry["ui:options"],
-            show_loader: true,
-          },
-        },
-      }));
-      try {
-        const response = await this.axios.post(
-          `${this.mainRouteURL}/external-api/cif-enquiry`,
-          {
-            cif_number: cifId ?? this.formData.cif_number,
-            form_title: "joint_info",
-            id: this.case_id,
-            is_minor: this.formData?.is_minor_account,
-          }
-        );
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
-        const resp = response?.data?.data;
-
-        this.setFormData((prevData) => ({
-          ...prevData,
-          ...resp,
-          account_info: prevData?.account_info,
-          has_cif: prevData?.has_cif,
-          cif_number: prevData?.cif_number,
-          cif_data: resp,
-          ...(resp?.national_id_number && {
-            national_id_number: this.functionGroup.nidFormat(
-              resp?.national_id_number
-            ),
-          }),
-
-          date_of_birth_bs: resp?.date_of_birth_ad
-            ? this.adToBs(resp?.date_of_birth_ad)
-            : "",
-        }));
-
-        return;
-      } catch (error) {
-        this.setModalOpen({
-          open: true,
-          message: error
-            ? `${error.response?.data?.message || error?.response?.statusText}`
-            : `${error || "Unknown Error"}`,
-          subTitle: Array.isArray(error?.response?.data?.errors)
-            ? error?.response?.data?.errors
-                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
-                .join("\n")
-            : "",
-          status: "error",
-          close: "Close",
-          showButton:
-            error.response?.data?.message
-              .toLowerCase()
-              ?.includes("incomplete") && true,
-          buttonName:
-            error.response?.data?.message
-              .toLowerCase()
-              ?.includes("incomplete") && "Redirect to BPM",
-          buttonUrl:
-            error.response?.data?.message
-              .toLowerCase()
-              ?.includes("incomplete") && "",
-        });
-        return {};
-      } finally {
-        this.setUiSchema((prevUiSchema) => ({
-          ...prevUiSchema,
-          cif_enquiry: {
-            ...prevUiSchema.cif_enquiry,
-            "ui:disabled": false,
-            "ui:options": {
-              ...prevUiSchema.cif_enquiry["ui:options"],
-              show_loader: false,
-            },
-          },
-        }));
-      }
-    }
-
-    filterOptionsOccupation(key, childKey, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const filteredOptions = cascadeValue
-        ? this.optionsData[key][childKey]?.filter((item) =>
-            item.cascade_id?.includes(cascadeValue)
-          ) || []
-        : this.optionsData[key][childKey];
-
-      return filteredOptions
-        ?.filter((item) => item?.id !== "remaining all occopation code")
-        ?.map((item) => ({
-          label: item.title,
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
     }
 
     async formDataCleaner(fields) {
@@ -1227,100 +592,6 @@
 
       setTimeout(() => this.setFormData(result), 100);
       return result;
-    }
-
-    async getDedupCheck() {
-      const nonClearableField = [
-        "is_minor_account",
-        "has_cif",
-        "cif_number",
-        "first_name",
-        "middle_name",
-        "last_name",
-        "last_name_not_available",
-        "father_name",
-        "dedup_id_number",
-        "dedup_identification",
-        "date_of_birth_ad",
-        "date_of_birth_bs",
-        "collect",
-        "account_info",
-        "account_type_id",
-        "account_scheme_id",
-        "currency",
-        "nationality",
-        "customer_type_id",
-        "customer_status",
-        ...(this.formData?.account_scheme_id ===
-        "e1d843a7-8062-4190-a26d-846a85b0f4ad"
-          ? ["gender"]
-          : []),
-        ...([
-          "b7a9d971-2596-408f-ab7f-60c657549da1",
-          "945b7138-18dc-418c-9de1-2a79df23947f",
-          "dc396a31-7c87-42d6-b208-ae973cecb12b",
-        ].includes(this.formData?.account_scheme_id)
-          ? ["occupation_type"]
-          : []),
-      ];
-      !(this.formData?.has_cif || this.formData?.source === "ocr") &&
-        this.formDataCleaner(nonClearableField);
-      if (!this.formData?.first_name) {
-        this.toast.error("Enter name for dedup module");
-        return;
-      }
-      this.addLoader("dedup_check", true);
-
-      try {
-        const response = await this.axios.post(
-          `${this.mainRouteURL}/external-api/dedup-check`,
-          {
-            first_name: this.formData.first_name,
-            middle_name: this.formData.middle_name,
-            last_name: this.formData.last_name,
-            father_name: this.formData.father_name,
-            id_number: this.formData.dedup_id_number,
-            document_type: this.formData.dedup_identification,
-            citizenship_number: null,
-            dob_ad: this.formData.date_of_birth_ad,
-            dob_bs: this.formData.date_of_birth_bs,
-          }
-        );
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
-        const resp = response?.data?.data?.dedup_response;
-        if (resp?.message?.includes("No Data")) {
-          this.toast.info(resp.message);
-        } else {
-          this.setFormData((prevData) => ({
-            ...prevData,
-            dedup_module_data: this.preprocessData(resp),
-          }));
-        }
-
-        this.setRenderFormKey((prev) => prev + 1);
-
-        return;
-      } catch (error) {
-        this.setModalOpen({
-          open: true,
-          message: error
-            ? `${error.response?.data?.message || error?.response?.statusText}`
-            : `${error || "Unknown Error"}`,
-          subTitle: Array.isArray(error?.response?.data?.errors)
-            ? error?.response?.data?.errors
-                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
-                .join("\n")
-            : "",
-
-          status: "error",
-          close: "Close",
-        });
-        return {};
-      } finally {
-        this.addLoader("dedup_check", false);
-      }
     }
 
     async updateFamilyInformation(value) {
@@ -1493,7 +764,7 @@
         jsonSchema,
         widgets,
       } = options;
-      !this.formData?.case_status && (this.nationalityChanged = true);
+
       const handleSetNotAvailable = (value, keyName) => {
         setTimeout(
           () =>
@@ -1512,58 +783,6 @@
         );
       };
 
-      const sameAsPermanentOnChange = (value) => {
-        setTimeout(
-          () =>
-            this.setFormData((prevFormData) => {
-              let updatedFormData = { ...prevFormData };
-              updatedFormData.same_as_permanent = value;
-
-              if (value) {
-                updatedFormData = {
-                  ...updatedFormData,
-                  current_country: updatedFormData.permanent_country || "NP",
-                  current_province: updatedFormData.permanent_province || "",
-                  current_district: updatedFormData.permanent_district || "",
-                  current_municipality:
-                    updatedFormData.permanent_municipality || "",
-                  current_ward_number:
-                    updatedFormData.permanent_ward_number || "",
-                  current_street_name:
-                    updatedFormData.permanent_street_name || "",
-                  current_town: updatedFormData.permanent_town || "",
-                  current_house_number:
-                    updatedFormData.permanent_house_number || "",
-                  current_outside_town:
-                    updatedFormData.permanent_outside_town || "",
-                  current_outside_street_name:
-                    updatedFormData.permanent_outside_street_name,
-                  current_postal_code: updatedFormData.permanent_postal_code,
-                };
-              } else {
-                updatedFormData = {
-                  ...updatedFormData,
-                  same_as_permanent: value,
-                  current_country: "NP",
-                  current_province: "",
-                  current_district: "",
-                  current_municipality: "",
-                  current_ward_number: "",
-                  current_street_name: "",
-                  current_town: "",
-                  current_house_number: "",
-                  current_outside_town: "",
-                  current_outside_street_name: "",
-                  current_postal_code: "",
-                };
-              }
-
-              return updatedFormData;
-            }),
-          100
-        );
-      };
-
       this.initializeSchema(setJsonSchema, formData);
       return {
         "ui:ObjectFieldTemplate": ObjectFieldTemplate,
@@ -1572,9 +791,10 @@
           "has_cif",
           "cif_number",
           "cif_enquiry",
+
           "account_info",
+          "branch",
           "account_type_id",
-          "nationality",
           "currency",
           "account_scheme_id",
           "pension",
@@ -1582,8 +802,8 @@
           "dmat_number",
           "ssn",
           "customer_type_id",
+          "account_purpose",
           "customer_status",
-          "collect",
 
           "salutation",
           "first_name",
@@ -1593,541 +813,158 @@
           "father_name",
           "date_of_birth_ad",
           "date_of_birth_bs",
+          "is_nrn",
+          "is_refugee",
+          "nationality",
           "dedup_identification",
           "dedup_id_number",
-          "extra_gap",
-          "dedup_check",
-          "dedup_module_data",
+
           "gender",
           "marital_status",
+          "religion",
           "email",
           "email_not_available",
           "literacy",
           "educational_qualification",
+          "is_bank_staff",
+          "staff_id",
+          "is_us_person",
+
           "family_information",
-
-          "permanent_country",
-          "permanent_province",
-          "permanent_district",
-          "permanent_municipality",
-          "permanent_ward_number",
-          "permanent_street_name",
-          "permanent_town",
-          "permanent_house_number",
-          "permanent_outside_town",
-          "permanent_outside_street_name",
-          "permanent_postal_code",
-          "same_as_permanent",
-          "current_country",
-          "current_province",
-          "current_district",
-          "current_municipality",
-          "current_ward_number",
-          "current_street_name",
-          "current_town",
-          "current_house_number",
-          "current_outside_town",
-          "current_outside_street_name",
-          "current_postal_code",
-          "contact_type",
-          "mobile_country_code",
-          "mobile_number",
-          "phone_country_code",
-          "phone_number",
-          "is_customer_disabled",
-          "national_id_number",
-          "national_id_issue_date_ad",
-          "national_id_issue_date_bs",
-          "national_id_issue_place",
-          "national_id_issuing_authority",
-          "nid_verified",
-          "nid_verify",
-          "nid_reset",
-          "id_type_details",
-          "id_type_id",
-          "identification_number",
-          "issue_country",
-          "citizenship_number",
-          "occupation_type",
-          "source_of_income",
-          "occupation_detail",
-
-          "business_type",
-          "has_nominee",
-
-          "nominee_full_name",
-          "relation_to_nominee",
-          "nominee_father_name",
-          "nominee_grandfather_name",
-          "nominee_contact_number",
-
-          "personal_info_screening",
-          "screening_filter",
-          "personal_screening_data",
-          "screening_ref_code",
-
-          "declared_anticipated_annual_transaction",
-          "expected_anticipated_annual_transaction",
-          "number_of_transaction",
-          "yearly_income",
-          "transaction_justification",
-          "transaction_fund_details",
-
-          "pep",
-          "pep_category",
-          "pep_declaration",
-          "family_pep_declaration",
-          "adverse_media",
-          "adverse_category",
-          "entitled_with_fund",
-          "existing_risk_rating",
-          "loan_status",
-          "is_blacklisted",
-          "customer_introduce_by",
-          "introducer_account_number",
-          "customer_name",
-          "employee_id",
-          "met_in_person",
-          "blacklist_min_score",
-          "sanction_min_score",
-          "pep_min_score",
-          "adverse_media_min_score",
-          "max_result",
-          "screening_ref_number",
-          "external_cdd_id",
-          "risk_level",
-          "calculate_risk",
-          "risk_score",
-          "cif_data",
-          "source",
         ],
-        source: {
-          "ui:widget": "hidden",
-        },
-        is_customer_disabled: {
+        connectedPairs: [
+          ["last_name", "last_name_not_available"],
+          ["email", "email_not_available"],
+        ],
+
+        is_minor_account: {
           "ui:widget": "CustomCheckBoxWidget",
           "ui:label": false,
         },
-        collect: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return [
-                {
-                  label: "Collect by Person",
-                  value: "C",
-                },
-                {
-                  label: "Collect by Email",
-                  value: "E",
-                },
-              ];
-            },
-          },
-        },
-        nid_verify: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames": "mt-5 w-100",
-          "ui:options": {
-            disableButton: (formData) => !formData?.national_id_number,
-            buttonClassName: "w-100",
-            onClick: async (formData) => {
-              this.addLoader("nid_verify", true);
-              let nidVerifiedValue = "No";
-              try {
-                const response = await this.axios.post(
-                  `${this.mainRouteURL}/external-api/verify-nid`,
-                  {
-                    nin: formData?.national_id_number,
-                    first_name: formData?.first_name,
-                    last_name: formData?.last_name,
-                    middle_name: formData?.middle_name,
-                    date_of_birth: formData?.date_of_birth_ad,
-                  }
-                );
 
-                const responseData = response?.data;
-                nidVerifiedValue = responseData?.resCod == "200" ? "Yes" : "No";
-                this.setModalOpen({
-                  open: true,
-                  message: responseData?.data?.message,
-                  close: "Close",
-                  status: "success",
-                });
-              } catch (err) {
-                nidVerifiedValue = "No";
-                this.setModalOpen({
-                  open: true,
-                  message: err?.response?.data?.message,
-                  close: "Close",
-                  status: "error",
-                });
-              } finally {
-                this.addLoader("nid_verify", false);
-                this.setFormData((prevForm) => ({
-                  ...prevForm,
-                  nid_verified: nidVerifiedValue,
-                }));
-              }
-            },
-          },
+        account_purpose: {
+          "ui:placeholder": "Select Purpose of Account",
         },
 
-        nid_reset: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
+        account_info: {
+          "ui:widget": "CustomRadioWidget",
           "ui:label": false,
-          "ui:classNames": "mt-5 w-100",
+        },
+
+        account_type_id: {
           "ui:options": {
-            disableButton: (formData) => !formData?.nid_verified,
-            buttonClassName: "w-100",
-            onClick: async (formData) => {
+            onChange: (value) => {
               this.dropdownReset({
-                national_id_number: null,
-                national_id_issue_date_ad: "",
-                national_id_issue_date_bs: "",
-                national_id_issue_place: "",
-                nid_verified: "",
+                account_type_id: value,
+                account_scheme_id: null,
+                currency: null,
+                customer_type_id: null,
               });
             },
           },
         },
-        declared_anticipated_annual_transaction: {
+
+        currency: {
+          "ui:options": {},
+        },
+
+        account_scheme_id: {
+          "ui:widget": "CascadeDropdown",
           "ui:options": {
-            addonBefore: "Customer",
-            amount: true,
+            getOptions: (formData) =>
+              this.filterMasterData("scheme_type", formData),
           },
         },
-        expected_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Branch",
-            amount: true,
-          },
-        },
-        yearly_income: {
-          "ui:options": {
-            amount: true,
-          },
-        },
-        cif_data: {
+
+        screening_ref_code: {
           "ui:widget": "hidden",
         },
-        connectedPairs: [
-          ["lastname", "last_name_not_available"],
-          ["email", "email_not_available"],
-        ],
+
+        staff_id: {
+          "ui:options": {
+            maxLength: 10,
+          },
+        },
+
+        is_customer_disabled: {
+          "ui:widget": "CustomCheckBoxWidget",
+          "ui:label": false,
+        },
+
+        last_name: {
+          "ui:disabled": true,
+        },
+
+        marital_status: {
+          "ui:options": {
+            onChange: (value) => {
+              this.updateFamilyInformation(value);
+            },
+          },
+        },
+
         has_cif: {
           "ui:widget": "CustomCheckBoxWidget",
           "ui:label": false,
           "ui:options": {
             onChange: (value) =>
               !value &&
-              setTimeout(
-                () =>
-                  setFormData((prev) => ({ account_info: prev?.account_info })),
-                100
-              ),
+              setFormData((prev) => ({
+                account_info: prev?.account_info,
+                id_type_details: [{ id_type_id: "CTZN" }],
+              })),
           },
         },
-        screening_ref_code: {
-          "ui:widget": "hidden",
-          "ui:label": false,
-        },
 
+        educational_qualification: {
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: (formData) => {
+              return this.filterOptions("education_qualifications");
+            },
+          },
+        },
         customer_type_id: {},
 
-        is_minor_account: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:classNames": "d-flex align-items-center",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => {
-              this.setUiSchema((prevSchema) => ({
-                ...prevSchema,
-                date_of_birth_ad: {
-                  ...prevSchema?.date_of_birth_ad,
-                  "ui:options": {
-                    ...prevSchema?.date_of_birth_ad["ui:options"],
-                    minAge: value ? 18 : 0,
-                    disableFutureDates: value,
-                    validAge: !value ? 18 : 0,
-                  },
-                },
-                date_of_birth_bs: {
-                  ...prevSchema?.date_of_birth_bs,
-                  "ui:options": {
-                    ...prevSchema?.date_of_birth_bs["ui:options"],
-                    minAge: !value && 0,
-                    maxAge: value && 18,
-                    disableFutureDates: value,
-                    validAge: !value ? 18 : 0,
-                  },
-                },
-              }));
-
-              this.dropdownReset({
-                is_minor_account: value,
-                marital_status: value ? "UNMAR" : "",
-                date_of_birth_ad: "",
-                date_of_birth_bs: "",
-                dedup_identification: value
-                  ? null
-                  : this.formData?.nationality === "NP"
-                  ? "CTZN"
-                  : null,
-                id_type_details: [{}],
-                // date_of_birth_ad: value
-                //   ? this.moment().subtract(1, "day").format("YYYY-MM-DD")
-                //   : this.moment().subtract(18, "years").format("YYYY-MM-DD"),
-                // date_of_birth_bs: value
-                //   ? this.NepaliDate.parseEnglishDate(
-                //       this.moment().subtract(1, "day").format("YYYY-MM-DD"),
-                //       "YYYY-MM-DD"
-                //     ).format("YYYY-MM-DD")
-                //   : this.NepaliDate.parseEnglishDate(
-                //       this.moment(formData?.date_of_birth_ad)
-                //         .subtract(18, "years")
-                //         .format("YYYY-MM-DD"),
-                //       "YYYY-MM-DD"
-                //     ).format("YYYY-MM-DD"),
-              });
-            },
-          },
-        },
-        national_id_issue_date_ad: {
-          "ui:widget": widgets.CustomDatePicker,
-          "ui:placeholder": "Select Issued Date (A.D)",
-          "ui:options": {
-            enforceAgeRestriction: false,
-            validAge: 0,
-            name: "national_id_issue_date_ad",
-            enforceAgeRestriction: true,
-            disableFutureDates: true,
-            minimumDate: (formData) => {
-              return (
-                formData?.date_of_birth_ad &&
-                this.moment(formData?.date_of_birth_ad)
-                  .add(1, "day")
-                  .format("YYYY-MM-DD")
-              );
-            },
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                true,
-                "national_id_issue_date_ad"
-              );
-            },
-          },
-        },
-        national_id_issue_date_bs: {
-          "ui:widget": widgets.NepaliDatePickerR,
-          "ui:options": {
-            enforceAgeRestriction: true,
-            disableFutureDates: true,
-            validAge: 0,
-            name: "national_id_issue_date_bs",
-            minimumDate: (formData) => {
-              return (
-                formData?.date_of_birth_bs &&
-                this.moment(formData?.date_of_birth_bs).format("YYYY-MM-DD")
-              );
-            },
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                false,
-                "national_id_issue_date_bs"
-              );
-            },
-          },
-        },
-
-        dedup_identification: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            setDisabled: (formData, index) =>
-              !(
-                formData?.nationality === "IN" || formData?.nationality === "NP"
-              ),
-
-            // getOptions: (formData) => {
-            //   if (
-            //     formData?.dedup_identification &&
-            //     this.nationalityChanged === true
-            //   ) {
-            //     this.convertToArray(
-            //       formData?.dedup_identification,
-            //       "id_type_id",
-            //       "id_type_details",
-            //       ["dedup_identification", "id_type_id"]
-            //     );
-
-            //     this.nationalityChanged = false;
-            //   }
-            //   const d = this.functionGroup?.getRequiredDocuments(
-            //     this.optionsData["multi_validation_mapping"],
-            //     {
-            //       nationality: formData?.nationality,
-            //       account_type: formData?.is_minor_account
-            //         ? "MINOR"
-            //         : formData?.account_info,
-            //     }
-            //   );
-            //   return d?.filter((doc) => !["PANR", "WPERM"].includes(doc.value));
-            // },
-
-            onChange: async (value) => {
-              await setTimeout(
-                () =>
-                  this.setFormData((prev) => ({
-                    ...prev,
-                    id_type_details: [],
-                    dedup_id_number: null,
-                  })),
-                100
-              );
-              await this.convertToArray(
-                value,
-                "id_type_id",
-                "id_type_details",
-                ["dedup_identification", "id_type_id"]
-              );
-            },
-          },
-        },
+        dedup_identification: {},
 
         dedup_id_number: {
           "ui:options": {
-            onChange: (value) => {
+            onBlurCapture: (event) =>
               this.convertToArray(
-                value,
+                event?.target?.value,
                 "identification_number",
                 "id_type_details",
                 ["dedup_identification", "id_type_id"]
-              );
-            },
+              ),
           },
         },
 
         father_name: {
-          "ui:options": {
-            onChange: (value) => {
-              this.convertToArray(
-                value,
-                "family_member_full_name",
-                "family_information"
-              );
-            },
-          },
+          "ui:options": {},
         },
 
-        dedup_check: {
-          "ui:widget": "hidden",
-          "ui:label": false,
-          "ui:classNames":
-            "d-flex justify-content-end align-items-end h-100 my-1",
-          "ui:options": {
-            disableButton: (formData) =>
-              !(
-                formData?.first_name?.trim() &&
-                formData?.last_name?.trim() &&
-                formData?.father_name?.trim() &&
-                formData?.date_of_birth_ad?.trim() &&
-                formData?.dedup_identification?.trim() &&
-                formData?.dedup_id_number?.trim()
-              ),
-            onClick: () => {
-              this.getDedupCheck();
-            },
-          },
-        },
-
-        dedup_module_data: {
+        personal_screening_data: {
           "ui:widget": "ScreeningReportCard",
           "ui:label": false,
-          showCheckbox: false,
-          showViewedColumn: false,
+          showCheckbox: this.form_status?.includes("init") ? true : false,
+          showViewedColumn: true,
           fixedActionsColumn: true,
+          showFooter: true,
           "ui:options": {
             onCheckboxChange: (tableData, category, checked) => {
               this.setFormData((prevData) => ({
                 ...prevData,
-                [category]: checked ? "Yes" : "No",
-                dedup_module_data: tableData,
+                [category === "pep_nba"
+                  ? "pep"
+                  : category === "sanction_moha"
+                  ? "sanction"
+                  : category]: checked ? "Yes" : "No",
+                personal_screening_data: tableData,
               }));
             },
-            disabledButton: !this.form_status?.includes("case-init") && [
-              "match",
-            ],
             actionHandlers: {
               view: (record) => setIsModalVisible(true),
-              ...(this.form_status?.includes("case-init") && {
-                match: (record) => {
-                  if (record?.cif_number !== "-") {
-                    this.setFormData((prev) => ({
-                      ...prev,
-                      has_cif: true,
-                      cif_number: record?.cif_number,
-                    }));
-                    this.fetchIndividualInfoCIFDetail(record?.cif_number);
-                  } else {
-                    this.setModalOpen({
-                      open: true,
-                      message: "CIF number unavailable",
-                      close: "Close",
-                      status: "info",
-                    });
-                  }
-                },
-              }),
-            },
-          },
-        },
-
-        account_info: {
-          "ui:widget": "hidden",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => {
-              return this.dropdownReset({
-                account_type_id: value,
-                account_scheme_id: null,
-              });
-            },
-          },
-        },
-
-        risk_score: {
-          "ui:widget": "hidden",
-          "ui:label": false,
-        },
-
-        calculate_risk: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames":
-            "d-flex flex-column justify-content-center mt-5 h-100",
-          "ui:options": {
-            disableButton: (formData) => {
-              let requiredFields = jsonSchema.required || [];
-              const allFilled = requiredFields.every((field) => {
-                const value = formData?.[field];
-                return value !== undefined && value !== null && value !== "";
-              });
-
-              return this.form_status?.includes("init") && !allFilled;
-            },
-            onClick: (value) => {
-              this.calculateRisk(value);
             },
           },
         },
@@ -2135,220 +972,14 @@
         salutation: {
           "ui:widget": "CustomRadioWidget",
           "ui:options": {
-            // getOptions: (formData) => {
-            //   console.log(formData);
-            //   return formData?.account_scheme_id
-            //     ? this.filterOptions(
-            //         "salutations",
-            //         formData?.account_scheme_id ===
-            //           "e1d843a7-8062-4190-a26d-846a85b0f4ad"
-            //           ? formData?.account_scheme_id
-            //           : formData?.is_minor_account
-            //           ? "MINOR"
-            //           : formData?.account_info
-            //       )
-            //     : this.functionGroup?.getRequiredDocuments(
-            //         this.optionsData["multi_validation_mapping"],
-            //         {
-            //           account_info:
-            //             formData?.account_scheme_id ===
-            //             "e1d843a7-8062-4190-a26d-846a85b0f4ad"
-            //               ? formData?.account_scheme_id
-            //               : formData?.is_minor_account
-            //               ? "MINOR"
-            //               : formData?.account_info,
-            //         }
-            //       );
-            // },
-            onChange: (value) => {
-              this.dropdownReset({
-                salutation: value,
-                gender:
-                  this.formData?.account_scheme_id ===
-                  "e1d843a7-8062-4190-a26d-846a85b0f4ad"
-                    ? "535a3b2f-7e6f-4077-9359-51a451083cbc"
-                    : null,
-              });
-            },
+            onChange: (value) =>
+              setTimeout(() => {
+                this.dropdownReset({
+                  salutation: value,
+                  gender: value === "MR." ? "M" : "F",
+                });
+              }, 600),
           },
-        },
-        mobile_country_code: {
-          "ui:options": {
-            onChange: (value) => {
-              return this.dropdownReset({
-                mobile_country_code: value,
-                mobile_number: "",
-              });
-            },
-          },
-        },
-        phone_country_code: {
-          "ui:options": {
-            onChange: (value) => {
-              return this.dropdownReset({
-                phone_country_code: value,
-                phone_number: "",
-              });
-            },
-          },
-        },
-        permanent_country: {
-          "ui:options": {
-            onChange: (value) => {
-              this.dropdownReset({
-                permanent_country: value,
-                permanent_province: null,
-                permanent_district: null,
-                permanent_outside_town: "",
-                permanent_outside_street_name: "",
-                permanent_postal_code: "",
-              });
-            },
-          },
-        },
-        mobile_number: {
-          "ui:options": {
-            inputMode: "decimal",
-            onInput: (e) => {
-              e.currentTarget.value = e.currentTarget.value.replace(
-                /[^0-9]/g,
-                ""
-              );
-            },
-          },
-        },
-        account_type_id: {
-          "ui:options": {
-            onChange: (value) => {
-              this.dropdownReset({
-                account_type_id: value,
-                account_scheme_id: null,
-              });
-            },
-          },
-        },
-        currency: {
-          "ui:options": {
-            onChange: (value) => {
-              this.dropdownReset({
-                account_scheme_id: null,
-                customer_type_id: null,
-              });
-
-              this.handleSchemeCheck({
-                cif_number: this.formData?.cif_number,
-                currency: value,
-                account_scheme_id: this.formData?.account_scheme_id,
-              });
-            },
-          },
-        },
-        account_scheme_id: {
-          // "ui:widget": "CascadeDropdown",
-          // "ui:options": {
-          //   getOptions: (formData) => {
-          //     return this.filterMasterData("scheme_type", formData);
-          //   },
-          //   onChange: (value) =>
-          //     setTimeout(() => {
-          //       this.handleSchemeChange();
-          //       this.handleSchemeCheck({
-          //         cif_number: this.formData?.cif_number,
-          //         currency: this.formData?.currency,
-          //         account_scheme_id: value,
-          //       });
-          //       if (
-          //         value === "dc396a31-7c87-42d6-b208-ae973cecb12b" ||
-          //         value === "2c825f3c-372e-4cf4-aaa2-601652927933" ||
-          //         value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-          //       ) {
-          //         setTimeout(
-          //           () =>
-          //             this.setFormData((prev) => {
-          //               const items = prev?.id_type_details || [];
-          //               const targetId =
-          //                 value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-          //                   ? "NRNID"
-          //                   : "WPERM";
-          //               const otherId =
-          //                 value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-          //                   ? "WPERM"
-          //                   : "NRNID";
-          //               // Filter out the otherId if it exists
-          //               const filteredItems = items.filter(
-          //                 (item) => item?.id_type_id !== otherId
-          //               );
-          //               const hasTarget = filteredItems.some(
-          //                 (item) => item?.id_type_id === targetId
-          //               );
-          //               return {
-          //                 ...prev,
-          //                 id_type_details: hasTarget
-          //                   ? filteredItems.map((item) => ({
-          //                       ...item,
-          //                     }))
-          //                   : filteredItems.length === 1 &&
-          //                     Object.keys(filteredItems[0]).length === 0
-          //                   ? [
-          //                       ...filteredItems
-          //                         .filter(
-          //                           (item) => Object.keys(item).length > 0
-          //                         )
-          //                         .map((item) => ({
-          //                           ...item,
-          //                           ...(item?.id_type_id && {
-          //                             removable: true,
-          //                           }),
-          //                         })),
-          //                       { id_type_id: targetId, removable: false },
-          //                     ]
-          //                   : filteredItems.map((item) => ({
-          //                       ...item,
-          //                     })),
-          //                 // id_type_details: hasTarget
-          //                 //   ? filteredItems.map((item) => ({
-          //                 //       ...item,
-          //                 //     }))
-          //                 //   : [
-          //                 //       ...filteredItems.map((item) => ({
-          //                 //         ...item,
-          //                 //         removable: true,
-          //                 //       })),
-          //                 //       { id_type_id: targetId, removable: false },
-          //                 //     ],
-          //               };
-          //             }),
-          //           100
-          //         );
-          //       } else {
-          //         setTimeout(
-          //           () =>
-          //             this.setFormData((prev) => {
-          //               const items = prev?.id_type_details || [];
-          //               return {
-          //                 ...prev,
-          //                 id_type_details: items.map((item) => ({
-          //                   ...item,
-          //                   ...(item?.id_type_id && { removable: true }),
-          //                 })),
-          //               };
-          //             }),
-          //           100
-          //         );
-          //       }
-          //       !this.formData?.has_cif &&
-          //         this.dropdownReset({
-          //           account_scheme_id: value,
-          //           ...(this.formData?.source !== "ocr" && {
-          //             salutation: null,
-          //           }),
-          //           ...(value === "df09a418-3847-4565-a2c1-eb261f2a8e72" && {
-          //             date_of_birth_ad: "",
-          //             date_of_birth_bs: "",
-          //           }),
-          //         });
-          //     }, 100),
-          // },
         },
 
         gender: {
@@ -2359,23 +990,81 @@
             },
           },
         },
+
         cif_enquiry: {
           "ui:widget": "hidden",
           "ui:label": false,
           "ui:classNames": "d-flex h-100 mt-5 align-items-center",
+          "ui:options": {},
+        },
+
+        last_name_not_available: {
+          "ui:widget": "CustomCheckBoxWidget",
+
+          "ui:label": false,
+
           "ui:options": {
-            onClick: (formData) => {
-              setTimeout(
-                () =>
-                  setFormData({
-                    account_info: formData?.account_info,
-                    has_cif: formData?.has_cif,
-                    cif_number: formData?.cif_number,
-                  }),
-                100
-              ),
-                this.fetchIndividualInfoCIFDetail(null);
+            onChange: (value) => handleSetNotAvailable(value, "last_name"),
+          },
+        },
+
+        date_of_birth_ad: {
+          "ui:widget": widgets.CustomDatePicker,
+
+          "ui:placeholder": "Select Date of Birth (A.D)",
+          "ui:help": "Date Format: YYYY-MM-DD",
+          "ui:options": {
+            name: "date_of_birth_ad",
+
+            enforceAgeRestriction: true,
+
+            validAge: 18,
+
+            onDateChange: (selectedDate) => {
+              this.convertDate(
+                selectedDate,
+
+                setFormData,
+
+                true,
+
+                "date_of_birth_ad"
+              );
             },
+          },
+        },
+
+        date_of_birth_bs: {
+          "ui:widget": widgets.NepaliDatePickerR,
+          "ui:help": "Date Format: YYYY-MM-DD",
+          "ui:options": {
+            enforceAgeRestriction: true,
+
+            name: "date_of_birth_bs",
+
+            validAge: 18,
+
+            onDateChange: (selectedDate) => {
+              this.convertDate(
+                selectedDate,
+
+                setFormData,
+
+                false,
+
+                "date_of_birth_bs"
+              );
+            },
+          },
+        },
+
+        email_not_available: {
+          "ui:widget": "CustomCheckBoxWidget",
+
+          "ui:label": false,
+
+          "ui:options": {
+            onChange: (value) => handleSetNotAvailable(value, "email"),
           },
         },
 
@@ -2384,20 +1073,14 @@
             onChange: async (value) => {
               this.dropdownReset({
                 nationality: value,
-                dedup_id_number: "",
                 dedup_identification:
-                  value === "NP"
-                    ? this.formData?.is_minor_account
-                      ? null
-                      : "CTZN"
-                    : value === "IN"
-                    ? null
-                    : "PP",
+                  value === "NP" ? "CTZN" : value === "IN" ? null : "PP",
                 permanent_country:
                   value === "NP" ? "NP" : this.formData?.permanent_country,
                 currency: null,
                 account_scheme_id: null,
                 customer_type_id: null,
+
                 id_type_details:
                   value === "NP" || value === "IN"
                     ? [{}]
@@ -2408,6 +1091,7 @@
                         {
                           removable: false,
                           id_type_id: "TRDOC",
+                          issue_country: "NP",
                         },
                       ],
                 national_id_number: "",
@@ -2421,662 +1105,59 @@
           },
         },
 
-        last_name_not_available: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => handleSetNotAvailable(value, "last_name"),
-          },
-        },
-
-        date_of_birth_ad: {
-          "ui:widget": widgets.CustomDatePicker,
-          "ui:placeholder": "Select Date of Birth (A.D)",
-          "ui:options": {
-            name: "date_of_birth_ad",
-            enforceAgeRestriction: true,
-            minAge: this.formData?.is_minor_account ? 18 : 0,
-            disableFutureDates: true,
-            validAge: !this.formData?.is_minor_account ? 18 : 0,
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                true,
-                "date_of_birth_ad"
-              );
-            },
-          },
-        },
-        date_of_birth_bs: {
-          "ui:widget": widgets.NepaliDatePickerR,
-          "ui:options": {
-            enforceAgeRestriction: true,
-            name: "date_of_birth_bs",
-            minAge: !this.formData?.is_minor_account && 0,
-            maxAge: this.formData?.is_minor_account && 18,
-            disableFutureDates: true,
-            validAge: !this.formData?.is_minor_account ? 18 : 0,
-            onDateChange: (selectedDate) => {
-              this.convertDate(
-                selectedDate,
-                setFormData,
-                false,
-                "date_of_birth_bs"
-              );
-            },
-          },
-        },
-
-        same_as_permanent: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: sameAsPermanentOnChange,
-          },
-        },
-        email_not_available: {
-          "ui:widget": "CustomCheckBoxWidget",
-          "ui:label": false,
-          "ui:options": {
-            onChange: (value) => handleSetNotAvailable(value, "email"),
-          },
-        },
-
-        permanent_province: {
-          "ui:options": {
-            onChange: (value) =>
-              this.dropdownReset({
-                permanent_province: value,
-                permanent_district: "",
-                permanent_municipality: "",
-                permanent_ward_number: "",
-                permanent_street_name: "",
-                permanent_town: "",
-                permanent_house_number: "",
-              }),
-          },
-        },
-        permanent_district: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "districts",
-                formData?.permanent_province
-              );
-            },
-            onChange: (value) =>
-              this.dropdownReset({
-                permanent_district: value,
-                permanent_municipality: "",
-                permanent_ward_number: "",
-                permanent_street_name: "",
-                permanent_town: "",
-                permanent_house_number: "",
-              }),
-          },
-        },
-        permanent_municipality: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptions(
-                "local_bodies",
-                formData?.permanent_district
-              );
-            },
-          },
-        },
-
-        id_type_details: {
-          "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-            orderable: false,
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-          },
-          items: {
-            "ui:order": [
-              "id_type_id",
-              "identification_number",
-              "issue_country",
-              "issued_district",
-              "issued_district_text",
-              "issuing_authority",
-              "issuing_authority_text",
-              "id_issued_date_ad",
-              "id_issued_date_bs",
-              "id_expiry_date_ad",
-              "id_expiry_date_bs",
-              "visa_issued_date_ad",
-              "visa_expiry_date_ad",
-              "national_id_number",
-              "comment",
-              "citizenship_number",
-              "disable",
-              "removable",
-            ],
-            disable: {
-              "ui:widget": "hidden",
-            },
-            removable: {
-              "ui:widget": "hidden",
-            },
-            id_type_id: {
-              // "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                setDisabled: (formData, index) => {
-                  if (
-                    formData?.id_type_details?.[index]?.id_type_id ===
-                    formData?.dedup_identification
-                  )
-                    return true;
-                  const blocks = {
-                    "dc396a31-7c87-42d6-b208-ae973cecb12b": "WPERM",
-                    "2c825f3c-372e-4cf4-aaa2-601652927933": "WPERM",
-                    "c711e377-393a-4e8b-b1df-8531bbb4184f": "NRNID",
-                  };
-                  return (
-                    blocks[formData?.account_scheme_id] &&
-                    blocks[formData?.account_scheme_id] ===
-                      formData?.id_type_details?.[index]?.id_type_id
-                  );
-                },
-
-                // getOptions: (formData, index) => {
-                //   this.setFormData((prev) => ({
-                //     ...prev,
-                //     id_type_details: prev?.id_type_details?.map((i) => {
-                //       return i?.id_type_id
-                //         ? {
-                //             ...i,
-                //             disable: true,
-                //           }
-                //         : i;
-                //     }),
-                //   }));
-
-                //   const selected = formData?.id_type_details?.map((i, idx) =>
-                //     idx !== index ? i?.id_type_id : null
-                //   );
-                //   const opts = this.functionGroup?.getRequiredDocuments(
-                //     this.optionsData["multi_validation_mapping"],
-                //     {
-                //       nationality: formData?.nationality,
-                //       account_type: formData?.is_minor_account
-                //         ? "MINOR"
-                //         : formData?.account_info,
-                //     }
-                //   );
-
-                //   return (
-                //     opts?.filter(
-                //       (o) =>
-                //         o?.value &&
-                //         (o.value ===
-                //           formData?.id_type_details?.[index]?.id_type_id ||
-                //           !selected?.includes(o.value))
-                //     ) || []
-                //   );
-                // },
-                onChange: (data, index) => {
-                  const document_types = {
-                    citizenship_number: "CTZN",
-                    passport: "PP",
-                    driving_license: "LCNSE",
-                    voter_id: "VOTER",
-                    nid: "NID",
-                    pan: "PANR",
-                  };
-                  const issuing_authorities = {
-                    citizenship_number: "DAO",
-                    passport: "85bdeca6-4cb1-435e-a81c-e65a04a910f4",
-                    driving_license: "NA",
-                    voter_id: "a4e3fa6d-133d-40da-8996-444207b7f2a2",
-                    nid: "DONICR",
-                    pan: "IRD",
-                  };
-
-                  const matchingDocType = Object.entries(document_types).find(
-                    ([_, value]) => value === data
-                  );
-                  const [docTypeKey] = matchingDocType ?? "";
-                  this.setFormData((prev) => ({
-                    ...prev,
-                    id_type_details: prev?.id_type_details?.map((item, idx) =>
-                      index === idx
-                        ? {
-                            id_type_id: data,
-                            issuing_authority:
-                              issuing_authorities[docTypeKey] ?? null,
-                          }
-                        : item
-                    ),
-                  }));
-                },
-              },
-            },
-            // identification_number: {
-            //   "ui:options": {
-            //     setDisabled: (formData, index) => {
-            //       if (
-            //         formData?.id_type_details?.[index]?.id_type_id ===
-            //         formData?.dedup_identification
-            //       )
-            //         return true;
-            //     },
-            //   },
-            // },
-
-            issue_country: {
-              "ui:options": {},
-            },
-            comment: {
-              "ui:widget": "textarea",
-              "ui:options": {
-                rows: 5,
-              },
-            },
-            id_issued_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:placeholder": "Select Issued Date (A.D)",
-              "ui:options": {
-                name: "id_issued_date_ad",
-                enforceAgeRestriction: false,
-                validAge: 0,
-                disableFutureDates: true,
-                minimumDate: (formData) => {
-                  const minDateValue = formData?.id_type_details?.map((item) =>
-                    this.moment(formData?.date_of_birth_ad)
-                      .add(
-                        formData?.is_minor_account ? 1 : 16,
-                        formData?.is_minor_account ? "day" : "years"
-                      )
-                      .format("YYYY-MM-DD")
-                  );
-                  return minDateValue && minDateValue[0];
-                },
-
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    true,
-                    "id_issued_date_ad",
-                    "id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            id_issued_date_bs: {
-              "ui:widget": widgets.NepaliDatePickerR,
-              "ui:options": {
-                enforceAgeRestriction: true,
-                name: "id_issued_date_bs",
-                disableFutureDates: true,
-                minimumDate: (formData) => {
-                  const minDateValue = formData?.id_type_details?.map(
-                    (item) =>
-                      formData?.date_of_birth_ad &&
-                      this.NepaliDate.parseEnglishDate(
-                        this.moment(formData?.date_of_birth_ad)
-                          .add(
-                            formData?.is_minor_account ? 1 : 16,
-                            formData?.is_minor_account ? "days" : "years"
-                          )
-                          .format("YYYY-MM-DD"),
-                        "YYYY-MM-DD"
-                      ).format("YYYY-MM-DD")
-                  );
-                  return minDateValue && minDateValue[0];
-                },
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    false,
-                    "id_issued_date_bs",
-                    "id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            id_expiry_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-              "ui:placeholder": "Select Expiry Date (A.D)",
-              "ui:options": {
-                //   minDate: this.moment().subtract(100, "years"),
-                //   maxDate: this.moment().subtract(18, "years"),
-                enforceAgeRestriction: false,
-                validAge: 0,
-                name: "id_expiry_date_ad",
-                enforceAgeRestriction: true,
-                enableFutureDates: true,
-                setValue: (formData, index) => {
-                  const match = formData?.id_type_details?.find(
-                    (item, dataIndex) =>
-                      item?.id_type_id === "BRTCT" && dataIndex === index
-                  );
-                  if (match && formData?.date_of_birth_ad) {
-                    let extended_date = new Date(formData?.date_of_birth_ad);
-                    extended_date.setFullYear(extended_date.getFullYear() + 16);
-                    setFormData((prev) => ({
-                      ...prev,
-                      id_type_details: prev?.id_type_details?.map((item) =>
-                        item?.id_type_id === "BRTCT" ||
-                        item?.id_type_id === "MICRD"
-                          ? {
-                              ...item,
-                              id_expiry_date_ad:
-                                this.moment(extended_date).format("YYYY-MM-DD"),
-                              id_expiry_date_bs:
-                                this.NepaliDate.parseEnglishDate(
-                                  this.moment(extended_date).format(
-                                    "YYYY-MM-DD"
-                                  ),
-                                  "YYYY-MM-DD"
-                                ).format("YYYY-MM-DD"),
-                            }
-                          : item
-                      ),
-                    }));
-                  }
-                },
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    true,
-                    "id_expiry_date_ad",
-                    "id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            id_expiry_date_bs: {
-              "ui:widget": widgets.NepaliDatePickerR,
-              "ui:options": {
-                enforceAgeRestriction: true,
-                name: "id_expiry_date_bs",
-                validAge: 0,
-                enableFutureDates: true,
-                onDateChange: (selectedDate, index) => {
-                  this.convertDate(
-                    selectedDate,
-                    setFormData,
-                    false,
-                    "id_expiry_date_bs",
-                    "id_type_details",
-                    index ? index : 0
-                  );
-                },
-              },
-            },
-            issuing_authority: {
-              "ui:options": {
-                setDisabled: (formData, index) => {
-                  const document_types = {
-                    citizenship_number: "CTZN",
-
-                    passport: "PP",
-
-                    driving_license: "LCNSE",
-
-                    voter_id: "VOTER",
-
-                    nid: "NID",
-                    embassy: "EMBSY",
-                  };
-
-                  const issuing_authorities = {
-                    citizenship_number: "DAO",
-
-                    passport: "85bdeca6-4cb1-435e-a81c-e65a04a910f4",
-
-                    driving_license: "NA",
-
-                    voter_id: "a4e3fa6d-133d-40da-8996-444207b7f2a2",
-
-                    nid: "DONICR",
-                    embassy: "5db16d6d-63ea-4ff1-a8d3-0ffdf38a2773",
-                  };
-
-                  const currentIdType =
-                    formData?.id_type_details?.[index]?.id_type_id;
-
-                  const matchingDocType = Object.entries(document_types).find(
-                    ([_, value]) => value === currentIdType
-                  );
-
-                  if (matchingDocType) {
-                    const [docTypeKey] = matchingDocType;
-
-                    setFormData((prev) => ({
-                      ...prev,
-
-                      id_type_details: prev?.id_type_details?.map((item, idx) =>
-                        index === idx
-                          ? {
-                              ...item,
-                              issuing_authority:
-                                issuing_authorities[docTypeKey],
-                            }
-                          : item
-                      ),
-                    }));
-                    return true;
-                    // return issuing_authorities[docTypeKey];
-                  }
-                  return false;
-                  // return null;
-                },
-              },
-            },
-
-            issued_district: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData, index) => {
-                  const identification =
-                    formData?.id_type_details?.[index]?.id_type_id;
-                  return this.filterOptions(
-                    identification === "PP" || identification === "EMBSY"
-                      ? "country_and_district"
-                      : "districts"
-                  );
-                },
-              },
-            },
-            issued_district_text: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData, index) => {
-                  const identification =
-                    formData?.id_type_details?.[index]?.id_type_id;
-                  return this.filterOptions(
-                    identification === "PP" || identification === "EMBSY"
-                      ? "country_and_district"
-                      : "countries"
-                  );
-                },
-              },
-            },
-            visa_issued_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-
-              "ui:placeholder": "Select Visa Issued Date (A.D)",
-
-              "ui:options": {
-                enforceAgeRestriction: false,
-
-                disableFutureDates: true,
-
-                validAge: 0,
-
-                minimumDate: (formData) => {
-                  const minDateValue = formData?.id_type_details?.map((item) =>
-                    this.moment(item?.id_issued_date_ad).format("YYYY-MM-DD")
-                  );
-
-                  return minDateValue && minDateValue[0];
-                },
-              },
-            },
-
-            visa_expiry_date_ad: {
-              "ui:widget": widgets.CustomDatePicker,
-
-              "ui:placeholder": "Select Visa Expiry Date (A.D)",
-
-              "ui:options": {
-                enforceAgeRestriction: false,
-
-                minDate: 0,
-
-                enableFutureDates: true,
-              },
-            },
-            visa_type: {
-              "ui:placeholder": "Select Visa Type",
-            },
-          },
-        },
-        occupation_type: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
-            onChange: (value) =>
-              this.dropdownReset({
-                occupation_type: value,
-                source_of_income: this.optionsData["occupation_rule"]?.[
-                  `source_of_income_list`
-                ]?.find((item) => item?.cascade_id?.includes(value))?.id,
-              }),
-          },
-        },
-
-        source_of_income: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.occupation_type
-            //   );
-            // },
-          },
-        },
-
-        occupation_detail: {
-          "ui:classNames": "my-1",
-          "ui:options": {
-            addable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-
-            orderable: false,
-
-            removable: !(
-              this.form_status?.includes("review") ||
-              this.form_status?.includes("approval") ||
-              this.form_status?.includes("reporting") ||
-              this.form_status?.includes("Completed")
-            ),
-          },
-
-          items: {
-            business_type: {
-              // "ui:widget": "CascadeDropdown",
-              // "ui:options": {
-              //   getOptions: (formData) => {
-              //     const filteredData = this.filterOptionsOccupation(
-              //       "occupation_rule",
-              //       "business_type_list",
-              //       formData?.occupation_type
-              //     );
-              //     return [
-              //       ...filteredData,
-              //       { label: "Others", value: "others" },
-              //     ];
-              //   },
-              // },
-            },
-          },
-        },
-
-        marital_status: {
-          "ui:options": {
-            onChange: (value) => {
-              this.updateFamilyInformation(value);
-            },
-          },
-        },
-
         family_information: {
           "ui:widget": "EditableTableWidget",
           "ui:label": false,
-          "ui:hideLabel": true,
           "ui:options": {
+            addable: !(
+              this.form_status?.includes("review") ||
+              this.form_status?.includes("approval") ||
+              this.form_status?.includes("reporting") ||
+              this.form_status?.includes("Completed")
+            ),
             orderable: false,
-            addable:
-              !formData?.is_minor_account &&
-              !(
-                this.form_status?.includes("review") ||
-                this.form_status?.includes("approval") ||
-                this.form_status?.includes("reporting") ||
-                this.form_status?.includes("Completed")
-              ),
-            removable:
-              !formData?.is_minor_account &&
-              !(
-                this.form_status?.includes("review") ||
-                this.form_status?.includes("approval") ||
-                this.form_status?.includes("reporting") ||
-                this.form_status?.includes("Completed")
-              ),
-            fieldKeys: ["family_member_relation"],
+            removable: !(
+              this.form_status?.includes("review") ||
+              this.form_status?.includes("approval") ||
+              this.form_status?.includes("reporting") ||
+              this.form_status?.includes("Completed")
+            ),
+            fieldKeys: [
+              "family_member_relation",
+              "family_member_relation",
+              "family_member_full_name",
+              "is_family_name_not_available",
+            ],
             disableSpecificKeys: this.form_status.includes("init")
               ? [
                   { family_member_relation: 0 },
+
                   { family_member_relation: 1 },
+
                   { family_member_relation: 2 },
                 ]
               : [
                   {
                     family_member_relation: 0,
+
                     family_member_full_name: 0,
+
                     is_family_name_not_available: 0,
                   },
+
                   {
                     family_member_relation: 1,
+
                     family_member_full_name: 1,
+
                     is_family_name_not_available: 1,
                   },
+
                   {
                     family_member_relation: 2,
+
                     family_member_full_name: 2,
+
                     is_family_name_not_available: 2,
                   },
                 ],
@@ -3109,6 +1190,7 @@
                 },
               },
             },
+
             family_member_full_name: {
               "ui:placeholder": "Enter Full Name",
               "ui:options": {
@@ -3128,9 +1210,11 @@
 
             is_family_name_not_available: {
               "ui:widget": "CustomCheckBoxWidget",
+
               "ui:options": {
                 setDisabled: (formData, index) =>
-                  this.form_status.includes("init") ||
+                  /* !this?.formData?.cif_data
+                    ? */ this.form_status.includes("init") ||
                   this.form_status.includes("update")
                     ? formData?.family_information?.[index ?? 0]
                         ?.family_member_relation === "FATHE" &&
@@ -3138,11 +1222,16 @@
                       ? true
                       : false
                     : true,
+                // : true,
+
                 onChange: (value, index) => {
                   this.familyNameChange(
                     "family_member_full_name",
+
                     value,
+
                     "family_information",
+
                     index ?? 0
                   );
                 },
@@ -3150,155 +1239,8 @@
             },
           },
         },
-        screening_filter: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:options": {
-            disableButton: (formData) => {
-              let requiredFields = jsonSchema.required || [];
-              const allFilled = requiredFields.every((field) => {
-                const value = formData?.[field];
-                return value !== undefined && value !== null && value !== "";
-              });
-
-              return this.form_status?.includes("init") && !allFilled;
-            },
-            onClick: (event) => {
-              setFormData((prevData) => {
-                const currentValue = prevData?.screening_filter;
-
-                function toggleFilter(value) {
-                  if (value === undefined) return "true";
-                  if (value === "true") return "false";
-                  return "true";
-                }
-
-                return {
-                  ...prevData,
-                  screening_filter: toggleFilter(currentValue),
-                };
-              });
-            },
-          },
-        },
-        personal_info_screening: {
+        cif_data: {
           "ui:widget": "hidden",
-          "ui:label": false,
-          "ui:classNames": "my-1",
-          "ui:options": {
-            block: true,
-            disableButton: (formData) => {
-              let requiredFields =
-                [
-                  "first_name",
-                  "last_name",
-                  "father_name",
-                  "date_of_birth_ad",
-                  "date_of_birth_bs",
-                  "dedup_identification",
-                  "dedup_id_number",
-                  "collect",
-                  "account_info",
-                  "account_type_id",
-                  "account_scheme_id",
-                  "currency",
-                  "salutation",
-                  "gender",
-                  "marital_status",
-                  "nationality",
-                  "customer_type_id",
-                  "customer_status",
-                ] || [];
-              const allFilled = requiredFields.every((field) => {
-                const value = formData?.[field];
-                return value !== undefined && value !== null && value !== "";
-              });
-
-              return this.form_status?.includes("init") && !allFilled;
-            },
-            onClick: () => {
-              this.fetchPersonalInfoScreening();
-              setFormData((prevData) => ({
-                ...prevData,
-              }));
-            },
-          },
-        },
-        personal_screening_data: {
-          "ui:widget": "ScreeningReportCard",
-          "ui:label": false,
-          showCheckbox: true,
-          showActionText: true,
-          showFooter: true,
-          showViewedColumn: false,
-          fixedActionsColumn: true,
-          "ui:options": {
-            onCheckboxChange: (tableData, category, checked) => {
-              const categoryKey =
-                category === "pep_nba"
-                  ? "pep"
-                  : category === "sanction_moha"
-                  ? "sanction"
-                  : category;
-
-              // check if any item in the array has isChecked true
-              const hasChecked = tableData[categoryKey]?.some(
-                (item) => item.isChecked
-              );
-
-              this.setFormData((prevData) => ({
-                ...prevData,
-                [categoryKey]: hasChecked ? "Yes" : "No",
-                personal_screening_data: tableData,
-              }));
-            },
-            actionHandlers: {
-              view: (record) => setIsModalVisible(true),
-            },
-          },
-        },
-
-        current_country: {
-          "ui:widget": "hidden",
-        },
-
-        current_province: {
-          "ui:widget": "hidden",
-        },
-
-        current_district: {
-          "ui:widget": "hidden",
-        },
-        current_municipality: {
-          "ui:widget": "hidden",
-        },
-        current_ward_number: {
-          "ui:widget": "hidden",
-        },
-        current_street_name: {
-          "ui:widget": "hidden",
-        },
-        current_town: {
-          "ui:widget": "hidden",
-        },
-        current_house_number: {
-          "ui:widget": "hidden",
-        },
-        current_outside_town: {
-          "ui:widget": "hidden",
-        },
-        current_outside_street_name: {
-          "ui:widget": "hidden",
-        },
-        current_postal_code: {
-          "ui:widget": "hidden",
-        },
-
-        screening_card: {
-          "ui:widget": "ScreeningReportCard",
-          "ui:label": false,
         },
       };
     }

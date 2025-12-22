@@ -144,7 +144,7 @@
       "group": "Primary Account Information",
       "hideTitle": true,
       "readOnly": true,
-      "width": "full"
+      "width": 4
     },
 
     "account_info": {
@@ -304,7 +304,8 @@
             "title": "CIF Number",
             "group": "Primary Account Information",
             "hideTitle": true,
-            "readOnly": true
+            "readOnly": true,
+            "width": 4
           },
           "cif_enquiry": {
             "type": "string",

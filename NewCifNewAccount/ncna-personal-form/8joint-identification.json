@@ -1,43 +1,65 @@
 {
   "type": "object",
-  "className": "fs-1",
-  "singleForm": true,
   "hasStep": true,
   "form_title": "joint_info",
-  "submissionHidden": false,
   "isDisabled": false,
   "required": [],
 
   "properties": {
-    "account_info": {
-      "type": "string",
-      "group": "Account Information",
-      "hideTitle": true,
-      "width": "full",
-      "readOnly": true
-    },
-
-    "is_minor_account": {
-      "type": "boolean",
-      "title": "Is Minor Account?",
-      "width": 4,
-      "readOnly": true
-    },
-
     "first_name": {
       "type": "string",
       "title": "First Name",
+      "group": "personalInformation",
+
+      "readOnly": true,
       "hideTitle": true
     },
     "middle_name": {
       "type": "string",
       "title": "Middle Name",
-      "hideTitle": true
+      "group": "personalInformation",
+
+      "readOnly": true
     },
     "last_name": {
       "type": "string",
       "title": "Last Name",
+      "group": "personalInformation",
+      "connect": "last_name_not_available",
+
+      "readOnly": true
+    },
+    "date_of_birth_ad": {
+      "type": "string",
+      "title": "Date of Birth (A.D)",
+      "group": "personalInformation",
+      "readOnly": true
+    },
+    "date_of_birth_bs": {
+      "type": "string",
+      "title": "Date of Birth (B.S)",
+      "group": "personalInformation",
+      "readOnly": true
+    },
+
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true,
       "hideTitle": true
+    },
+
+    "nationality": {
+      "type": "string",
+      "title": "Nationality",
+      "group": "Account Information",
+      "default": "NP"
+    },
+    "current_country": {
+      "type": "string",
+      "title": "Current Country",
+      "group": "Account Information"
     },
 
     "id_type_details": {
@@ -161,146 +183,92 @@
   },
 
   "dependencies": {
-    "is_minor_account": {
+    "nationality": {
       "if": {
         "properties": {
-          "is_minor_account": {
-            "const": false
+          "nationality": {
+            "enum": ["NP"]
           }
         }
       },
       "then": {
-        "required": [],
-
         "properties": {
-          "nationality": {
-            "type": "string",
-            "title": "Nationality",
-            "hideTitle": true
+          "is_customer_disabled": {
+            "type": "boolean",
+            "title": "Is Customer Disabled or Senior Citizen?",
+            "group": "National ID Details",
+            "default": false,
+            "width": "full"
           },
-          "date_of_birth_ad": {
+          "national_id_number": {
             "type": "string",
-            "title": "Date of Birth (A.D)",
-            "hideTitle": true
+            "title": "National ID Number",
+            "group": "National ID Details"
           },
-          "date_of_birth_bs": {
+          "national_id_issue_date_ad": {
             "type": "string",
-            "title": "Date of Birth (B.S)",
-            "hideTitle": true
+
+            "title": "National Id Issue Date(A.D)",
+            "group": "National ID Details"
+          },
+          "national_id_issue_date_bs": {
+            "type": "string",
+
+            "title": "National Id Issue Date(B.S)",
+            "group": "National ID Details"
+          },
+          "national_id_issue_place": {
+            "type": "string",
+            "title": "National Id Issue Place",
+            "group": "National ID Details"
+          },
+          "national_id_issuing_authority": {
+            "type": "string",
+            "title": "Issuing Authority",
+            "group": "National ID Details",
+            "default": "DONICR",
+            "readOnly": true
+          },
+          "nid_verified": {
+            "type": "string",
+            "title": "NID Verified",
+            "group": "National ID Details",
+            "enum": ["Yes", "No"]
+          },
+          "nid_verify": {
+            "type": "string",
+            "title": "Verify NID",
+            "group": "National ID Details",
+            "width": 4,
+            "url": "https://citizenportal.donidcr.gov.np/ne/check-national-id-number"
           }
         },
-
         "dependencies": {
-          "nationality": {
+          "is_customer_disabled": {
             "if": {
               "properties": {
-                "nationality": {
-                  "enum": ["NP"]
+                "is_customer_disabled": {
+                  "const": true
                 }
               }
             },
             "then": {
-              "properties": {
-                "is_customer_disabled": {
-                  "type": "boolean",
-                  "title": "Is Customer Disabled or Senior Citizen?",
-                  "group": "NationalIDDetail",
-                  "default": false,
-                  "width": "full"
-                },
-                "national_id_number": {
-                  "type": "string",
-                  "title": "National ID Number",
-                  "group": "NationalIDDetail"
-                },
-                "national_id_issue_date_ad": {
-                  "type": "string",
-
-                  "title": "National Id Issue Date(A.D)",
-                  "group": "NationalIDDetail"
-                },
-                "national_id_issue_date_bs": {
-                  "type": "string",
-
-                  "title": "National Id Issue Date(B.S)",
-                  "group": "NationalIDDetail"
-                },
-                "national_id_issue_place": {
-                  "type": "string",
-                  "title": "National Id Issue Place",
-                  "group": "NationalIDDetail"
-                },
-                "national_id_issuing_authority": {
-                  "type": "string",
-                  "title": "Issuing Authority",
-                  "group": "NationalIDDetail",
-                  "default": "DONICR",
-                  "readOnly": true
-                },
-                "nid_verified": {
-                  "type": "string",
-                  "title": "NID Verified",
-                  "group": "NationalIDDetail",
-                  "enum": ["Yes", "No"]
-                },
-                "nid_verify": {
-                  "type": "string",
-                  "title": "Verify NID",
-                  "group": "NationalIDDetail",
-                  "width": 4,
-                  "url": "https://citizenportal.donidcr.gov.np/ne/check-national-id-number"
-                }
-              },
-              "dependencies": {
-                "is_customer_disabled": {
-                  "if": {
-                    "properties": {
-                      "is_customer_disabled": {
-                        "const": true
-                      }
-                    }
-                  },
-                  "then": {},
-                  "else": {
-                    "properties": {},
-                    "required": [
-                      "national_id_number",
-                      "national_id_issue_date_ad",
-                      "national_id_issue_date_bs",
-                      "national_id_issue_place",
-                      "national_id_issuing_authority",
-                      "nid_verified"
-                    ]
-                  }
-                }
-              },
-              "required": []
+              "properties": {}
+            },
+            "else": {
+              "properties": {},
+              "required": [
+                "national_id_number",
+                "national_id_issue_date_ad",
+                "national_id_issue_date_bs",
+                "national_id_issue_place",
+                "national_id_issuing_authority",
+                "nid_verified"
+              ]
             }
           }
-        }
-      },
-      "else": {
-        "required": [],
-
-        "properties": {
-          "nationality": {
-            "type": "string",
-            "title": "Nationality",
-            "hideTitle": true
-          },
-          "date_of_birth_ad": {
-            "type": "string",
-            "title": "Date of Birth (A.D)",
-            "hideTitle": true
-          },
-          "date_of_birth_bs": {
-            "type": "string",
-            "title": "Date of Birth (B.S)",
-            "hideTitle": true
-          }
         },
-
-        "dependencies": {}
+        "required": []
       }
     }
   }

@@ -8,6 +8,7 @@
   "required": [
     "hpp",
     "pep",
+    "adverse_media",
     "nationality",
     "entitled_with_fund",
     "family_pep_declaration",
@@ -21,8 +22,7 @@
     "monthly_number_of_transactions",
     "yearly_income",
     "transaction_justification",
-    "transaction_fund_details",
-    "adverse_media"
+    "transaction_fund_details"
   ],
   "properties": {
     "is_high_risk_account": {
@@ -474,71 +474,6 @@
           "required": []
         }
       ]
-    },
-
-    "occupation_type": {
-      "if": {
-        "properties": {
-          "occupation_type": {
-            "enum": [
-              "4a3fa6bb-7580-4a7d-8479-0b44f31f58a6",
-              "EMP",
-              "cddfc23d-86b6-44cf-b640-25155cd3e52d",
-              "BSM",
-              "d3e087fa-5104-468b-80b7-5a6d6fe431d4"
-            ]
-          }
-        }
-      },
-      "then": {
-        "required": ["occupation_detail"],
-        "properties": {
-          "occupation_detail": {
-            "type": "array",
-            "title": "Occupation",
-            "group": "Occupation / Profession / Business Details",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "name_of_organization": {
-                  "type": "string",
-                  "title": "Employer Name",
-                  "readOnly": true
-                },
-                "organization_address": {
-                  "type": "string",
-                  "title": "Address",
-                  "readOnly": true
-                },
-                "organization_contact_number": {
-                  "type": "number",
-                  "title": "Contact No.",
-                  "pattern": "^(\\d{7,12})?$",
-                  "errorMessage": {
-                    "pattern": "Mobile number must be 7 to 12 digits."
-                  },
-                  "readOnly": true
-                },
-                "designation": {
-                  "type": "string",
-                  "title": "Designation",
-                  "readOnly": true
-                },
-                "business_type": {
-                  "type": "string",
-                  "title": "Business Type",
-                  "readOnly": true
-                }
-              },
-              "required": []
-            }
-          }
-        }
-      },
-      "else": {
-        "properties": {}
-      }
     },
 
     "nationality": {

@@ -91,45 +91,6 @@
       }));
     }
 
-    filterMasterData(masterDataKey, formData) {
-      const strictKey = "account_type_id";
-      const softKeys = ["currency", "nationality"];
-
-      return this.optionsData?.[masterDataKey]
-        ?.filter((item) => {
-          const relationMatch =
-            item.individual === formData?.account_info ||
-            item.joint === formData?.account_info ||
-            item.minor === formData?.account_info;
-
-          if (!relationMatch) return false;
-
-          if (
-            formData?.[strictKey] &&
-            item?.[strictKey] !== formData?.[strictKey]
-          ) {
-            return false;
-          }
-
-          const softMatch = softKeys?.every((key) => {
-            if (!formData[key]) return true;
-            const itemValue = item[key];
-            if (itemValue == null) return true;
-            if (Array.isArray(itemValue)) {
-              return itemValue.includes(formData[key]);
-            }
-            return itemValue === formData?.[key];
-          });
-
-          return softMatch;
-        })
-        .map((item) => ({
-          label: `${item.title} - ${item?.cbs_code}`,
-
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
-    }
-
     //Dropdown Reset
     dropdownReset = async (dropdownClearObject, arrayName, index) => {
       this.setFormData((prevFormData) => {
@@ -177,82 +138,6 @@
           };
         });
       }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-        const flatEntry = { key: index };
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-        return acc;
-      }, {});
-    }
-
-    convertToArray(value, key, parentKey, comparisionKey) {
-      setTimeout(() => {
-        this.setFormData((prevData) => {
-          if (!prevData[parentKey]) return prevData;
-          if (!comparisionKey || comparisionKey.length === 0) {
-            return {
-              ...prevData,
-              [parentKey]: prevData[parentKey]?.map((data, index) =>
-                index === 0 ? { [key]: value } : data
-              ),
-            };
-          }
-
-          const updatedArray = prevData[parentKey].map((item) => {
-            if (Object.keys(item).length === 0) return { [key]: value };
-            if (
-              comparisionKey &&
-              item[comparisionKey[1]] === prevData[comparisionKey[0]]
-            ) {
-              return { ...item, [key]: value };
-            }
-
-            return item;
-          });
-
-          if (
-            comparisionKey &&
-            !updatedArray.some(
-              (item) => item[comparisionKey[1]] === prevData[comparisionKey[0]]
-            )
-          ) {
-            updatedArray.push({
-              [comparisionKey[1]]: prevData[comparisionKey[0]],
-              [key]: value,
-            });
-          }
-
-          return {
-            ...prevData,
-            [parentKey]: updatedArray,
-          };
-        });
-      }, 50);
     }
 
     convertDate(
@@ -775,6 +660,10 @@
 
         if (dedupResponse) {
           this.toast.success(dedupResponse?.data?.data?.dedup_message);
+          this.setFormData((prevData) => ({
+            ...prevData,
+            dedup_module_data: dedupResponse?.data?.data?.data,
+          }));
         }
 
         // Screening check
@@ -903,6 +792,7 @@
           "extra_gap",
 
           "dedup_check",
+          "dedup_module_data",
           "personal_screening_data",
           "screening_ref_code",
 
@@ -1009,12 +899,6 @@
 
         father_name: {
           "ui:options": {
-            // onBlurCapture: (event) =>
-            //   this.convertToArray(
-            //     event?.target?.value,
-            //     "family_member_full_name",
-            //     "family_information"
-            //   ),
             maxLength: 50,
           },
         },
@@ -1290,23 +1174,7 @@
                 this.form_status?.includes("reporting") ||
                 this.form_status?.includes("Completed")
               ) && {
-                match: (record) => {
-                  if (record?.cif_number !== "-") {
-                    this.setFormData((prev) => ({
-                      ...prev,
-                      has_cif: true,
-                      cif_number: record?.cif_number,
-                    }));
-                    this.fetchIndividualInfoCIFDetail(record?.cif_number);
-                  } else {
-                    this.setModalOpen({
-                      open: true,
-                      message: "CIF number unavailable",
-                      close: "Close",
-                      status: "info",
-                    });
-                  }
-                },
+                view: (record) => setIsModalVisible(true),
               }),
             },
           },

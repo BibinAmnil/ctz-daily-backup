@@ -7,6 +7,16 @@
   "submissionHidden": false,
   "isDisabled": false,
   "required": [
+    "branch",
+    "account_type_id",
+    "account_scheme_id",
+    "nationality",
+    "currency",
+    "account_purpose",
+    "customer_type_id",
+    "customer_status",
+
+    "salutation",
     "first_name",
     "last_name",
     "father_name",
@@ -14,19 +24,16 @@
     "date_of_birth_bs",
     "dedup_identification",
     "dedup_id_number",
-    "account_info",
-    "account_type_id",
-    "account_scheme_id",
-    "currency",
-    "salutation",
     "gender",
     "marital_status",
     "email",
+    "family_information",
     "literacy",
-    "nationality",
-    "customer_type_id",
-    "customer_status",
-    "family_information"
+    "religion",
+    "is_nrn",
+    "is_refugee",
+    "is_bank_staff",
+    "is_us_person"
   ],
 
   "properties": {
@@ -38,9 +45,47 @@
       "default": false,
       "readOnly": true
     },
+    "has_cif": {
+      "type": "boolean",
+      "title": "Has CIF Number?",
+      "group": "Primary Joint Account Information",
+      "readOnly": true,
+      "width": 4
+    },
+    "branch": {
+      "type": "string",
+      "title": "Branch",
+      "group": "Account Information",
+      "readOnly": true
+    },
 
-    "cif_data": {
-      "type": "string"
+    "account_info": {
+      "type": "string",
+      "group": "Account Information",
+      "width": "full",
+      "readOnly": true
+    },
+    "account_type_id": {
+      "type": "string",
+      "title": "Account Type",
+      "group": "Account Information"
+    },
+    "account_scheme_id": {
+      "type": "string",
+      "title": "Product Scheme",
+      "group": "Account Information"
+    },
+    "currency": {
+      "type": "string",
+      "title": "Currency of Account",
+      "group": "Account Information"
+    },
+
+    "account_purpose": {
+      "type": "string",
+      "title": "Purpose of Account",
+      "group": "Account Information",
+      "default": "SAVIN"
     },
 
     "customer_type_id": {
@@ -48,7 +93,6 @@
       "title": "Customer Type",
       "group": "Account Information"
     },
-
     "customer_status": {
       "type": "string",
       "title": "Customer Status",
@@ -56,17 +100,30 @@
       "enum": ["Good", "Bad", "Doubtful"],
       "default": "Good"
     },
+    "literacy": {
+      "type": "string",
+      "title": "Literacy",
+      "group": "Personal Information"
+    },
+
     "first_name": {
       "type": "string",
       "title": "First Name",
       "group": "Personal Information",
+      "pattern": "^[a-zA-Z.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
+      },
       "readOnly": true
     },
     "middle_name": {
       "type": "string",
       "title": "Middle Name",
       "group": "Personal Information",
-
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
       "readOnly": true
     },
     "last_name": {
@@ -74,6 +131,10 @@
       "title": "Last Name",
       "group": "Personal Information",
       "connect": "last_name_not_available",
+      "pattern": "^[a-zA-Z\\s.()/]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
       "readOnly": true
     },
 
@@ -87,14 +148,16 @@
       "type": "string",
       "title": "Father Name",
       "group": "Personal Information",
-
+      "pattern": "^[a-zA-Z\\s.()]*$",
+      "errorMessage": {
+        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+      },
       "readOnly": true
     },
     "dedup_identification": {
       "type": "string",
       "title": "Identification",
       "group": "Personal Information",
-      "default": "CTZN",
       "readOnly": true
     },
     "dedup_id_number": {
@@ -112,45 +175,40 @@
     "date_of_birth_bs": {
       "type": "string",
       "group": "Personal Information",
-      "title": "Date of Birth (B.S.)",
-      "readOnly": true
+      "readOnly": true,
+      "title": "Date of Birth (B.S.)"
     },
 
-    "has_cif": {
-      "type": "boolean",
-      "title": "Has CIF Number?",
-      "group": "Primary Joint Account Information",
-      "width": 4,
+    "is_nrn": {
+      "type": "string",
+      "title": "NRN",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
       "readOnly": true
     },
-
-    "account_info": {
+    "is_refugee": {
       "type": "string",
-      "group": "Account Information",
-      "width": "full"
+      "title": "Refugee",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No",
+      "readOnly": true
     },
-    "account_type_id": {
+    "is_bank_staff": {
       "type": "string",
-      "title": "Account Type",
-      "group": "Account Information"
-    },
-    "account_scheme_id": {
-      "type": "string",
-      "title": "Product Scheme",
-      "group": "Account Information"
-    },
-    "currency": {
-      "type": "string",
-      "title": "Currency of Account",
-      "group": "Account Information"
+      "title": "Bank Staff",
+      "group": "Personal Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
     },
     "nationality": {
       "type": "string",
       "title": "Nationality",
-      "group": "Account Information",
-      "default": "NP"
+      "group": "Personal Information",
+      "default": "NP",
+      "readOnly": true
     },
-
     "marital_status": {
       "type": "string",
       "title": "Marital Status",
@@ -167,7 +225,8 @@
     "gender": {
       "type": "string",
       "title": "Gender",
-      "group": "Personal Information"
+      "group": "Personal Information",
+      "readOnly": true
     },
 
     "email_not_available": {
@@ -184,26 +243,28 @@
         "pattern": "Invalid Email Address"
       }
     },
-
-    "literacy": {
+    "religion": {
       "type": "string",
-      "title": "Literacy",
+      "title": "Religion",
       "group": "Personal Information"
     },
+
     "family_information": {
       "type": "array",
       "title": "Family Information",
-      "minItems": 3,
-      "maxItems": 3,
+      "group": "Family Information",
       "default": [
         {
-          "family_member_relation": "FATHE"
+          "family_member_relation": "FATHE",
+          "family_member_full_name": ""
         },
         {
-          "family_member_relation": "MOTHE"
+          "family_member_relation": "MOTHE",
+          "family_member_full_name": ""
         },
         {
-          "family_member_relation": "GRANF"
+          "family_member_relation": "GRANF",
+          "family_member_full_name": ""
         }
       ],
       "items": {
@@ -215,18 +276,73 @@
           },
           "family_member_full_name": {
             "type": "string",
-            "title": "Full Name"
+            "title": "Full Name",
+            "pattern": "^[a-zA-Z\\s.()]*$",
+            "errorMessage": {
+              "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
+            }
           },
           "is_family_name_not_available": {
             "type": "boolean",
             "title": "Member not available?"
           }
-        }
-      },
-      "group": "Family Information"
+        },
+        "required": ["family_member_full_name"]
+      }
+    },
+    "is_us_person": {
+      "type": "string",
+      "title": "FATCA Declaration",
+      "group": "Personal Information",
+      "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
+      "default": "None"
     }
   },
+
   "dependencies": {
+    "is_minor_account": {
+      "if": {
+        "properties": {
+          "is_minor_account": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "marital_status": {
+            "default": "UNMAR",
+            "readOnly": true
+          }
+        }
+      }
+    },
+    "has_cif": {
+      "if": {
+        "properties": {
+          "has_cif": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "cif_number": {
+            "type": "string",
+            "title": "CIF Number",
+            "group": "Primary Joint Account Information",
+            "readOnly": true,
+            "width": 4
+          },
+          "cif_enquiry": {
+            "type": "string",
+            "title": "Proceed",
+            "group": "Primary Joint Account Information"
+          }
+        },
+        "required": ["cif_number"]
+      }
+    },
     "email_not_available": {
       "if": {
         "properties": {
@@ -250,75 +366,27 @@
         }
       }
     },
-    "last_name_not_available": {
+    "is_bank_staff": {
       "if": {
         "properties": {
-          "last_name_not_available": {
-            "const": true
+          "is_bank_staff": {
+            "enum": ["Yes"]
           }
         }
       },
       "then": {
         "properties": {
-          "last_name": {
-            "readOnly": true
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "last_name": {
-            "readOnly": false
-          }
-        }
-      }
-    },
-
-    "has_cif": {
-      "if": {
-        "properties": {
-          "has_cif": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "cif_number": {
+          "staff_id": {
             "type": "string",
-            "title": "CIF Number",
-            "group": "Primary Account Information",
-            "hideTitle": true,
-            "width": 4,
-            "readOnly": true
-          },
-          "cif_enquiry": {
-            "type": "string",
-            "title": "Proceed",
-            "hideTitle": true,
-            "group": "Primary Account Information",
-            "width": 4
+            "title": "Staff ID",
+            "group": "Personal Information",
+            "pattern": "^[a-zA-Z0-9\\s.()]*$",
+            "errorMessage": {
+              "pattern": "Alphanumeric, spaces, brackets ( ), and dot (.) only allowed"
+            }
           }
         },
-        "required": ["cif_number"]
-      }
-    },
-
-    "is_minor_account": {
-      "if": {
-        "properties": {
-          "is_minor_account": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "marital_status": {
-            "default": "UNMAR",
-            "readOnly": true
-          }
-        }
+        "required": ["staff_id"]
       }
     },
     "literacy": {
