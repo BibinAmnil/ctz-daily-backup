@@ -509,6 +509,7 @@
         national_id_issue_place: "districts",
         literacy: "literacy",
         educational_qualification: "education_qualifications",
+        mode_of_operation: "mode_of_operations",
       };
 
       const dataKey = fieldMapping[fieldKey] || fieldKey;
@@ -723,6 +724,7 @@
         "literacy",
         "educational_qualification",
         "account_purpose",
+        "mode_of_operation",
       ];
 
       for (const fieldKey of fieldsToUpdate) {
@@ -2328,6 +2330,20 @@
                 "national_id_issue_date_bs"
               );
             },
+          },
+        },
+        mode_of_operation: {
+          "ui:widget": !this.form_status?.includes("case-init")
+            ? "SelectWidget"
+            : "hidden",
+        },
+        remarks: {
+          "ui:widget": !this.form_status?.includes("case-init")
+            ? "textarea"
+            : "hidden",
+          "ui:disabled": true,
+          "ui:options": {
+            rows: 5,
           },
         },
       };

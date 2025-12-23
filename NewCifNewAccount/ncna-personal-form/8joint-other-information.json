@@ -175,6 +175,21 @@
       "width": "full",
       "readOnly": true,
       "hideTitle": true
+    },
+    "mode_of_operation": {
+      "type": "string",
+      "width": "half",
+      "title": "Mode of Operation",
+      "group": "Signature",
+      "readOnly": true,
+      "hideTitle": true
+    },
+    "remarks": {
+      "type": "string",
+      "width": "half",
+      "title": "Remarks",
+      "group": "Signature",
+      "readOnly": true
     }
   },
 

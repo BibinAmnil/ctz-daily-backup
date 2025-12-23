@@ -270,6 +270,7 @@
         beneficial_relationship: "relationships",
         nominee_id_issuing_authority: "issuing_authorities",
         beneficial_id_issuing_authority: "issuing_authorities",
+        mode_of_operation: "mode_of_operations",
       };
 
       const dataKey = fieldMapping[fieldKey] || fieldKey;
@@ -439,6 +440,7 @@
         "educational_qualification",
         "nominee_id_issuing_authority",
         "beneficial_id_issuing_authority",
+        "mode_of_operation",
       ];
 
       for (const fieldKey of fieldsToUpdate) {
@@ -677,6 +679,20 @@
                 },
               ];
             },
+          },
+        },
+        mode_of_operation: {
+          "ui:widget": !this.form_status?.includes("case-init")
+            ? "SelectWidget"
+            : "hidden",
+        },
+        remarks: {
+          "ui:widget": !this.form_status?.includes("case-init")
+            ? "textarea"
+            : "hidden",
+          "ui:disabled": true,
+          "ui:options": {
+            rows: 5,
           },
         },
       };

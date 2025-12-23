@@ -493,6 +493,21 @@
       "group": "Personal Information",
       "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
       "default": "None"
+    },
+    "mode_of_operation": {
+      "type": "string",
+      "width": "half",
+      "title": "Mode of Operation",
+      "group": "Signature",
+      "readOnly": true,
+      "hideTitle": true
+    },
+    "remarks": {
+      "type": "string",
+      "width": "half",
+      "title": "Remarks",
+      "group": "Signature",
+      "readOnly": true
     }
   },
 
