@@ -787,27 +787,6 @@
       this.addLoader("guardian_dedup_check", true);
 
       try {
-        // Dedup check
-        const dedupResponse = await this.axios.post(
-          `${this.mainRouteURL}/external-api/dedup-check`,
-          {
-            first_name: formData.guardian_first_name,
-            middle_name: formData.guardian_middle_name,
-            last_name: formData.guardian_last_name,
-            father_name: formData.guardian_father_name,
-            id_number: formData.guardian_dedup_id_number,
-            document_type: formData.guardian_dedup_identification,
-            citizenship_number: null,
-            place_of_issue: formData.guardian_place_of_issue,
-            dob_ad: formData.guardian_date_of_birth_ad,
-            dob_bs: formData.guardian_date_of_birth_bs,
-          }
-        );
-
-        if (dedupResponse) {
-          this.toast.success(dedupResponse?.data?.data?.dedup_message);
-        }
-
         // Screening check
         const screeningResponse = await this.axios.post(
           `${this.mainRouteURL}/external-api/screening-check`,
@@ -828,14 +807,15 @@
         );
 
         delete cleanedResponseData.screening_id;
-
-        this.setFormData((prev) => ({
-          ...prev,
-          guardian_personal_screening_data: cleanedResponseData || [],
-          guardian_screening_ref_code: String(responseData?.screening_id),
-        }));
-
-        this.setJsonSchema((prev) => ({ ...prev, isDisabled: false }));
+        if (responseData) {
+          this.toast.success("Preliminary Screening Success");
+          this.setFormData((prev) => ({
+            ...prev,
+            guardian_personal_screening_data: cleanedResponseData || [],
+            guardian_screening_ref_code: String(responseData?.screening_id),
+          }));
+          this.setJsonSchema((prev) => ({ ...prev, isDisabled: false }));
+        }
       } catch (error) {
         const errMsg =
           error?.response?.data?.message ||
