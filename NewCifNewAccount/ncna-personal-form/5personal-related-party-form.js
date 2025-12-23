@@ -1139,61 +1139,6 @@
         ArrayFieldTemplate,
         widgets,
       } = options;
-      const handleLastNameNotAvailableChange = (
-        fieldName,
-        value,
-        arrayPath,
-        index
-      ) => {
-        this.setFormData((prevFormData) => {
-          const updatedRelatedPartyDetails = [...prevFormData[arrayPath]];
-          updatedRelatedPartyDetails[index] = {
-            ...updatedRelatedPartyDetails[index],
-            [fieldName]: value ? "N/A" : "",
-          };
-
-          return {
-            ...prevFormData,
-            [arrayPath]: updatedRelatedPartyDetails,
-          };
-        });
-      };
-
-      const ChangeFiledToDot = (fieldName, value, arrayPath, index) => {
-        setTimeout(() => {
-          this.setFormData((prevFormData) => {
-            const newData = { ...prevFormData };
-            let currentLevel = newData;
-            const pathParts = arrayPath.split(".");
-
-            pathParts.forEach((part, level) => {
-              const idx = index[level];
-
-              if (!currentLevel[part]) return;
-
-              if (Array.isArray(currentLevel[part])) {
-                currentLevel[part] = currentLevel[part].map((item, i) => {
-                  if (i === idx) {
-                    if (level === pathParts.length - 1) {
-                      return {
-                        ...item,
-                        [fieldName]: value ? "N/A" : "",
-                      };
-                    }
-                    return { ...item };
-                  }
-                  return item;
-                });
-              }
-
-              currentLevel = currentLevel[part][idx];
-            });
-
-            return newData;
-          });
-        }, 100);
-      };
-
       this.initializeSchema(setJsonSchema, formData);
       return {
         "ui:order": [
@@ -1239,7 +1184,6 @@
               "first_name",
               "middle_name",
               "last_name",
-              "last_name_not_available",
               "father_name",
               "grandfather_name",
               "date_of_birth_ad",
@@ -1311,7 +1255,15 @@
               },
             },
 
-            relation_with_account_holder: {},
+            relation_with_account_holder: {
+              "ui:widget": "CascadeDropdown",
+              "ui:options": {
+                getOptions: (formData, index) => {
+                  const options = this.filterOptions("relationships");
+                  return options;
+                },
+              },
+            },
             has_cif: {
               "ui:widget": "CustomCheckBoxWidget",
               "ui:label": false,
@@ -1339,21 +1291,6 @@
             },
             cif_data: {
               "ui:widget": "hidden",
-            },
-            last_name_not_available: {
-              "ui:widget": "CustomCheckBoxWidget",
-              "ui:label": false,
-
-              "ui:options": {
-                onChange: (value, index) => {
-                  handleLastNameNotAvailableChange(
-                    "last_name",
-                    value,
-                    "related_party",
-                    index ?? 0
-                  );
-                },
-              },
             },
 
             calculate_risk: {
@@ -1508,7 +1445,6 @@
                   "first_name",
                   "middle_name",
                   "last_name",
-                  "last_name_not_available",
                   "father_name",
                   "grandfather_name",
                   "date_of_birth_ad",
@@ -1585,59 +1521,19 @@
                     },
                   },
                 },
-                last_name_not_available: {
-                  "ui:widget": "CustomCheckBoxWidget",
-                  "ui:label": false,
+
+                relation_with_account_holder: {
+                  "ui:widget": "CascadeDropdown",
                   "ui:options": {
-                    onChange: (value, index) => {
-                      ChangeFiledToDot(
-                        "last_name",
-                        value,
-                        "related_party.related_party_detail",
-                        index
-                      );
+                    getOptions: (formData, index) => {
+                      const options = this.filterOptions("relationships");
+                      return options;
                     },
                   },
                 },
-                relation_with_account_holder: {},
                 has_cif: {
                   "ui:widget": "CustomCheckBoxWidget",
                   "ui:label": false,
-                  "ui:options": {
-                    onChange: (value, index) => {
-                      !value &&
-                        setTimeout(
-                          () =>
-                            setFormData((prev) => {
-                              return {
-                                ...prev,
-                                related_party: prev?.related_party?.map(
-                                  (item, idx) =>
-                                    idx === index?.[0]
-                                      ? {
-                                          ...item,
-                                          related_party_detail:
-                                            item?.related_party_detail?.map(
-                                              (item2, idx2) =>
-                                                idx2 === index?.[1]
-                                                  ? {
-                                                      account_info:
-                                                        item?.account_info,
-
-                                                      designation:
-                                                        item2?.designation,
-                                                    }
-                                                  : item2
-                                            ),
-                                        }
-                                      : item
-                                ),
-                              };
-                            }),
-                          100
-                        );
-                    },
-                  },
                 },
 
                 calculate_risk: {

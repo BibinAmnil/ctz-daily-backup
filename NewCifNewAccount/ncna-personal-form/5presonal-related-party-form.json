@@ -9,7 +9,8 @@
     "has_related_party": {
       "type": "string",
       "title": "Has related parties ?",
-      "enum": ["Yes", "No"]
+      "enum": ["Yes", "No"],
+      "default": "No"
     },
     "account_info": {
       "type": "string",
@@ -135,44 +136,26 @@
           "type": "string",
           "title": "First Name",
           "group": "Customer Information",
-          "pattern": "^[a-zA-Z.()]*$",
-          "errorMessage": {
-            "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
-          }
+          "readOnly": true
         },
         "middle_name": {
           "type": "string",
           "title": "Middle Name",
           "group": "Customer Information",
-          "pattern": "^[a-zA-Z\\s.()]*$",
-          "errorMessage": {
-            "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-          }
+          "readOnly": true
         },
         "last_name": {
           "type": "string",
           "title": "Last Name",
           "group": "Customer Information",
           "connect": "last_name_not_available",
-          "pattern": "^[a-zA-Z\\s.()/]*$",
-          "errorMessage": {
-            "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-          }
-        },
-
-        "last_name_not_available": {
-          "type": "boolean",
-          "title": "Is last name not available ?",
-          "group": "Customer Information"
+          "readOnly": true
         },
         "father_name": {
           "type": "string",
           "title": "Father Name",
           "group": "Customer Information",
-          "pattern": "^[a-zA-Z\\s.()]*$",
-          "errorMessage": {
-            "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-          }
+          "readOnly": true
         },
         "grandfather_name": {
           "type": "string",
@@ -187,27 +170,27 @@
         "date_of_birth_ad": {
           "type": "string",
           "group": "Customer Information",
-          "title": "Date of Birth (A.D.)"
+          "title": "Date of Birth (A.D.)",
+          "readOnly": true
         },
         "date_of_birth_bs": {
           "type": "string",
           "group": "Customer Information",
-          "title": "Date of Birth (B.S.)"
+          "title": "Date of Birth (B.S.)",
+          "readOnly": true
         },
         "dedup_identification": {
           "type": "string",
           "title": "Identification",
-          "group": "Customer Information"
+          "group": "Customer Information",
+          "readOnly": true
         },
 
         "dedup_id_number": {
           "type": "string",
           "title": "Identification Number",
           "group": "Customer Information",
-          "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
-          "errorMessage": {
-            "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
-          }
+          "readOnly": true
         },
         "existing_permanent_address": {
           "type": "string",
@@ -258,15 +241,13 @@
           "type": "string",
           "title": "Highly Positioned Person (HPP) ?",
           "group": "Declaration",
-          "enum": ["Yes", "No"],
-          "default": "No"
+          "enum": ["Yes", "No"]
         },
         "pep": {
           "type": "string",
           "title": "Politically Exposed Person (PEP) ?",
           "group": "Declaration",
-          "enum": ["Yes", "No"],
-          "default": "No"
+          "enum": ["Yes", "No"]
         },
 
         "family_pep_declaration": {
@@ -295,8 +276,7 @@
           "title": "Has the customer being blacklisted by us ?",
           "group": "statusOfClient",
           "enum": ["Yes", "No"],
-          "width": 8,
-          "default": "No"
+          "width": 8
         },
         "customer_introduce_by": {
           "type": "string",
