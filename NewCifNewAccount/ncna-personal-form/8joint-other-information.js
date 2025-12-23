@@ -565,16 +565,7 @@
           "ui:label": false,
         },
 
-        occupation_type: {
-          "ui:options": {
-            onChange: (value) =>
-              this.dropdownReset({
-                occupation_type: value,
-                source_of_income: null,
-                employment_type: null,
-              }),
-          },
-        },
+        occupation_type: {},
 
         source_of_income: {
           "ui:widget": "CascadeDropdown",
