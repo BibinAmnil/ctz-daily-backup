@@ -1226,6 +1226,9 @@
           "occupation_type",
           "occupation_detail",
 
+          "mode_of_operation",
+          "remarks",
+
           "pep",
 
           "pep_category",

@@ -35,7 +35,7 @@
 
     customValidate(formData, errors, uiSchema) {
       //Check if the User has Viewed the Application
-      this.functionGroup?.checkAndAssignScreeningErrors(formData, errors);
+      // this.functionGroup?.checkAndAssignScreeningErrors(formData, errors);
 
       return errors;
     }
@@ -1264,6 +1264,24 @@
                 },
               },
             },
+            hpp_category: {
+              "ui:widget": "CascadeDropdown",
+              "ui:options": {
+                getOptions: (formData, index) => {
+                  const options = this.filterOptions("hpp_categories");
+                  return options;
+                },
+              },
+            },
+            hpp_sub_category: {
+              "ui:widget": "CascadeDropdown",
+              "ui:options": {
+                getOptions: (formData, index) => {
+                  const options = this.filterOptions("hpp_sub_categories");
+                  return options;
+                },
+              },
+            },
             has_cif: {
               "ui:widget": "CustomCheckBoxWidget",
               "ui:label": false,
@@ -1527,6 +1545,24 @@
                   "ui:options": {
                     getOptions: (formData, index) => {
                       const options = this.filterOptions("relationships");
+                      return options;
+                    },
+                  },
+                },
+                hpp_category: {
+                  "ui:widget": "CascadeDropdown",
+                  "ui:options": {
+                    getOptions: (formData, index) => {
+                      const options = this.filterOptions("hpp_categories");
+                      return options;
+                    },
+                  },
+                },
+                hpp_sub_category: {
+                  "ui:widget": "CascadeDropdown",
+                  "ui:options": {
+                    getOptions: (formData, index) => {
+                      const options = this.filterOptions("hpp_sub_categories");
                       return options;
                     },
                   },

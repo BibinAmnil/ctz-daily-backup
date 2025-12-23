@@ -1168,58 +1168,6 @@
       ]
     },
 
-    "pep": {
-      "if": {
-        "properties": {
-          "pep": {
-            "enum": ["Yes"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "pep_category": {
-            "type": "string",
-            "enum": [
-              "Existing PEPs",
-              "Former PEPs",
-              "High-ranking officials from neighboring or nearby countries",
-              "Other foreign PEPs",
-              "International PEPs"
-            ],
-            "title": "Pep Category",
-            "group": "Declaration"
-          }
-        },
-        "required": ["pep_category"]
-      }
-    },
-    "adverse_media": {
-      "if": {
-        "properties": {
-          "adverse_media": {
-            "enum": ["Yes"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "adverse_category": {
-            "type": "string",
-            "enum": [
-              "Money Laundering",
-              "Terrorist Financing",
-              "Financial Fraud",
-              "Organized Crime"
-            ],
-            "title": "Category of Adverse",
-            "group": "Declaration"
-          }
-        },
-        "required": ["adverse_category"]
-      }
-    },
-
     "contact_type": {
       "oneOf": [
         {

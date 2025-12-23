@@ -57,84 +57,64 @@
       "type": "string",
       "title": "First Name",
       "group": "Customer Information",
-      "pattern": "^[a-zA-Z.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, brackets ( ), and dot (.) only allowed"
-      }
+      "readOnly": true
     },
     "guardian_middle_name": {
       "type": "string",
       "title": "Middle Name",
       "group": "Customer Information",
-      "pattern": "^[a-zA-Z\\s.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-      }
+      "readOnly": true
     },
     "guardian_last_name": {
       "type": "string",
       "title": "Last Name",
       "group": "Customer Information",
       "connect": "guardian_last_name_not_available",
-      "pattern": "^[a-zA-Z\\s.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-      }
-    },
-
-    "guardian_last_name_not_available": {
-      "type": "boolean",
-      "title": "Is last name not available ?",
-      "group": "Customer Information"
+      "readOnly": true
     },
     "guardian_father_name": {
       "type": "string",
       "title": "Father Name",
       "group": "Customer Information",
-      "pattern": "^[a-zA-Z\\s.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-      }
+      "readOnly": true
     },
     "guardian_grandfather_name": {
       "type": "string",
       "title": "Grandfather Name",
       "group": "Customer Information",
-      "pattern": "^[a-zA-Z\\s.()]*$",
-      "errorMessage": {
-        "pattern": "Alphabets, spaces, brackets ( ), and dot (.) only allowed"
-      }
+      "readOnly": true
     },
 
     "guardian_dedup_identification": {
       "type": "string",
       "title": "Identification",
       "group": "Customer Information",
-      "default": "CTZN"
+      "default": "CTZN",
+      "readOnly": true
     },
     "guardian_dedup_id_number": {
       "type": "string",
       "title": "Identification Number",
       "group": "Customer Information",
-      "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
-      "errorMessage": {
-        "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
-      }
+      "readOnly": true
     },
     "guardian_date_of_birth_ad": {
       "type": "string",
       "group": "Customer Information",
-      "title": "Date of Birth (A.D.)"
+      "title": "Date of Birth (A.D.)",
+      "readOnly": true
     },
     "guardian_date_of_birth_bs": {
       "type": "string",
       "group": "Customer Information",
-      "title": "Date of Birth (B.S.)"
+      "title": "Date of Birth (B.S.)",
+      "readOnly": true
     },
     "guardian_existing_permanent_address": {
       "type": "string",
       "title": "Existing Permanent Address",
-      "group": "Customer Information"
+      "group": "Customer Information",
+      "readOnly": true
     },
     "guardian_related_party_family_account_holder": {
       "type": "string",
