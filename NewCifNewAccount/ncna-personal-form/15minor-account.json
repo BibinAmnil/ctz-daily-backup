@@ -469,10 +469,6 @@
           "designation": {
             "type": "string",
             "title": "Designation"
-          },
-          "business_type": {
-            "type": "string",
-            "title": "Business Type"
           }
         },
         "required": []

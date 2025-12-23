@@ -1218,12 +1218,11 @@
 
           "nominee_contact_number",
 
-          "occupation_type",
-
-          "source_of_income",
-          "other_source_of_income",
           "employment_type",
           "other_employment_type",
+          "source_of_income",
+          "other_source_of_income",
+          "occupation_type",
           "occupation_detail",
 
           "pep",
@@ -2133,18 +2132,6 @@
                 rows: 5,
               },
             },
-          },
-        },
-
-        occupation_type: {
-          "ui:options": {
-            onChange: (value) =>
-              this.dropdownReset({
-                occupation_type: value,
-                source_of_income: this.optionsData["occupation_rule"]?.[
-                  `source_of_income_list`
-                ]?.find((item) => item?.cascade_id?.includes(value))?.id,
-              }),
           },
         },
 
