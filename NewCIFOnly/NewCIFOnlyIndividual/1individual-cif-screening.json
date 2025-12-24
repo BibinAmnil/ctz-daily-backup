@@ -146,10 +146,6 @@
       "additionalProperties": true,
       "columns": [
         {
-          "key": "full_name",
-          "label": "Name"
-        },
-        {
           "key": "cif_number",
           "label": "Cif Number"
         }
@@ -223,6 +219,7 @@
         }
       ]
     },
+
     "screening_ref_code": {
       "type": "string",
       "width": "full",

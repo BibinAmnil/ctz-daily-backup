@@ -1142,10 +1142,10 @@
         dedup_module_data: {
           "ui:widget": "ScreeningReportCard",
           "ui:label": false,
-          showCheckbox: false,
+          showCheckbox: true,
           showViewedColumn: false,
-          // showActionText: true,
           fixedActionsColumn: true,
+          showFooter: true,
           "ui:options": {
             onCheckboxChange: (tableData, category, checked) => {
               this.setFormData((prevData) => ({
@@ -1159,24 +1159,20 @@
               this.form_status?.includes("reporting") ||
               this.form_status?.includes("Completed")) && ["match"],
             actionHandlers: {
-              ...(!(
-                this.form_status?.includes("review") ||
-                this.form_status?.includes("approval") ||
-                this.form_status?.includes("reporting") ||
-                this.form_status?.includes("Completed")
-              ) && {
+              ...(this.form_status?.includes("case-init") && {
                 view: (record) => setIsModalVisible(true),
               }),
             },
           },
         },
+
         branch_dedup_module_data: {
           "ui:widget": "ScreeningReportCard",
           "ui:label": false,
-          showCheckbox: false,
+          showCheckbox: true,
           showViewedColumn: false,
-          // showActionText: true,
           fixedActionsColumn: true,
+          showFooter: true,
           "ui:options": {
             onCheckboxChange: (tableData, category, checked) => {
               this.setFormData((prevData) => ({
@@ -1190,12 +1186,7 @@
               this.form_status?.includes("reporting") ||
               this.form_status?.includes("Completed")) && ["match"],
             actionHandlers: {
-              ...(!(
-                this.form_status?.includes("review") ||
-                this.form_status?.includes("approval") ||
-                this.form_status?.includes("reporting") ||
-                this.form_status?.includes("Completed")
-              ) && {
+              ...(this.form_status?.includes("case-init") && {
                 view: (record) => setIsModalVisible(true),
               }),
             },

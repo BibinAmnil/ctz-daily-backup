@@ -519,18 +519,6 @@
             : "",
           status: "error",
           close: "Close",
-          showButton:
-            error.response?.data?.message
-              .toLowerCase()
-              ?.includes("incomplete") && true,
-          buttonName:
-            error.response?.data?.message
-              .toLowerCase()
-              ?.includes("incomplete") && "Redirect to BPM",
-          buttonUrl:
-            error.response?.data?.message
-              .toLowerCase()
-              ?.includes("incomplete") && "",
         });
 
         return {};
