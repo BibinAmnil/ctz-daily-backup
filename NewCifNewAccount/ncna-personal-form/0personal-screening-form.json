@@ -164,10 +164,10 @@
       ],
       "actions": [
         {
-          "label": "View",
-          "icon": "view",
-          "tooltip": "View Detail",
-          "actionKey": "view"
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
         }
       ]
     },
@@ -204,10 +204,10 @@
       ],
       "actions": [
         {
-          "label": "View",
-          "icon": "view",
-          "tooltip": "View Detail",
-          "actionKey": "view"
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
         }
       ]
     },

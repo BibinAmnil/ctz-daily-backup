@@ -489,6 +489,7 @@
         const resp = response?.data?.data;
 
         this.setFormData((prev) => ({
+          ...prev,
           ...resp,
           account_info: prev?.account_info,
           has_cif: prev?.has_cif,
@@ -860,13 +861,6 @@
         has_cif: {
           "ui:widget": "CustomCheckBoxWidget",
           "ui:label": false,
-          "ui:options": {
-            onChange: (value) =>
-              !value &&
-              setFormData((prev) => ({
-                account_info: prev?.account_info,
-              })),
-          },
         },
 
         account_info: {
@@ -1160,25 +1154,29 @@
           // showActionText: true,
           fixedActionsColumn: true,
           "ui:options": {
-            onCheckboxChange: (tableData, category, checked) => {
-              this.setFormData((prevData) => ({
-                ...prevData,
-                [category]: checked ? "Yes" : "No",
-                dedup_module_data: tableData,
-              }));
-            },
             disabledButton: (this.form_status?.includes("review") ||
               this.form_status?.includes("approval") ||
               this.form_status?.includes("reporting") ||
               this.form_status?.includes("Completed")) && ["match"],
             actionHandlers: {
-              ...(!(
-                this.form_status?.includes("review") ||
-                this.form_status?.includes("approval") ||
-                this.form_status?.includes("reporting") ||
-                this.form_status?.includes("Completed")
-              ) && {
-                view: (record) => setIsModalVisible(true),
+              ...(this.form_status?.includes("case-init") && {
+                match: (record) => {
+                  if (record?.cif_number !== "-") {
+                    this.setFormData((prev) => ({
+                      ...prev,
+                      has_cif: true,
+                      cif_number: record?.cif_number,
+                    }));
+                    this.fetchIndividualInfoCIFDetail(record?.cif_number);
+                  } else {
+                    this.setModalOpen({
+                      open: true,
+                      message: "CIF number unavailable.",
+                      close: "Close",
+                      status: "info",
+                    });
+                  }
+                },
               }),
             },
           },
@@ -1204,13 +1202,28 @@
               this.form_status?.includes("reporting") ||
               this.form_status?.includes("Completed")) && ["match"],
             actionHandlers: {
-              ...(!(
-                this.form_status?.includes("review") ||
-                this.form_status?.includes("approval") ||
-                this.form_status?.includes("reporting") ||
-                this.form_status?.includes("Completed")
-              ) && {
-                view: (record) => setIsModalVisible(true),
+              ...(this.form_status?.includes("case-init") && {
+                match: (record) => {
+                  if (
+                    record?.cif_number !== "-" &&
+                    record?.case_status === "Completed"
+                  ) {
+                    this.setFormData((prev) => ({
+                      ...prev,
+                      has_cif: true,
+                      cif_number: record?.cif_number,
+                    }));
+                    this.fetchIndividualInfoCIFDetail(record?.cif_number);
+                  } else {
+                    this.setModalOpen({
+                      open: true,
+                      message:
+                        "CIF number unavailable or the case has not been completed.",
+                      close: "Close",
+                      status: "info",
+                    });
+                  }
+                },
               }),
             },
           },
@@ -1252,18 +1265,13 @@
           "ui:options": {
             disableButton: (formData) => !formData?.cif_number?.trim(),
             onClick: (formData) => {
-              /*  setTimeout(
-                  () => */
-              setFormData({
+              this.setFormData({
                 account_info: formData?.account_info,
                 has_cif: formData?.has_cif,
                 cif_number: formData?.cif_number,
                 id_type_details: [{ id_type_id: "CTZN" }],
               });
-
-              /*  100
-                ), */
-              this.fetchIndividualInfoCIFDetail(null);
+              this.fetchIndividualInfoCIFDetail(formData?.cif_number);
             },
           },
         },
