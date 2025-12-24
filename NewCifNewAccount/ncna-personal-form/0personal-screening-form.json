@@ -144,6 +144,13 @@
       "title": "Date of Birth (B.S.)"
     },
 
+    "blacklist_account": {
+      "type": "boolean",
+      "title": "Blacklist Account",
+      "group": "Customer Information",
+      "default": false
+    },
+
     "dedup_check": {
       "type": "string",
       "title": "Preliminary Screening",
@@ -236,10 +243,6 @@
       "width": "full",
       "title": "Screening",
       "group": ""
-    },
-
-    "source": {
-      "type": "string"
     }
   },
 
@@ -288,6 +291,28 @@
           }
         },
         "required": ["cif_number"]
+      }
+    },
+    "blacklist_account": {
+      "if": {
+        "properties": {
+          "blacklist_account": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "is_blacklisted": {
+            "type": "string",
+            "title": "Is Blacklisted",
+            "group": "Customer Information",
+            "enum": ["Yes", "No"],
+            "default": "Yes",
+            "readOnly": true
+          }
+        },
+        "required": []
       }
     },
     "last_name_not_available": {

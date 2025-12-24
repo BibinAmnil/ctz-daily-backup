@@ -779,7 +779,7 @@
           "issuing_authority",
           "place_of_issue",
           "dedup_id_number",
-
+          "is_blacklisted",
           "extra_gap",
 
           "dedup_check",
@@ -787,9 +787,8 @@
           "branch_dedup_module_data",
           "personal_screening_data",
           "screening_ref_code",
-
+          "blacklist_account",
           "cif_data",
-          "source",
         ],
         connectedPairs: [
           ["last_name", "last_name_not_available"],
@@ -1263,11 +1262,10 @@
             },
           },
         },
-
-        cif_data: {
+        blacklist_account: {
           "ui:widget": "hidden",
         },
-        source: {
+        cif_data: {
           "ui:widget": "hidden",
         },
       };

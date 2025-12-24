@@ -923,6 +923,7 @@
         account_scheme_id: {
           "ui:widget": "CascadeDropdown",
           "ui:options": {
+            setDisabled: (formData) => formData?.blacklist_account,
             getOptions: (formData) =>
               this.filterMasterData("scheme_type", formData),
           },
