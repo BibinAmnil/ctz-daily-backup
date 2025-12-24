@@ -411,15 +411,15 @@
       const {
         setJsonSchema,
         formData,
-        jsonSchema,
+        setFormData,
         ObjectFieldTemplate,
         ArrayFieldTemplate,
         widgets,
+        jsonSchema,
       } = options;
 
-      this.hasUpdated.current = false;
-
       this.initializeSchema(setJsonSchema, formData);
+
       return {
         "ui:ObjectFieldTemplate": ObjectFieldTemplate,
         "ui:order": [
@@ -432,6 +432,7 @@
           "family_pep_declaration",
           "adverse_media",
           "adverse_category",
+
           "nationality",
           "permanent_country",
           "permanent_province",
@@ -439,14 +440,9 @@
           "permanent_outside_town",
           "permanent_outside_street_name",
           "permanent_postal_code",
-          "has_related_party",
-          "related_party",
-          "related_party_detail",
-          "entitled_with_fund",
+
           "occupation_type",
-          "source_of_income",
-          "occupation_detail",
-          "business_type",
+
           "existing_risk_rating",
           "loan_status",
           "is_blacklisted",
@@ -455,6 +451,7 @@
           "customer_name",
           "employee_id",
           "met_in_person",
+
           "annual_volume_of_transactions",
           "annual_number_of_transactions",
           "monthly_volume_of_transactions",
@@ -466,75 +463,17 @@
           "risk_level",
           "is_high_risk_account",
           "calculate_risk",
-          "risk_score",
-          "acknowledge",
+
           "approval_status",
+          "revert_to",
           "approval_remarks",
+
           "account_info",
-          "is_sanction",
-          "is_cib_list",
-          "is_block_list",
         ],
-        related_party: {
-          "ui:options": {
-            fieldKeys: [
-              "designation",
-              "first_name",
-              "middle_name",
-              "last_name",
-              "family_account_holder",
-              "relation_with_account_holder",
-              "related_party_detail",
-            ],
-          },
-          "ui:options": {
-            addable: false,
-            removable: false,
-          },
-          items: {
-            "ui:order": [
-              "designation",
-              "first_name",
-              "middle_name",
-              "last_name",
-              "family_account_holder",
-              "relation_with_account_holder",
-              "related_party_detail",
-            ],
-            related_party_detail: {
-              "ui:options": {
-                addable: false,
-                removable: false,
-              },
-              items: {
-                "ui:order": [
-                  "designation",
-                  "first_name",
-                  "middle_name",
-                  "last_name",
-                  "family_account_holder",
-                  "relation_with_account_holder",
-                ],
-              },
-            },
-          },
-        },
-        has_related_party: {
-          "ui:widget": "hidden",
-        },
         account_info: {
           "ui:widget": "hidden",
         },
 
-        is_sanction: {
-          "ui:widget": "hidden",
-        },
-        is_cib_list: {
-          "ui:widget": "hidden",
-        },
-        is_block_list: {
-          "ui:widget": "hidden",
-        },
         hpp_sub_category: {
           "ui:widget": "CascadeDropdown",
           "ui:options": {
@@ -547,6 +486,14 @@
           },
         },
 
+        occupation_type: {
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: () => {
+              return this.filterOptions("occupations");
+            },
+          },
+        },
         annual_volume_of_transactions: {
           "ui:options": {
             amount: true,
@@ -562,77 +509,9 @@
             amount: true,
           },
         },
-
-        occupation_type: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
-            // onChange: (value) =>
-            //   this.dropdownReset({
-            //     occupation_type: value,
-            //     source_of_income: this.optionsData["occupation_rule"]?.[
-            //       `source_of_income_list`
-            //     ]?.find((item) => item?.cascade_id?.includes(value))?.id,
-            //   }),
-          },
+        transaction_justification: {
+          "ui:classNames": "h-auto",
         },
-
-        source_of_income: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.occupation_type
-            //   );
-            // },
-          },
-        },
-
-        occupation_detail: {
-          "ui:classNames": "my-1",
-          "ui:options": {
-            addable: false,
-            orderable: false,
-            removable: false,
-          },
-
-          items: {
-            designation: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: () => this.filterOptions("corporate_relation"),
-              },
-            },
-            business_type: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData) => {
-                  const filteredData = this.filterOptionsOccupation(
-                    "occupation_rule",
-                    "business_type_list",
-                    formData?.occupation_type
-                  );
-                  return [
-                    ...filteredData,
-                    { label: "Others", value: "others" },
-                  ];
-                },
-              },
-            },
-          },
-        },
-
-        risk_score: {
-          "ui:widget": "hidden",
-        },
-
         calculate_risk: {
           "ui:widget": this.form_status?.includes("init")
             ? "ButtonField"
@@ -656,9 +535,6 @@
           },
         },
 
-        transaction_justification: {
-          "ui:classNames": "h-auto",
-        },
         approval_status: {
           "ui:disabled": !(
             this.form_status?.includes("review") ||
@@ -667,25 +543,42 @@
 
           "ui:widget":
             this.form_status?.includes("review") &&
-            (this.formData?.risk_level?.includes("High") ||
-              this.formData?.is_high_risk_account === "Yes")
+            this.formData?.risk_level.includes("High")
               ? "hidden"
               : this.form_status?.includes("review") ||
                 this.form_status?.includes("approval")
               ? "SelectWidget"
               : "hidden",
         },
-        acknowledge: {
-          "ui:classNames": "mt-5",
-          "ui:label": false,
+        revert_to: {
           "ui:disabled": !(
             this.form_status?.includes("review") ||
             this.form_status?.includes("approval")
           ),
 
-          "ui:widget": this.form_status?.includes("approval")
-            ? "CustomCheckBoxWidget"
-            : "hidden",
+          "ui:widget":
+            this.formData?.current_step === "final-review" &&
+            this.formData?.risk_level.includes("High")
+              ? "hidden"
+              : this.form_status?.includes("review") ||
+                this.form_status?.includes("approval")
+              ? "CascadeDropdown"
+              : "hidden",
+
+          "ui:options": {
+            getOptions: (formData, index) => {
+              const option = (
+                this.formData?.revert_list || formData?.revert_list
+              )?.map((item) => {
+                return {
+                  label: item,
+                  value: item,
+                };
+              });
+
+              return option || [];
+            },
+          },
         },
         approval_remarks: {
           "ui:disabled": !(
@@ -695,8 +588,7 @@
 
           "ui:widget":
             this.form_status?.includes("review") &&
-            (this.formData?.risk_level?.includes("High") ||
-              this.formData?.is_high_risk_account === "Yes")
+            this.formData?.risk_level.includes("High")
               ? "hidden"
               : this.form_status?.includes("review") ||
                 this.form_status?.includes("approval")

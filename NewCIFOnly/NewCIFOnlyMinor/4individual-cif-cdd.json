@@ -1,8 +1,8 @@
 {
   "type": "object",
   "className": "fs-1",
-  "form_title": "personal_cdd",
-  "hasStep": false,
+  "form_title": "minor_cdd",
+  "hasStep": true,
   "isDisabled": true,
   "submissionHidden": false,
   "required": [
@@ -22,37 +22,17 @@
     "yearly_income",
     "transaction_justification",
     "transaction_fund_details",
-    "adverse_media"
+    "adverse_media",
+    "occupation_type"
   ],
   "properties": {
-    "is_high_risk_account": {
-      "type": "string",
-      "title": "Is High Risk Account?",
-      "readOnly": true,
-      "enum": ["Yes", "No"],
-      "group": "Risk"
-    },
     "account_info": {
       "type": "string",
       "group": "Account Information",
       "hideTitle": true,
       "width": "full"
     },
-    "is_sanction": {
-      "type": "boolean",
-      "title": "Is Sanctioned?",
-      "group": "Declaration"
-    },
-    "is_cib_list": {
-      "type": "boolean",
-      "title": "Is CIB Black Listed?",
-      "group": "Declaration"
-    },
-    "is_block_list": {
-      "type": "boolean",
-      "title": "Is Internal Block Listed?",
-      "group": "Declaration"
-    },
+
     "hpp": {
       "type": "string",
       "title": "Highly Positioned Person (HPP) ?",
@@ -64,8 +44,7 @@
       "type": "string",
       "title": "Politically Exposed Person (PEP) ?",
       "group": "Declaration",
-      "enum": ["Yes", "No"],
-      "default": "No"
+      "enum": ["Yes", "No"]
     },
 
     "family_pep_declaration": {
@@ -86,27 +65,12 @@
       "type": "string",
       "title": "Nationality",
       "group": "Geographical Risk",
-      "default": "NP",
       "readOnly": true
-    },
-
-    "entitled_with_fund": {
-      "type": "string",
-      "title": "Is Ultimately account holder is entitled to the funds ?",
-      "group": "Beneficial Owner",
-      "enum": ["Yes", "No"],
-      "width": 8
     },
 
     "occupation_type": {
       "type": "string",
       "title": "Occupation Type",
-      "group": "OccupationAndIncome",
-      "readOnly": true
-    },
-    "source_of_income": {
-      "type": "string",
-      "title": "Source of Income",
       "group": "OccupationAndIncome",
       "readOnly": true
     },
@@ -118,13 +82,13 @@
       "enum": ["Yes", "No"],
       "width": 8
     },
+
     "is_blacklisted": {
       "type": "string",
       "title": "Has the customer being blacklisted by us ?",
       "group": "statusOfClient",
       "enum": ["Yes", "No"],
-      "width": 8,
-      "default": "No"
+      "width": 8
     },
     "customer_introduce_by": {
       "type": "string",
@@ -146,6 +110,7 @@
       "enum": ["Yes", "No"],
       "width": 8
     },
+
     "annual_volume_of_transactions": {
       "type": "string",
       "title": "Annual Volume of Transactions",
@@ -201,23 +166,18 @@
     "transaction_justification": {
       "type": "string",
       "title": "Is transaction amount justified with customer profile?",
-      "group": "transactionDetails",
+      "group": "Transaction Details",
       "enum": ["Yes", "No"],
       "width": 8
     },
     "transaction_fund_details": {
       "type": "string",
       "title": "Is the source of funds clear and identifiable ?",
-      "group": "transactionDetails",
+      "group": "Transaction Details",
       "enum": ["Yes", "No"],
       "width": 8
     },
 
-    "calculate_risk": {
-      "type": "string",
-      "title": "Calculate Risk",
-      "group": "Risk"
-    },
     "risk_level": {
       "type": "string",
       "group": "Risk",
@@ -225,60 +185,37 @@
       "enum": ["Low Risk", "Medium Risk", "High Risk"],
       "readOnly": true
     },
-    "risk_score": {
-      "type": "number",
-      "title": "Risk Score",
+    "is_high_risk_account": {
+      "type": "string",
+      "title": "Is High Risk Account ?",
       "group": "Risk",
+      "enum": ["Yes", "No"],
       "readOnly": true
     },
-
-    "acknowledge": {
-      "type": "boolean",
-      "width": "full",
-      "hideTitle": true,
-      "title": "I acknowledge that the details provided are correct and complete.",
-      "group": ""
+    "calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
     },
+
     "approval_status": {
       "type": "string",
       "enum": ["Approve", "Reject", "Revert"],
       "width": "half",
       "title": "Approval Status",
-      "group": ""
+      "group": "Approval",
+      "hideTitle": true
     },
     "approval_remarks": {
       "type": "string",
       "width": "half",
       "title": "Approval Remarks",
-      "group": ""
+      "group": "Approval",
+      "hideTitle": true
     }
   },
 
   "dependencies": {
-    "beneficial_owner": {
-      "if": {
-        "properties": {
-          "beneficial_owner": {
-            "enum": ["Yes"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "beneficial_name": {
-            "type": "string",
-            "title": "Name of Benficial Owner",
-            "group": "Beneficial Owner Information"
-          },
-          "beneficial_relationship": {
-            "type": "string",
-            "title": "Benficial Owner Relationship with You",
-            "group": "Beneficial Owner Information"
-          }
-        },
-        "required": ["beneficial_name", "beneficial_relationship"]
-      }
-    },
     "customer_introduce_by": {
       "oneOf": [
         {
@@ -319,8 +256,7 @@
             "customer_introduce_by": {
               "enum": ["Walk-in Customer", "Local Government Bodies"]
             }
-          },
-          "required": []
+          }
         }
       ]
     },
@@ -381,25 +317,27 @@
                     "pattern": "Only alphanumeric characters and spaces are allowed."
                   }
                 },
+
                 "permanent_outside_street_name": {
                   "type": "string",
                   "title": "Tole/Street",
-                  "group": "Geographical Risk",
+                  "group": "",
                   "readOnly": true,
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
                   }
                 },
+
                 "permanent_postal_code": {
                   "type": "string",
                   "title": "Postal Code",
                   "group": "Geographical Risk",
-                  "readOnly": true,
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [
@@ -453,31 +391,31 @@
                   "type": "string",
                   "title": "Town",
                   "group": "Geographical Risk",
-                  "readOnly": true,
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_outside_street_name": {
                   "type": "string",
                   "title": "Tole/Street",
                   "group": "Geographical Risk",
-                  "readOnly": true,
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_postal_code": {
                   "type": "string",
                   "title": "Postal Code",
                   "group": "Geographical Risk",
-                  "readOnly": true,
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [
@@ -546,7 +484,7 @@
             "enum": [
               "Existing PEPs",
               "Former PEPs",
-              "High-ranking officials from neighbouring or nearby countries",
+              "High-ranking officials from neighboring or nearby countries",
               "Other foreign PEPs",
               "International PEPs"
             ],
@@ -580,6 +518,26 @@
           }
         },
         "required": ["adverse_category"]
+      }
+    },
+
+    "approval_status": {
+      "if": {
+        "properties": {
+          "approval_status": {
+            "enum": ["Revert"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "revert_to": {
+            "type": "string",
+            "title": "Revert To",
+            "width": "half"
+          }
+        },
+        "required": ["revert_to"]
       }
     }
   }
