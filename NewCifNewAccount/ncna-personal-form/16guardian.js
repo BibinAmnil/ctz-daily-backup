@@ -530,7 +530,11 @@
 
     async initializeSchema(setJsonSchema, formData) {
       if (!this.form_status?.includes("case-init")) this.setDivide(true);
-      this.setNextStep("personal-cdd-form");
+      if (this.formData?.account_info === "MINOR") {
+        this.setNextStep("minor-cdd-form");
+      } else {
+        this.setNextStep("joint-cdd-forma");
+      }
 
       if (this.form_status?.includes("review")) {
         this.setJsonSchema((prevSchema) => {
@@ -775,8 +779,6 @@
         "issuing_authority",
         "family_information",
       ];
-      // !(formData?.has_cif || formData?.source === "ocr") &&
-      //   this.formDataCleaner(nonClearableField, formData);
 
       if (!formData?.guardian_first_name) {
         this.toast.error("Enter name for dedup module");
@@ -787,27 +789,6 @@
       this.addLoader("guardian_dedup_check", true);
 
       try {
-        // Dedup check
-        const dedupResponse = await this.axios.post(
-          `${this.mainRouteURL}/external-api/dedup-check`,
-          {
-            first_name: formData.guardian_first_name,
-            middle_name: formData.guardian_middle_name,
-            last_name: formData.guardian_last_name,
-            father_name: formData.guardian_father_name,
-            id_number: formData.guardian_dedup_id_number,
-            document_type: formData.guardian_dedup_identification,
-            citizenship_number: null,
-            place_of_issue: formData.guardian_place_of_issue,
-            dob_ad: formData.guardian_date_of_birth_ad,
-            dob_bs: formData.guardian_date_of_birth_bs,
-          }
-        );
-
-        if (dedupResponse) {
-          this.toast.success(dedupResponse?.data?.data?.dedup_message);
-        }
-
         // Screening check
         const screeningResponse = await this.axios.post(
           `${this.mainRouteURL}/external-api/screening-check`,
@@ -829,13 +810,14 @@
 
         delete cleanedResponseData.screening_id;
 
-        this.setFormData((prev) => ({
-          ...prev,
-          guardian_personal_screening_data: cleanedResponseData || [],
-          guardian_screening_ref_code: String(responseData?.screening_id),
-        }));
-
-        this.setJsonSchema((prev) => ({ ...prev, isDisabled: false }));
+        if (responseData) {
+          this.toast.success("Preliminary Screening Success");
+          this.setFormData((prev) => ({
+            ...prev,
+            guardian_personal_screening_data: cleanedResponseData || [],
+            guardian_screening_ref_code: String(responseData?.screening_id),
+          }));
+        }
       } catch (error) {
         const errMsg =
           error?.response?.data?.message ||
@@ -1069,7 +1051,6 @@
           "guardian_related_party_relation_with_account_holder",
 
           "guardian_dedup_check",
-          "guardian_dedup_module_data",
           "guardian_personal_screening_data",
           "guardian_screening_ref_code",
 
@@ -1167,48 +1148,6 @@
           },
         },
 
-        guardian_dedup_module_data: {
-          "ui:widget": "ScreeningReportCard",
-          "ui:label": false,
-          showCheckbox: false,
-          showViewedColumn: false,
-          // showActionText: true,
-          fixedActionsColumn: true,
-          "ui:options": {
-            onCheckboxChange: (tableData, category, checked) => {
-              this.setFormData((prevData) => ({
-                ...prevData,
-                [category]: checked ? "Yes" : "No",
-                guardian_dedup_module_data: tableData,
-              }));
-            },
-            disabledButton: !this.form_status?.includes("case-init") && [
-              "match",
-            ],
-            actionHandlers: {
-              view: (record) => setIsModalVisible(true),
-              ...(this.form_status?.includes("case-init") && {
-                match: (record) => {
-                  if (record?.cif_number !== "-") {
-                    this.setFormData((prev) => ({
-                      ...prev,
-                      guardian_has_cif: true,
-                      guardian_cif_number: record?.cif_number,
-                    }));
-                    this.fetchIndividualInfoCIFDetail(record?.cif_number);
-                  } else {
-                    this.setModalOpen({
-                      open: true,
-                      message: "CIF number unavailable",
-                      close: "Close",
-                      status: "info",
-                    });
-                  }
-                },
-              }),
-            },
-          },
-        },
         guardian_related_party_relation_with_account_holder: {},
 
         guardian_cif_enquiry: {
@@ -1366,22 +1305,6 @@
               view: (record) => setIsModalVisible(true),
             },
           },
-        },
-
-        guardian_is_existing_cif: {
-          "ui:widget": "hidden",
-        },
-        guardian_is_block_list: {
-          "ui:widget": "hidden",
-        },
-        guardian_scheme_check: {
-          "ui:widget": "hidden",
-        },
-        guardian_is_cib_list: {
-          "ui:widget": "hidden",
-        },
-        guardian_is_sanction: {
-          "ui:widget": "hidden",
         },
 
         guardian_current_country: {

@@ -39,6 +39,21 @@
       }));
     };
 
+    // FUNCTION TO FILTER OPTIONS AS PER CASCADE
+    filterOptions(key, cascadeValue) {
+      if (!this.optionsData[key]) return [];
+
+      const filteredOptions = cascadeValue
+        ? this.optionsData[key]?.filter((item) =>
+            item.cascade_id?.includes(cascadeValue)
+          ) || []
+        : this.optionsData[key];
+
+      return filteredOptions.map((item) => ({
+        label: item.title,
+        value: item?.fg_code || item?.cbs_code || item?.id,
+      }));
+    }
     filterOptionsByCascadeId(options, cascadeId) {
       const filteredOptions = options.filter(
         (option) => option.cascade_id == cascadeId
@@ -59,14 +74,14 @@
         permanent_province: "provinces",
         permanent_district: "districts",
         family_member_relation: "relationships",
-        guardian_occupation_type: "occupations",
-        guardian_source_of_income: "income_sources",
+        occupation_type: "occupations",
+        source_of_income: "income_sources",
         related_party_relation_with_account_holder: "relationships",
         business_type: "business_type",
         existing_risk_rating: "risk_categories",
         account_info: "account_category",
         designation: "corporate_relation",
-        guardian_designation: "corporate_relation",
+        designation: "corporate_relation",
         constitution_code_id: "constitution_types",
         hpp_category: "hpp_categories",
         hpp_sub_category: "hpp_sub_categories",
@@ -170,6 +185,12 @@
             is_high_risk_acc: resp?.is_high_risk_acc,
             is_high_risk_account: resp?.is_high_risk_account ? "Yes" : "No",
           }));
+          this.setJsonSchema((prevJsonSchema) => {
+            return {
+              ...prevJsonSchema,
+              isDisabled: false,
+            };
+          });
         }
 
         return;
@@ -267,37 +288,20 @@
         this.setDivide(true);
       }
 
-      this.setFormData((prevData) => ({
-        ...prevData,
-        nationality: prevData?.guardian_nationality,
-        permanent_country: prevData?.guardian_permanent_country,
-        permanent_province: prevData?.guardian_permanent_province,
-        permanent_district: prevData?.guardian_permanent_district,
-
-        source_of_income: prevData?.guardian_source_of_income,
-
-        permanent_outside_town: prevData?.guardian_permanent_outside_town,
-        permanent_outside_street_name:
-          prevData?.guardian_permanent_outside_street_name,
-        permanent_postal_code: prevData?.guardian_permanent_postal_code,
-        business_type: prevData?.guardian_business_type,
-      }));
-
       const fieldsToUpdate = [
         "permanent_country",
         "permanent_province",
         "nationality",
         "permanent_district",
         "family_member_relation",
-        "guardian_occupation_type",
+        "occupation_type",
         "source_of_income",
-        "guardian_source_of_income",
         "related_party_relation_with_account_holder",
         "business_type",
         "existing_risk_rating",
         "account_info",
         "designation",
-        "guardian_designation",
+        "designation",
         "hpp_category",
         "hpp_sub_category",
       ];
@@ -371,9 +375,6 @@
             required: this.formData?.risk_level.includes("High")
               ? []
               : [
-                  ...(this.form_status?.includes("approval")
-                    ? ["acknowledge"]
-                    : []),
                   ...new Set([
                     ...(prevSchema.required || []),
                     "approval_status",
@@ -383,23 +384,6 @@
           };
         });
       }
-    }
-
-    filterOptionsOccupation(key, childKey, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const filteredOptions = cascadeValue
-        ? this.optionsData[key][childKey]?.filter((item) =>
-            item.cascade_id?.includes(cascadeValue)
-          ) || []
-        : this.optionsData[key][childKey];
-
-      return filteredOptions
-        ?.filter((item) => item?.id !== "remaining all occopation code")
-        ?.map((item) => ({
-          label: item.title,
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
     }
 
     createUISchema(options) {
@@ -413,7 +397,6 @@
         jsonSchema,
       } = options;
 
-      this.hasUpdated.current = false;
       this.initializeSchema(setJsonSchema, formData);
 
       return {
@@ -428,6 +411,7 @@
           "family_pep_declaration",
           "adverse_media",
           "adverse_category",
+
           "nationality",
           "permanent_country",
           "permanent_province",
@@ -435,12 +419,9 @@
           "permanent_outside_town",
           "permanent_outside_street_name",
           "permanent_postal_code",
-          "has_related_party",
-          "related_party",
-          "related_party_detail",
-          "entitled_with_fund",
-          "source_of_income",
-          "business_type",
+
+          "occupation_type",
+
           "existing_risk_rating",
           "loan_status",
           "is_blacklisted",
@@ -449,19 +430,7 @@
           "customer_name",
           "employee_id",
           "met_in_person",
-          "declared_anticipated_annual_transaction",
-          "guardian_annual_income",
-          "guardian_nationality",
-          "guardian_permanent_country",
-          "guardian_permanent_province",
-          "guardian_permanent_district",
-          "guardian_permanent_outside_town",
-          "guardian_permanent_outside_street_name",
-          "guardian_permanent_postal_code",
-          "guardian_occupation_type",
-          "guardian_source_of_income",
-          "guardian_occupation_detail",
-          "guardian_business_type",
+
           "annual_volume_of_transactions",
           "annual_number_of_transactions",
           "monthly_volume_of_transactions",
@@ -469,82 +438,21 @@
           "yearly_income",
           "transaction_justification",
           "transaction_fund_details",
-          "account_info",
-          "screening_ref_number",
-          "external_cdd_id",
 
           "risk_level",
           "is_high_risk_account",
           "calculate_risk",
-          "risk_score",
 
-          "is_sanction",
-          "is_cib_list",
-          "is_block_list",
-          "acknowledge",
           "approval_status",
           "revert_to",
           "approval_remarks",
+
+          "account_info",
         ],
-
-        related_party: {
-          "ui:options": {
-            fieldKeys: [
-              "related_party_designation",
-              "related_party_first_name",
-              "related_party_middle_name",
-              "related_party_last_name",
-              "related_party_family_account_holder",
-              "related_party_relation_with_account_holder",
-              "related_party_detail",
-            ],
-          },
-          "ui:options": {
-            addable: false,
-            removable: false,
-          },
-          items: {
-            "ui:order": [
-              "related_party_designation",
-              "related_party_first_name",
-              "related_party_middle_name",
-              "related_party_last_name",
-              "related_party_family_account_holder",
-              "related_party_relation_with_account_holder",
-              "related_party_detail",
-            ],
-            related_party_detail: {
-              "ui:options": {
-                addable: false,
-                removable: false,
-              },
-              items: {
-                "ui:order": [
-                  "related_party_designation",
-                  "related_party_first_name",
-                  "related_party_middle_name",
-                  "related_party_last_name",
-                  "related_party_family_account_holder",
-                  "related_party_relation_with_account_holder",
-                ],
-              },
-            },
-          },
-        },
-
         account_info: {
           "ui:widget": "hidden",
         },
 
-        is_sanction: {
-          "ui:widget": "hidden",
-        },
-        is_cib_list: {
-          "ui:widget": "hidden",
-        },
-        is_block_list: {
-          "ui:widget": "hidden",
-        },
         hpp_sub_category: {
           "ui:widget": "CascadeDropdown",
           "ui:options": {
@@ -553,6 +461,15 @@
                 "hpp_sub_categories",
                 formData?.hpp_category
               );
+            },
+          },
+        },
+
+        occupation_type: {
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: () => {
+              return this.filterOptions("occupations");
             },
           },
         },
@@ -571,100 +488,8 @@
             amount: true,
           },
         },
-
-        guardian_annual_income: {
-          "ui:widget": "hidden",
-        },
-        guardian_nationality: {
-          "ui:widget": "hidden",
-        },
-        guardian_permanent_country: {
-          "ui:widget": "hidden",
-        },
-        guardian_permanent_province: {
-          "ui:widget": "hidden",
-        },
-        guardian_permanent_district: {
-          "ui:widget": "hidden",
-        },
-        guardian_occupation_type: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "occupation_list"
-            //   );
-            // },
-            onChange: (value) =>
-              this.dropdownReset({
-                guardian_occupation_type: value,
-                guardian_source_of_income: this.optionsData[
-                  "occupation_rule"
-                ]?.[`source_of_income_list`]?.find((item) =>
-                  item?.cascade_id?.includes(value)
-                )?.id,
-              }),
-          },
-        },
-
-        guardian_source_of_income: {
-          // "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            // getOptions: (formData) => {
-            //   return this.filterOptionsOccupation(
-            //     "occupation_rule",
-            //     "source_of_income_list",
-            //     formData?.guardian_occupation_type
-            //   );
-            // },
-          },
-        },
-
-        guardian_occupation_detail: {
-          "ui:classNames": "my-1",
-          "ui:options": {
-            addable: false,
-
-            orderable: false,
-
-            removable: false,
-          },
-
-          items: {
-            guardian_business_type: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData) => {
-                  const filteredData = this.filterOptionsOccupation(
-                    "occupation_rule",
-                    "business_type_list",
-                    formData?.guardian_occupation_type
-                  );
-                  return [
-                    ...filteredData,
-                    { label: "Others", value: "others" },
-                  ];
-                },
-              },
-            },
-          },
-        },
-        guardian_permanent_outside_town: {
-          "ui:widget": "hidden",
-        },
-        guardian_permanent_outside_street_name: {
-          "ui:widget": "hidden",
-        },
-        guardian_permanent_postal_code: {
-          "ui:widget": "hidden",
-        },
-        guardian_business_type: {
-          "ui:widget": "hidden",
-        },
-        risk_level: {},
-        risk_score: {
-          "ui:widget": "hidden",
+        transaction_justification: {
+          "ui:classNames": "h-auto",
         },
         calculate_risk: {
           "ui:widget": this.form_status?.includes("init")
@@ -689,21 +514,6 @@
           },
         },
 
-        transaction_justification: {
-          "ui:classNames": "h-auto",
-        },
-        acknowledge: {
-          "ui:classNames": "mt-5",
-          "ui:label": false,
-          "ui:disabled": !(
-            this.form_status?.includes("review") ||
-            this.form_status?.includes("approval")
-          ),
-
-          "ui:widget": this.form_status?.includes("approval")
-            ? "CustomCheckBoxWidget"
-            : "hidden",
-        },
         approval_status: {
           "ui:disabled": !(
             this.form_status?.includes("review") ||

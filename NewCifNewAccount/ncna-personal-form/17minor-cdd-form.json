@@ -3,7 +3,7 @@
   "className": "fs-1",
   "form_title": "minor_cdd",
   "hasStep": true,
-  "isDisabled": false,
+  "isDisabled": true,
   "submissionHidden": false,
   "required": [
     "hpp",
@@ -23,38 +23,16 @@
     "transaction_justification",
     "transaction_fund_details",
     "adverse_media",
-    "guardian_occupation_type",
-    "guardian_source_of_income"
+    "occupation_type"
   ],
   "properties": {
-    "is_high_risk_account": {
-      "type": "string",
-      "title": "Is High Risk Account ?",
-      "group": "Risk",
-      "enum": ["Yes", "No"],
-      "readOnly": true
-    },
     "account_info": {
       "type": "string",
       "group": "Account Information",
       "hideTitle": true,
       "width": "full"
     },
-    "is_sanction": {
-      "type": "boolean",
-      "title": "Is Sanctioned?",
-      "group": "Declaration"
-    },
-    "is_cib_list": {
-      "type": "boolean",
-      "title": "Is CIB Black Listed?",
-      "group": "Declaration"
-    },
-    "is_block_list": {
-      "type": "boolean",
-      "title": "Is Internal Block Listed?",
-      "group": "Declaration"
-    },
+
     "hpp": {
       "type": "string",
       "title": "Highly Positioned Person (HPP) ?",
@@ -90,15 +68,7 @@
       "readOnly": true
     },
 
-    "entitled_with_fund": {
-      "type": "string",
-      "title": "Is Ultimately account holder is entitled to the funds ?",
-      "group": "Beneficial Owner",
-      "enum": ["Yes", "No"],
-      "width": 8
-    },
-
-    "guardian_occupation_type": {
+    "occupation_type": {
       "type": "string",
       "title": "Occupation Type",
       "group": "OccupationAndIncome",
@@ -112,6 +82,7 @@
       "enum": ["Yes", "No"],
       "width": 8
     },
+
     "is_blacklisted": {
       "type": "string",
       "title": "Has the customer being blacklisted by us ?",
@@ -192,61 +163,21 @@
         "pattern": "Only numbers are allowed"
       }
     },
-
     "transaction_justification": {
       "type": "string",
       "title": "Is transaction amount justified with customer profile?",
-      "group": "transactionDetails",
+      "group": "Transaction Details",
       "enum": ["Yes", "No"],
       "width": 8
     },
     "transaction_fund_details": {
       "type": "string",
       "title": "Is the source of funds clear and identifiable ?",
-      "group": "transactionDetails",
+      "group": "Transaction Details",
       "enum": ["Yes", "No"],
       "width": 8
     },
 
-    "guardian_annual_income": {
-      "type": "string",
-      "title": "Annual Income",
-      "group": "",
-      "readOnly": true
-    },
-    "guardian_nationality": {
-      "type": "string",
-      "title": "Nationality",
-      "group": "",
-      "readOnly": true
-    },
-    "guardian_permanent_country": {
-      "type": "string",
-      "title": "Permanent Country",
-      "group": ""
-    },
-    "guardian_permanent_province": {
-      "type": "string",
-      "title": "Permanent Province",
-      "group": ""
-    },
-    "guardian_permanent_district": {
-      "type": "string",
-      "title": "Permanent District",
-      "group": ""
-    },
-
-    "guardian_source_of_income": {
-      "type": "string",
-      "title": "Source of Income",
-      "group": "OccupationAndIncome",
-      "readOnly": true
-    },
-    "calculate_risk": {
-      "type": "string",
-      "title": "Calculate Risk",
-      "group": "Risk"
-    },
     "risk_level": {
       "type": "string",
       "group": "Risk",
@@ -254,20 +185,19 @@
       "enum": ["Low Risk", "Medium Risk", "High Risk"],
       "readOnly": true
     },
-    "risk_score": {
-      "type": "number",
-      "title": "Risk Score",
+    "is_high_risk_account": {
+      "type": "string",
+      "title": "Is High Risk Account ?",
       "group": "Risk",
+      "enum": ["Yes", "No"],
       "readOnly": true
     },
-
-    "acknowledge": {
-      "type": "boolean",
-      "width": "full",
-      "hideTitle": true,
-      "title": "I acknowledge that the details provided are correct and complete.",
-      "group": "Approval"
+    "calculate_risk": {
+      "type": "string",
+      "title": "Calculate Risk",
+      "group": "Risk"
     },
+
     "approval_status": {
       "type": "string",
       "enum": ["Approve", "Reject", "Revert"],
@@ -331,248 +261,6 @@
       ]
     },
 
-    "guardian_occupation_type": {
-      "if": {
-        "properties": {
-          "guardian_occupation_type": {
-            "enum": ["BUSIN", "EMPLO", "SELFE"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "guardian_occupation_detail": {
-            "type": "array",
-            "title": "Occupation",
-            "group": "OccupationAndIncome",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "guardian_name_of_organization": {
-                  "type": "string",
-                  "title": "Employer Name",
-                  "readOnly": true
-                },
-                "guardian_organization_address": {
-                  "type": "string",
-                  "title": "Address",
-                  "readOnly": true
-                },
-                "guardian_organization_contact_number": {
-                  "type": "number",
-                  "title": "Contact No.",
-                  "pattern": "^(\\d{7,12})?$",
-                  "errorMessage": {
-                    "pattern": "Mobile number must be 7 to 12 digits."
-                  },
-                  "readOnly": true
-                },
-                "guardian_designation": {
-                  "type": "string",
-                  "title": "Designation",
-                  "readOnly": true
-                },
-                "guardian_business_type": {
-                  "type": "string",
-                  "title": "Business Type",
-                  "readOnly": true
-                }
-              },
-              "required": [
-                "guardian_name_of_organization",
-                "guardian_organization_address",
-                "guardian_organization_contact_number",
-                "guardian_designation",
-                "guardian_business_type"
-              ]
-            }
-          }
-        }
-      },
-      "else": {
-        "properties": {}
-      }
-    },
-
-    "account_info": {
-      "if": {
-        "properties": {
-          "account_info": {
-            "enum": ["INDIVIDUAL"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "has_related_party": {
-            "type": "string",
-            "title": "Has a Power of Attorney / Mandatee been assigned ?",
-            "enum": ["Yes", "No"],
-            "group": "Related Parties",
-            "width": 8
-          }
-        },
-        "dependencies": {
-          "has_related_party": {
-            "if": {
-              "properties": {
-                "has_related_party": {
-                  "enum": ["Yes"]
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "related_party": {
-                  "type": "array",
-                  "readOnly": true,
-
-                  "minItems": 0,
-                  "title": "Related Party",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "related_party_designation": {
-                        "type": "string",
-                        "title": "Designation",
-                        "group": "personalInformation",
-                        "readOnly": true,
-                        "enum": ["Power of Attorney", "Mandatee"]
-                      }
-                    },
-                    "dependencies": {
-                      "related_party_designation": {
-                        "if": {
-                          "properties": {
-                            "related_party_designation": {
-                              "enum": ["Power of Attorney"]
-                            }
-                          }
-                        },
-                        "then": {
-                          "properties": {
-                            "related_party_first_name": {
-                              "type": "string",
-                              "title": "First Name",
-                              "group": "personalInformation",
-                              "readOnly": true,
-                              "pattern": "^[a-zA-Z.\\s]*$",
-                              "errorMessage": {
-                                "pattern": "Alphabets and spaces only"
-                              }
-                            },
-                            "related_party_middle_name": {
-                              "type": "string",
-                              "title": "Middle Name",
-                              "group": "personalInformation",
-                              "readOnly": true,
-                              "pattern": "^[a-zA-Z.\\s]*$",
-                              "errorMessage": {
-                                "pattern": "Alphabets only"
-                              }
-                            },
-                            "related_party_last_name": {
-                              "type": "string",
-                              "title": "Last Name",
-                              "group": "personalInformation",
-                              "readOnly": true,
-                              "pattern": "^[a-zA-Z.\\s]*$",
-                              "errorMessage": {
-                                "pattern": "Alphabets and spaces only"
-                              }
-                            },
-                            "related_party_family_account_holder": {
-                              "type": "string",
-                              "title": "Is s/he family member of account holder?",
-                              "enum": ["Yes", "No"],
-                              "group": "personalInformation",
-                              "readOnly": true
-                            },
-                            "related_party_relation_with_account_holder": {
-                              "type": "string",
-                              "title": "Relationship with the accoutholder ?",
-                              "group": "personalInformation",
-                              "readOnly": true
-                            }
-                          }
-                        },
-                        "else": {
-                          "properties": {
-                            "related_party_detail": {
-                              "type": "array",
-                              "minItems": 1,
-                              "group": "Mandatee Detail",
-                              "readOnly": true,
-                              "width": "full",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "related_party_first_name": {
-                                    "type": "string",
-                                    "title": "First Name",
-                                    "group": "personalInformation",
-                                    "readOnly": true,
-                                    "pattern": "^[a-zA-Z.\\s]*$",
-                                    "errorMessage": {
-                                      "pattern": "Alphabets and spaces only"
-                                    },
-                                    "width": 8
-                                  },
-                                  "related_party_middle_name": {
-                                    "type": "string",
-                                    "title": "Middle Name",
-                                    "group": "personalInformation",
-                                    "readOnly": true,
-                                    "pattern": "^[a-zA-Z.\\s]*$",
-                                    "errorMessage": {
-                                      "pattern": "Alphabets only"
-                                    },
-                                    "width": 8
-                                  },
-                                  "related_party_last_name": {
-                                    "type": "string",
-                                    "title": "Last Name",
-                                    "group": "personalInformation",
-                                    "readOnly": true,
-                                    "pattern": "^[a-zA-Z.\\s]*$",
-                                    "errorMessage": {
-                                      "pattern": "Alphabets and spaces only"
-                                    },
-                                    "width": 8
-                                  },
-                                  "related_party_family_account_holder": {
-                                    "type": "string",
-                                    "title": "Is s/he a family member of the account holder ?",
-                                    "enum": ["Yes", "No"],
-                                    "group": "personalInformation",
-                                    "readOnly": true,
-                                    "width": 8
-                                  },
-                                  "related_party_relation_with_account_holder": {
-                                    "type": "string",
-                                    "title": "Relationship with the accoutholder ?",
-                                    "group": "personalInformation",
-                                    "readOnly": true,
-                                    "width": 8
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "group": "personalInformation"
-                }
-              }
-            }
-          }
-        },
-        "required": ["has_related_party"]
-      }
-    },
     "nationality": {
       "if": {
         "properties": {
@@ -629,29 +317,10 @@
                     "pattern": "Only alphanumeric characters and spaces are allowed."
                   }
                 },
-                "guardian_permanent_outside_town": {
-                  "type": "string",
-                  "title": "Permanent Province",
-                  "group": "",
-                  "readOnly": true,
-                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
-                  "errorMessage": {
-                    "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
-                },
+
                 "permanent_outside_street_name": {
                   "type": "string",
                   "title": "Tole/Street",
-                  "group": "Geographical Risk",
-                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
-                  "errorMessage": {
-                    "pattern": "Only alphanumeric characters and spaces are allowed."
-                  },
-                  "readOnly": true
-                },
-                "guardian_permanent_outside_street_name": {
-                  "type": "string",
-                  "title": "Tole/Street",
                   "group": "",
                   "readOnly": true,
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
@@ -659,17 +328,8 @@
                     "pattern": "Only alphanumeric characters and spaces are allowed."
                   }
                 },
+
                 "permanent_postal_code": {
-                  "type": "string",
-                  "title": "Postal Code",
-                  "group": "Geographical Risk",
-                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
-                  "errorMessage": {
-                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
-                  },
-                  "readOnly": true
-                },
-                "guardian_permanent_postal_code": {
                   "type": "string",
                   "title": "Postal Code",
                   "group": "Geographical Risk",

@@ -3,7 +3,7 @@
   "hasStep": true,
   "form_title": "guardian_info",
   "submissionHidden": false,
-  "isDisabled": false,
+  "isDisabled": true,
   "required": [
     "guardian_first_name",
     "guardian_last_name",
@@ -134,30 +134,6 @@
       "group": "Customer Information",
       "additionalProperties": true,
       "width": "full"
-    },
-
-    "guardian_dedup_module_data": {
-      "type": "string",
-      "width": "full",
-      "group": "Customer Information",
-      "additionalProperties": true,
-      "columns": [
-        { "key": "full_name", "label": "Name" },
-        { "key": "cif_number", "label": "Cif Number" },
-        { "key": "date_of_birth_ad", "label": "Date of Birth" },
-        {
-          "key": "identification_number",
-          "label": "Citizenship Number"
-        }
-      ],
-      "actions": [
-        {
-          "label": "Match",
-          "icon": "match",
-          "tooltip": "Matched Detail",
-          "actionKey": "match"
-        }
-      ]
     },
 
     "guardian_personal_screening_data": {

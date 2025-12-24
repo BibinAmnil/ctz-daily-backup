@@ -188,30 +188,6 @@
             "additionalProperties": true
           },
 
-          "dedup_module_data": {
-            "type": "string",
-            "width": "full",
-            "additionalProperties": true,
-            "columns": [
-              {
-                "key": "full_name",
-                "label": "Name"
-              },
-              {
-                "key": "cif_number",
-                "label": "Cif Number"
-              }
-            ],
-            "actions": [
-              {
-                "label": "View",
-                "icon": "view",
-                "tooltip": "View Detail",
-                "actionKey": "view"
-              }
-            ]
-          },
-
           "personal_screening_data": {
             "type": "string",
             "width": "full",
@@ -302,13 +278,7 @@
             "enum": ["Low Risk", "Medium Risk", "High Risk"],
             "readOnly": true
           },
-          "is_high_risk_account": {
-            "type": "string",
-            "title": "Is High Risk Account?",
-            "enum": ["Yes", "No"],
-            "group": "Risk",
-            "readOnly": true
-          },
+
           "calculate_risk": {
             "type": "string",
             "title": "Calculate Risk",

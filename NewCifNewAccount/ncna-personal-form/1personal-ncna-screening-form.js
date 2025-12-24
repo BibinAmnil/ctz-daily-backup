@@ -825,7 +825,9 @@
           "customer_type_id",
           "account_purpose",
           "customer_status",
-
+          "multiple_account",
+          "multiple_currency",
+          "multiple_account_number",
           "salutation",
           "first_name",
           "middle_name",
@@ -887,7 +889,35 @@
         },
 
         currency: {
-          "ui:options": {},
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: (formData, index) => this.filterOptions("currencies"),
+            onChange: (value) => {
+              this.dropdownReset({
+                currency: value,
+                multiple_currency: null,
+              });
+            },
+          },
+        },
+        multiple_currency: {
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: (formData, index) => {
+              const filterOption = this.filterOptions("currencies");
+              // Only show currencies not currently selected
+              const dropdownOptions = filterOption?.filter(
+                (item) => item?.value !== formData?.currency
+              );
+
+              return dropdownOptions || [];
+            },
+          },
+        },
+        multiple_account_number: {
+          "ui:widget": this.formData?.case_status?.includes("Completed")
+            ? "TextWidget"
+            : "hidden",
         },
 
         account_scheme_id: {
@@ -945,25 +975,6 @@
               return this.filterOptions("education_qualifications");
             },
           },
-        },
-        customer_type_id: {},
-
-        dedup_identification: {},
-
-        dedup_id_number: {
-          "ui:options": {
-            onBlurCapture: (event) =>
-              this.convertToArray(
-                event?.target?.value,
-                "identification_number",
-                "id_type_details",
-                ["dedup_identification", "id_type_id"]
-              ),
-          },
-        },
-
-        father_name: {
-          "ui:options": {},
         },
 
         personal_screening_data: {

@@ -15,6 +15,7 @@
     "account_purpose",
     "customer_type_id",
     "customer_status",
+    "multiple_account",
 
     "salutation",
     "first_name",
@@ -79,6 +80,13 @@
       "type": "string",
       "title": "Currency of Account",
       "group": "Account Information"
+    },
+    "multiple_account": {
+      "type": "string",
+      "title": "Open account in other currencies as well?",
+      "group": "Account Information",
+      "enum": ["Yes", "No"],
+      "default": "No"
     },
 
     "account_purpose": {
@@ -341,6 +349,31 @@
           }
         },
         "required": ["cif_number"]
+      }
+    },
+    "multiple_account": {
+      "if": {
+        "properties": {
+          "multiple_account": {
+            "enum": ["Yes"]
+          }
+        }
+      },
+      "then": { 
+        "properties": {
+          "multiple_currency": {
+            "type": "string",
+            "title": "Other Currency",
+            "group": "Account Information"
+          },
+          "multiple_account_number": {
+            "type": "string",
+            "title": "Other Account Number",
+            "group": "Account Information",
+            "readOnly": true
+          }
+        },
+        "required": ["multiple_currency"]
       }
     },
     "email_not_available": {

@@ -543,6 +543,8 @@
           "need_locker",
           "need_internet_banking",
           "internet_banking_service_type",
+          "mode_of_operation",
+          "remarks",
 
           "account_info",
           "first_name",

@@ -1100,6 +1100,9 @@
           "customer_type_id",
           "account_purpose",
           "customer_status",
+          "multiple_account",
+          "multiple_currency",
+          "multiple_account_number",
 
           "salutation",
           "first_name",
@@ -1466,18 +1469,35 @@
         },
 
         currency: {
+          "ui:widget": "CascadeDropdown",
           "ui:options": {
+            getOptions: (formData, index) => this.filterOptions("currencies"),
             onChange: (value) => {
-              this.setFormData((prev) => ({
-                ...prev,
-                currency: value,
-              }));
               this.dropdownReset({
-                account_scheme_id: null,
-                customer_type_id: null,
+                currency: value,
+                multiple_currency: null,
               });
             },
           },
+        },
+        multiple_currency: {
+          "ui:widget": "CascadeDropdown",
+          "ui:options": {
+            getOptions: (formData, index) => {
+              const filterOption = this.filterOptions("currencies");
+              // Only show currencies not currently selected
+              const dropdownOptions = filterOption?.filter(
+                (item) => item?.value !== formData?.currency
+              );
+
+              return dropdownOptions || [];
+            },
+          },
+        },
+        multiple_account_number: {
+          "ui:widget": this.formData?.case_status?.includes("Completed")
+            ? "TextWidget"
+            : "hidden",
         },
 
         account_scheme_id: {

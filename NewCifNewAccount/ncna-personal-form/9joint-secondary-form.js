@@ -341,8 +341,6 @@
         "customer_type_id",
         "customer_status",
       ];
-      // !this.formData?.joint_details[index]?.has_cif &&
-      //   this.formDataCleaner(nonClearableField, index);
       if (!this.formData?.joint_details[index]?.first_name) {
         this.toast.error("Enter name for dedup module");
         return;
@@ -366,43 +364,15 @@
       }));
 
       try {
-        const dedupResponse = await this.axios.post(
-          `${this.mainRouteURL}/external-api/dedup-check`,
-          {
-            first_name: this.formData?.joint_details[index]?.first_name,
-            middle_name: this.formData?.joint_details[index]?.middle_name,
-            last_name: this.formData?.joint_details[index]?.last_name,
-            father_name: this.formData?.joint_details[index]?.father_name,
-            id_number: this.formData?.joint_details[index]?.dedup_id_number,
-            citizenship_number: null,
-            dob_ad: this.formData?.joint_details[index]?.date_of_birth_ad,
-            dob_bs: this.formData?.joint_details[index]?.date_of_birth_bs,
-          }
-        );
-        if (response) {
-          this.toast.success(dedupResponse?.data?.data?.dedup_message);
-          this.setFormData((prevData) => ({
-            ...prevData,
-            joint_details: prevData?.joint_details?.map((item, idx) =>
-              idx === index
-                ? {
-                    ...item,
-                    dedup_module_data: dedupResponse?.data?.data?.data,
-                  }
-                : item
-            ),
-          }));
-        }
-
         // Screening check
         const screeningResponse = await this.axios.post(
           `${this.mainRouteURL}/external-api/screening-check`,
           {
-            first_name: formData.first_name,
-            middle_name: formData.middle_name,
-            last_name: formData.last_name,
-            citizenship_no: formData.dedup_id_number,
-            dob_ad: formData.date_of_birth_ad,
+            first_name: this.formData.first_name,
+            middle_name: this.formData.middle_name,
+            last_name: this.formData.last_name,
+            citizenship_no: this.formData.dedup_id_number,
+            dob_ad: this.formData.date_of_birth_ad,
           }
         );
 
@@ -414,19 +384,21 @@
         );
 
         delete cleanedResponseData.screening_id;
-
-        this.setFormData((prevData) => ({
-          ...prevData,
-          joint_details: prevData?.joint_details?.map((item, idx) =>
-            idx === index
-              ? {
-                  ...item,
-                  personal_screening_data: cleanedResponseData || [],
-                  screening_ref_code: String(responseData?.screening_id),
-                }
-              : item
-          ),
-        }));
+        if (responseData) {
+          this.toast.success("Preliminary Screening Success");
+          this.setFormData((prevData) => ({
+            ...prevData,
+            joint_details: prevData?.joint_details?.map((item, idx) =>
+              idx === index
+                ? {
+                    ...item,
+                    personal_screening_data: cleanedResponseData || [],
+                    screening_ref_code: String(responseData?.screening_id),
+                  }
+                : item
+            ),
+          }));
+        }
       } catch (error) {
         this.setModalOpen({
           open: true,
@@ -1145,9 +1117,7 @@
               "met_in_person",
 
               "risk_level",
-              "is_high_risk_account",
               "calculate_risk",
-
               "cif_data",
             ],
 
@@ -1337,38 +1307,6 @@
                 },
               },
             },
-            dedup_module_data: {
-              "ui:widget": "ScreeningReportCard",
-              "ui:label": false,
-              showCheckbox: false,
-              showViewedColumn: false,
-              // showActionText: true,
-              fixedActionsColumn: true,
-              "ui:options": {
-                onCheckboxChange: (tableData, category, checked) => {
-                  this.setFormData((prevData) => ({
-                    ...prevData,
-                    [category]: checked ? "Yes" : "No",
-                    dedup_module_data: tableData,
-                  }));
-                },
-                disabledButton: (this.form_status?.includes("review") ||
-                  this.form_status?.includes("approval") ||
-                  this.form_status?.includes("reporting") ||
-                  this.form_status?.includes("Completed")) && ["match"],
-                actionHandlers: {
-                  ...(!(
-                    this.form_status?.includes("review") ||
-                    this.form_status?.includes("approval") ||
-                    this.form_status?.includes("reporting") ||
-                    this.form_status?.includes("Completed")
-                  ) && {
-                    view: (record) => setIsModalVisible(true),
-                  }),
-                },
-              },
-            },
-
             personal_screening_data: {
               "ui:widget": "ScreeningReportCard",
               "ui:label": false,

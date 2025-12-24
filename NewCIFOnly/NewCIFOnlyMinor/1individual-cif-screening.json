@@ -140,6 +140,70 @@
       "additionalProperties": true
     },
 
+    "dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "additionalProperties": true,
+      "columns": [
+        {
+          "key": "full_name",
+          "label": "Name"
+        },
+        {
+          "key": "cif_number",
+          "label": "Cif Number"
+        }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+
+    "branch_dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "additionalProperties": true,
+      "columns": [
+        {
+          "key": "full_name",
+          "label": "Full Name"
+        },
+        {
+          "key": "case_number",
+          "label": "Case Number"
+        },
+        {
+          "key": "cif_number",
+          "label": "Cif Number"
+        },
+        {
+          "key": "branch",
+          "label": "Branch"
+        },
+        {
+          "key": "case_status",
+          "label": "Case Status"
+        },
+        {
+          "key": "module_name",
+          "label": "Module Name"
+        }
+      ],
+      "actions": [
+        {
+          "label": "View",
+          "icon": "view",
+          "tooltip": "View Detail",
+          "actionKey": "view"
+        }
+      ]
+    },
+
     "personal_screening_data": {
       "type": "string",
       "width": "full",
