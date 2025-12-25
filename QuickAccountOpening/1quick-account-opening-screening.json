@@ -19,7 +19,8 @@
     "is_refugee",
     "salutation",
     "gender",
-    "account_scheme_id"
+    "account_scheme_id",
+    "residential_status"
   ],
 
   "properties": {
@@ -163,7 +164,7 @@
     "dedup_check": {
       "type": "string",
       "title": "Preliminary Screening",
-      "group": "Customer Information",
+      "group": "",
       "width": "full",
       "additionalProperties": true
     },

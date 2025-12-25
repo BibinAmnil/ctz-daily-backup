@@ -38,7 +38,8 @@
     "need_mobile_banking",
     "need_internet_banking",
     "residential_status",
-    "is_us_person"
+    "is_us_person",
+    "account_scheme_id"
   ],
 
   "properties": {
@@ -67,6 +68,12 @@
       "group": "Account Information",
       "enum": ["Good", "Bad", "Doubtful"],
       "default": "Good"
+    },
+    "account_scheme_id": {
+      "type": "string",
+      "title": "Product Scheme",
+      "group": "Account Information",
+      "readOnly": true
     },
     "first_name": {
       "type": "string",
@@ -194,7 +201,8 @@
       "type": "string",
       "title": "Salutation",
       "width": "full",
-      "group": "Personal Information"
+      "group": "Personal Information",
+      "readOnly": true
     },
 
     "gender": {
@@ -550,7 +558,8 @@
       "title": "Residential Status",
       "group": "Permanent Address",
       "enum": ["Yes", "No"],
-      "default": "Yes"
+      "default": "Yes",
+      "readOnly": true
     },
     "is_us_person": {
       "type": "string",
@@ -703,17 +712,20 @@
                 "permanent_province": {
                   "type": "string",
                   "title": "Permanent Province",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_district": {
                   "type": "string",
                   "title": "Permanent District",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_municipality": {
                   "type": "string",
                   "title": "Permanent Municipality",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_ward_number": {
                   "type": "string",
@@ -753,7 +765,8 @@
                     "31",
                     "32",
                     "33"
-                  ]
+                  ],
+                  "readOnly": true
                 },
                 "permanent_street_name": {
                   "type": "string",
@@ -762,7 +775,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_town": {
                   "type": "string",
@@ -771,7 +785,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_house_number": {
                   "type": "string",
@@ -780,7 +795,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [
@@ -801,7 +817,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_outside_street_name": {
                   "type": "string",
@@ -810,7 +827,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_postal_code": {
                   "type": "string",
@@ -819,7 +837,8 @@
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [
@@ -860,7 +879,8 @@
           "permanent_country": {
             "type": "string",
             "title": "Permanent Country",
-            "group": "Permanent Address"
+            "group": "Permanent Address",
+            "readOnly": true
           },
           "same_as_permanent": {
             "type": "boolean",
@@ -889,17 +909,20 @@
                 "permanent_province": {
                   "type": "string",
                   "title": "Permanent Province",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_district": {
                   "type": "string",
                   "title": "Permanent District",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_municipality": {
                   "type": "string",
                   "title": "Permanent Municipality",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_ward_number": {
                   "type": "string",
@@ -939,7 +962,8 @@
                     "31",
                     "32",
                     "33"
-                  ]
+                  ],
+                  "readOnly": true
                 },
                 "permanent_street_name": {
                   "type": "string",
@@ -948,7 +972,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_town": {
                   "type": "string",
@@ -957,7 +982,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_house_number": {
                   "type": "string",
@@ -966,7 +992,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [
@@ -987,7 +1014,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_outside_street_name": {
                   "type": "string",
@@ -996,7 +1024,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_postal_code": {
                   "type": "string",
@@ -1005,7 +1034,8 @@
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [

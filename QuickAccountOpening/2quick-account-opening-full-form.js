@@ -1119,15 +1119,11 @@
           "cif_enquiry",
 
           "account_info",
+          "account_type_id",
           "currency",
+          "account_scheme_id",
           "customer_type_id",
           "customer_status",
-
-          "account_type_id",
-          "account_scheme_id",
-          "pension",
-          "dmat_number",
-          "ssn",
 
           "salutation",
           "first_name",
