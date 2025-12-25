@@ -814,7 +814,7 @@
                 },
                 "permanent_postal_code": {
                   "type": "string",
-                  "title": "",
+                  "title": "Postal Code",
                   "group": "Permanent Address",
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
@@ -1000,7 +1000,7 @@
                 },
                 "permanent_postal_code": {
                   "type": "string",
-                  "title": "",
+                  "title": "Postal Code",
                   "group": "Permanent Address",
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {

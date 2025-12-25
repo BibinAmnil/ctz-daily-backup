@@ -16,7 +16,10 @@
     "current_country",
     "issuing_authority",
     "is_nrn",
-    "is_refugee"
+    "is_refugee",
+    "salutation",
+    "gender",
+    "account_scheme_id"
   ],
 
   "properties": {
@@ -26,6 +29,12 @@
       "group": "Account Information",
       "width": "full",
       "readOnly": true
+    },
+    "salutation": {
+      "type": "string",
+      "title": "Salutation",
+      "width": "full",
+      "group": "Customer Information"
     },
 
     "first_name": {
@@ -91,6 +100,13 @@
       "group": "Customer Information",
       "default": "NP"
     },
+    "residential_status": {
+      "type": "string",
+      "title": "Residential Status",
+      "group": "Permanent Address",
+      "enum": ["Yes", "No"],
+      "default": "Yes"
+    },
     "current_country": {
       "type": "string",
       "title": "Current Country",
@@ -132,12 +148,84 @@
       "group": "Customer Information",
       "title": "Date of Birth (B.S.)"
     },
+
+    "gender": {
+      "type": "string",
+      "title": "Gender",
+      "group": "Customer Information",
+      "readOnly": true
+    },
+    "account_scheme_id": {
+      "type": "string",
+      "title": "Product Scheme",
+      "group": "Customer Information"
+    },
     "dedup_check": {
       "type": "string",
       "title": "Preliminary Screening",
       "group": "Customer Information",
       "width": "full",
       "additionalProperties": true
+    },
+
+    "dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "additionalProperties": true,
+      "columns": [
+        {
+          "key": "cif_number",
+          "label": "Cif Number"
+        }
+      ],
+      "actions": [
+        {
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
+        }
+      ]
+    },
+
+    "branch_dedup_module_data": {
+      "type": "string",
+      "width": "full",
+      "additionalProperties": true,
+      "columns": [
+        {
+          "key": "full_name",
+          "label": "Full Name"
+        },
+        {
+          "key": "case_number",
+          "label": "Case Number"
+        },
+        {
+          "key": "cif_number",
+          "label": "Cif Number"
+        },
+        {
+          "key": "branch",
+          "label": "Branch"
+        },
+        {
+          "key": "case_status",
+          "label": "Case Status"
+        },
+        {
+          "key": "module_name",
+          "label": "Module Name"
+        }
+      ],
+      "actions": [
+        {
+          "label": "Match",
+          "icon": "match",
+          "tooltip": "Matched Detail",
+          "actionKey": "match"
+        }
+      ]
     },
 
     "personal_screening_data": {
@@ -241,6 +329,319 @@
             "readOnly": false
           }
         }
+      }
+    },
+    "nationality": {
+      "if": {
+        "properties": {
+          "nationality": {
+            "enum": ["NP"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Permanent Address",
+            "default": "NP",
+            "readOnly": true
+          }
+        },
+        "dependencies": {
+          "permanent_country": {
+            "if": {
+              "properties": {
+                "permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Permanent Address"
+                },
+                "permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Permanent Address"
+                },
+                "permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Permanent Address"
+                },
+                "permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Permanent Address",
+                  "enum": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33"
+                  ]
+                },
+                "permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                }
+              },
+              "required": [
+                "permanent_province",
+                "permanent_district",
+                "permanent_municipality",
+                "permanent_ward_number",
+                "permanent_street_name",
+                "permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_postal_code": {
+                  "type": "string",
+                  "title": "Postal Code",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  }
+                }
+              },
+              "required": [
+                "permanent_outside_town",
+                "permanent_outside_street_name",
+                "permanent_postal_code"
+              ]
+            }
+          }
+        },
+        "required": ["permanent_country"]
+      },
+      "else": {
+        "properties": {
+          "permanent_country": {
+            "type": "string",
+            "title": "Permanent Country",
+            "group": "Permanent Address"
+          }
+        },
+        "dependencies": {
+          "permanent_country": {
+            "if": {
+              "properties": {
+                "permanent_country": {
+                  "enum": ["NP"]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "permanent_province": {
+                  "type": "string",
+                  "title": "Permanent Province",
+                  "group": "Permanent Address"
+                },
+                "permanent_district": {
+                  "type": "string",
+                  "title": "Permanent District",
+                  "group": "Permanent Address"
+                },
+                "permanent_municipality": {
+                  "type": "string",
+                  "title": "Permanent Municipality",
+                  "group": "Permanent Address"
+                },
+                "permanent_ward_number": {
+                  "type": "string",
+                  "title": "Ward No",
+                  "group": "Permanent Address",
+                  "enum": [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33"
+                  ]
+                },
+                "permanent_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_house_number": {
+                  "type": "string",
+                  "title": "House No",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                }
+              },
+              "required": [
+                "permanent_province",
+                "permanent_district",
+                "permanent_municipality",
+                "permanent_ward_number",
+                "permanent_street_name",
+                "permanent_town"
+              ]
+            },
+            "else": {
+              "properties": {
+                "permanent_outside_town": {
+                  "type": "string",
+                  "title": "Town",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_outside_street_name": {
+                  "type": "string",
+                  "title": "Tole/Street",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed."
+                  }
+                },
+                "permanent_postal_code": {
+                  "type": "string",
+                  "title": "Postal Code",
+                  "group": "Permanent Address",
+                  "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
+                  "errorMessage": {
+                    "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
+                  }
+                }
+              },
+              "required": [
+                "permanent_outside_town",
+                "permanent_outside_street_name",
+                "permanent_postal_code"
+              ]
+            }
+          }
+        },
+        "required": ["permanent_country"]
       }
     }
   }

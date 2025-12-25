@@ -109,6 +109,24 @@
     };
 
     async updateFormAndSchema(formData, schemaConditions) {
+      if (this.functionGroup?.areObjectsEqual(formData, this.formData)) {
+        this.setJsonSchema((prevJsonSchema) => {
+          return {
+            ...prevJsonSchema,
+            isDisabled: true,
+          };
+        });
+        setTimeout(() => {
+          this.setFormData((prevFormData) => {
+            return {
+              ...prevFormData,
+              dedup_module_data: null,
+              branch_dedup_module_data: null,
+              personal_screening_data: null,
+            };
+          });
+        }, 100);
+      }
       if (this.formData?.current_step === "case-review") {
         this.setJsonSchema((prevSchema) => {
           if (!prevSchema) return prevSchema;
@@ -569,6 +587,59 @@
       });
     }
 
+    async fetchIndividualInfoCIFDetail(cifId) {
+      this.addLoader("cif_enquiry", true);
+
+      try {
+        const response = await this.axios.post(
+          `${this.mainRouteURL}/external-api/cif-enquiry`,
+          {
+            cif_number: cifId ?? this.formData.cif_number,
+            form_title: "personal_info",
+            id: this.case_id,
+          }
+        );
+        const resp = response?.data?.data;
+
+        this.setFormData((prev) => ({
+          ...prev,
+          ...resp,
+          account_info: prev?.account_info,
+          has_cif: prev?.has_cif,
+          cif_number: prev?.cif_number,
+          ...(resp?.national_id_number && {
+            national_id_number: this.functionGroup.nidFormat(
+              resp?.national_id_number
+            ),
+          }),
+          date_of_birth_bs: resp?.date_of_birth_ad
+            ? this.adToBs(resp?.date_of_birth_ad)
+            : "",
+          cif_data: JSON.stringify(resp),
+        }));
+
+        return;
+      } catch (error) {
+        this.setModalOpen({
+          open: true,
+          message: error
+            ? `${error.response?.data?.message || error?.response?.statusText}`
+            : `${error || "Unknown Error"}`,
+          subTitle: Array.isArray(error?.response?.data?.errors)
+            ? error?.response?.data?.errors
+                .map((e) => `${typeof e === "string" ? e : JSON.stringify(e)}`)
+                .join("\n")
+            : "",
+          status: "error",
+          close: "Close",
+        });
+
+        return {};
+      } finally {
+        this.addLoader("cif_enquiry", false);
+      }
+    }
+
     async formDataCleaner(fields, formData) {
       if (typeof formData !== "object" || formData === null) return {};
 
@@ -690,6 +761,12 @@
 
         if (dedupResponse) {
           this.toast.success(dedupResponse?.data?.data?.dedup_message);
+          this.setFormData((prevData) => ({
+            ...prevData,
+            dedup_module_data: dedupResponse?.data?.data?.data?.dedup_record,
+            branch_dedup_module_data:
+              dedupResponse?.data?.data?.data?.branch_dedup_record,
+          }));
         }
 
         // Screening check
@@ -787,6 +864,7 @@
         "ui:order": [
           "account_info",
 
+          "salutation",
           "first_name",
           "middle_name",
           "last_name",
@@ -802,11 +880,28 @@
           "issuing_authority",
           "place_of_issue",
           "dedup_id_number",
+          "gender",
+          "account_scheme_id",
 
-          "extra_gap",
+          "permanent_country",
+          "permanent_province",
+          "permanent_district",
+          "permanent_municipality",
+          "permanent_ward_number",
+          "permanent_street_name",
+          "permanent_town",
+          "permanent_house_number",
+          "permanent_outside_town",
+          "permanent_outside_street_name",
+          "permanent_postal_code",
+          "residential_status",
+
           "dedup_check",
+          "dedup_module_data",
+          "branch_dedup_module_data",
           "personal_screening_data",
           "screening_ref_code",
+
           "approval_status",
           "approval_remarks",
         ],
@@ -897,6 +992,26 @@
                   }));
                 }, 100);
               }
+              if (
+                this.functionGroup?.areObjectsEqual(formData, this.formData)
+              ) {
+                this.setJsonSchema((prevJsonSchema) => {
+                  return {
+                    ...prevJsonSchema,
+                    isDisabled: true,
+                  };
+                });
+                setTimeout(() => {
+                  this.setFormData((prevFormData) => {
+                    return {
+                      ...prevFormData,
+                      dedup_module_data: null,
+                      branch_dedup_module_data: null,
+                      personal_screening_data: null,
+                    };
+                  });
+                }, 100);
+              }
             },
           },
         },
@@ -919,6 +1034,26 @@
                 false,
                 "date_of_birth_bs"
               );
+              if (
+                this.functionGroup?.areObjectsEqual(formData, this.formData)
+              ) {
+                this.setJsonSchema((prevJsonSchema) => {
+                  return {
+                    ...prevJsonSchema,
+                    isDisabled: true,
+                  };
+                });
+                setTimeout(() => {
+                  this.setFormData((prevFormData) => {
+                    return {
+                      ...prevFormData,
+                      dedup_module_data: null,
+                      branch_dedup_module_data: null,
+                      personal_screening_data: null,
+                    };
+                  });
+                }, 100);
+              }
             },
           },
         },
@@ -1087,6 +1222,96 @@
           },
         },
 
+        salutation: {
+          "ui:widget": "CustomRadioWidget",
+          "ui:options": {
+            onChange: (value) =>
+              setTimeout(() => {
+                this.dropdownReset({
+                  salutation: value,
+                  gender: value === "MR." ? "M" : "F",
+                });
+              }, 600),
+          },
+        },
+
+        permanent_country: {
+          "ui:options": {
+            onChange: (value) => {
+              this.dropdownReset({
+                permanent_country: value,
+                permanent_province: null,
+                permanent_district: null,
+                permanent_ward_number: null,
+                permanent_street_name: "",
+                permanent_town: "",
+                permanent_house_number: "",
+                permanent_outside_town: "",
+                permanent_outside_street_name: "",
+                permanent_postal_code: "",
+              });
+            },
+          },
+        },
+
+        permanent_province: {
+          "ui:options": {
+            onChange: (value) =>
+              this.dropdownReset({
+                permanent_province: value,
+
+                permanent_district: null,
+
+                permanent_municipality: null,
+
+                permanent_ward_number: null,
+
+                permanent_street_name: "",
+
+                permanent_town: "",
+
+                permanent_house_number: "",
+              }),
+          },
+        },
+
+        permanent_district: {
+          "ui:widget": "CascadeDropdown",
+
+          "ui:options": {
+            getOptions: (formData) => {
+              return this.filterOptions(
+                "districts",
+                formData?.permanent_province
+              );
+            },
+
+            onChange: (value) =>
+              this.dropdownReset({
+                permanent_district: value,
+                permanent_municipality: null,
+                permanent_ward_number: null,
+                permanent_street_name: "",
+                permanent_town: "",
+                permanent_house_number: "",
+              }),
+          },
+        },
+
+        permanent_municipality: {
+          "ui:widget": "CascadeDropdown",
+
+          "ui:options": {
+            getOptions: (formData) => {
+              return this.filterOptions(
+                "local_bodies",
+
+                formData?.permanent_district
+              );
+            },
+          },
+        },
+
         dedup_check: {
           "ui:widget": this.form_status?.includes("init")
             ? "ButtonField"
@@ -1095,18 +1320,101 @@
           "ui:classNames":
             "d-flex justify-content-end align-items-end h-100 mt-5",
           "ui:options": {
-            disableButton: (formData) =>
-              !(
-                formData?.first_name?.trim() &&
-                formData?.last_name?.trim() &&
-                formData?.father_name?.trim() &&
-                formData?.date_of_birth_ad?.trim() &&
-                formData?.dedup_identification?.trim() &&
-                formData?.dedup_id_number?.trim()
-              ),
+            disableButton: (formData) => {
+              let requiredFields = jsonSchema.required || [];
+              const allFilled = requiredFields.every((field) => {
+                const value = formData?.[field];
+                return value !== undefined && value !== null && value !== "";
+              });
+
+              return this.form_status?.includes("init") && !allFilled;
+            },
 
             onClick: (formData) => {
               this.getDedupCheck(formData);
+            },
+          },
+        },
+
+        dedup_module_data: {
+          "ui:widget": "ScreeningReportCard",
+          "ui:label": false,
+          showCheckbox: false,
+          showViewedColumn: false,
+          // showActionText: true,
+          fixedActionsColumn: true,
+          "ui:options": {
+            disabledButton: (this.form_status?.includes("review") ||
+              this.form_status?.includes("approval") ||
+              this.form_status?.includes("reporting") ||
+              this.form_status?.includes("Completed")) && ["match"],
+            actionHandlers: {
+              ...(this.form_status?.includes("case-init") && {
+                match: (record) => {
+                  if (record?.cif_number !== "-") {
+                    this.setFormData((prev) => ({
+                      ...prev,
+                      has_cif: true,
+                      cif_number: record?.cif_number,
+                    }));
+                    this.fetchIndividualInfoCIFDetail(record?.cif_number);
+                  } else {
+                    this.setModalOpen({
+                      open: true,
+                      message: "CIF number unavailable.",
+                      close: "Close",
+                      status: "info",
+                    });
+                  }
+                },
+              }),
+            },
+          },
+        },
+
+        branch_dedup_module_data: {
+          "ui:widget": "ScreeningReportCard",
+          "ui:label": false,
+          showCheckbox: false,
+          showViewedColumn: false,
+          // showActionText: true,
+          fixedActionsColumn: true,
+          "ui:options": {
+            onCheckboxChange: (tableData, category, checked) => {
+              this.setFormData((prevData) => ({
+                ...prevData,
+                [category]: checked ? "Yes" : "No",
+                branch_dedup_module_data: tableData,
+              }));
+            },
+            disabledButton: (this.form_status?.includes("review") ||
+              this.form_status?.includes("approval") ||
+              this.form_status?.includes("reporting") ||
+              this.form_status?.includes("Completed")) && ["match"],
+            actionHandlers: {
+              ...(this.form_status?.includes("case-init") && {
+                match: (record) => {
+                  if (
+                    record?.cif_number !== "-" &&
+                    record?.case_status === "Completed"
+                  ) {
+                    this.setFormData((prev) => ({
+                      ...prev,
+                      has_cif: true,
+                      cif_number: record?.cif_number,
+                    }));
+                    this.fetchIndividualInfoCIFDetail(record?.cif_number);
+                  } else {
+                    this.setModalOpen({
+                      open: true,
+                      message:
+                        "CIF number unavailable or the case has not been completed.",
+                      close: "Close",
+                      status: "info",
+                    });
+                  }
+                },
+              }),
             },
           },
         },
@@ -1117,8 +1425,7 @@
           showCheckbox: true,
           showViewedColumn: false,
           fixedActionsColumn: true,
-          showFooter:
-            this.formData?.current_step === "case_init" ? true : false,
+          showFooter: true,
           "ui:options": {
             onCheckboxChange: (tableData, category, checked) => {
               this.setFormData((prevData) => ({
@@ -1140,6 +1447,7 @@
         screening_ref_code: {
           "ui:widget": "hidden",
         },
+
         approval_status: {
           "ui:disabled": !(
             this.form_status?.includes("review") ||
