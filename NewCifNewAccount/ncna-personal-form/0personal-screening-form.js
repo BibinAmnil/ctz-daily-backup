@@ -109,6 +109,27 @@
     };
 
     async updateFormAndSchema(formData, schemaConditions) {
+      if (this.functionGroup?.areObjectsEqual(formData, this.formData)) {
+        this.setJsonSchema((prevJsonSchema) => {
+          return {
+            ...prevJsonSchema,
+            isDisabled: true,
+          };
+        });
+        setTimeout(() => {
+          this.setFormData((prevFormData) => {
+            return {
+              ...prevFormData,
+              dedup_module_data: null,
+              branch_dedup_module_data: null,
+              personal_screening_data: null,
+            };
+          });
+        }, 100);
+        this.setRenderFormKey((prevData) => {
+          return prevData + 1;
+        });
+      }
       this.formData = formData;
 
       if (!this.form_status?.includes("case-init")) {
@@ -925,6 +946,29 @@
                   }));
                 }, 100);
               }
+              if (
+                this.functionGroup?.areObjectsEqual(formData, this.formData)
+              ) {
+                this.setJsonSchema((prevJsonSchema) => {
+                  return {
+                    ...prevJsonSchema,
+                    isDisabled: true,
+                  };
+                });
+                setTimeout(() => {
+                  this.setFormData((prevFormData) => {
+                    return {
+                      ...prevFormData,
+                      dedup_module_data: null,
+                      branch_dedup_module_data: null,
+                      personal_screening_data: null,
+                    };
+                  });
+                }, 100);
+                this.setRenderFormKey((prevData) => {
+                  return prevData + 1;
+                });
+              }
             },
           },
         },
@@ -948,6 +992,29 @@
                 false,
                 "date_of_birth_bs"
               );
+              if (
+                this.functionGroup?.areObjectsEqual(formData, this.formData)
+              ) {
+                this.setJsonSchema((prevJsonSchema) => {
+                  return {
+                    ...prevJsonSchema,
+                    isDisabled: true,
+                  };
+                });
+                setTimeout(() => {
+                  this.setFormData((prevFormData) => {
+                    return {
+                      ...prevFormData,
+                      dedup_module_data: null,
+                      branch_dedup_module_data: null,
+                      personal_screening_data: null,
+                    };
+                  });
+                }, 100);
+                this.setRenderFormKey((prevData) => {
+                  return prevData + 1;
+                });
+              }
             },
           },
         },
