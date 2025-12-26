@@ -164,22 +164,23 @@
           }
         );
 
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
         const resp = response?.data;
-
-        this.setFormData((prevData) => ({
-          ...prevData,
-          guardian_risk_level: resp?.risk_level,
-          guardian_risk_score: resp?.risk_score,
-        }));
-        this.setJsonSchema((prevJsonSchema) => {
-          return {
-            ...prevJsonSchema,
-            isDisabled: false,
-          };
-        });
+        if (resp) {
+          setTimeout(() => {
+            this.setJsonSchema((prevJsonSchema) => {
+              return {
+                ...prevJsonSchema,
+                isDisabled: false,
+              };
+            });
+          }, 100);
+          this.toast.success("Risk calculation successful");
+          this.setFormData((prevData) => ({
+            ...prevData,
+            guardian_risk_level: resp?.risk_level,
+            guardian_risk_score: resp?.risk_score,
+          }));
+        }
 
         return;
       } catch (error) {
@@ -779,7 +780,6 @@
             guardian_personal_screening_data: cleanedResponseData || [],
             guardian_screening_ref_code: String(responseData?.screening_id),
           }));
-          this.setJsonSchema((prev) => ({ ...prev, isDisabled: false }));
         }
       } catch (error) {
         const errMsg =
