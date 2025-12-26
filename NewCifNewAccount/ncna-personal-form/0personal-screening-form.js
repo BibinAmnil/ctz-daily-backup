@@ -126,9 +126,6 @@
             };
           });
         }, 100);
-        this.setRenderFormKey((prevData) => {
-          return prevData + 1;
-        });
       }
       this.formData = formData;
 

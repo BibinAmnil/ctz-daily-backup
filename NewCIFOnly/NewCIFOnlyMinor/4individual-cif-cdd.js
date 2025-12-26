@@ -182,7 +182,7 @@
             is_high_risk_account: resp?.is_high_risk_acc ? "Yes" : "No",
           }));
 
-          if (resp?.risk_level?.includes("High")) {
+          if (resp?.is_high_risk_acc) {
             this.setNextStep("personal-ncna-ecdd-form");
             setTimeout(() => {
               this.setJsonSchema((prevJsonSchema) => ({

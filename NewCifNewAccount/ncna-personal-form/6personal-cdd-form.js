@@ -23,6 +23,7 @@
       this.hasUpdated = options.hasUpdated;
       this.case_id = options.case_id;
       this.toast = options.toast;
+      this.functionGroup = options.functionGroup;
     }
 
     filterOptions(key, cascadeValue) {
@@ -181,7 +182,7 @@
             is_high_risk_acc: resp?.is_high_risk_acc,
             is_high_risk_account: resp?.is_high_risk_acc ? "Yes" : "No",
           }));
-          if (resp?.risk_level?.includes("High")) {
+          if (resp?.is_high_risk_acc) {
             this.setNextStep("personal-ncna-ecdd-form");
             this.setJsonSchema((prevJsonSchema) => ({
               ...prevJsonSchema,
@@ -322,6 +323,14 @@
     }
 
     async updateFormAndSchema(formData, schemaConditions) {
+      if (this.functionGroup?.areObjectsEqual(formData, this.formData)) {
+        this.setJsonSchema((prevJsonSchema) => {
+          return {
+            ...prevJsonSchema,
+            isDisabled: true,
+          };
+        });
+      }
       this.formData = formData;
       if (
         this.formData?.current_step?.includes("review") &&
@@ -401,22 +410,6 @@
           };
         });
       }
-    }
-
-    filterOptionsOccupation(key, childKey, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const filteredOptions = cascadeValue
-        ? this.optionsData[key][childKey]?.filter((item) =>
-            item.cascade_id?.includes(cascadeValue)
-          ) || []
-        : this.optionsData[key][childKey];
-      return filteredOptions
-        ?.filter((item) => item?.id !== "remaining all occopation code")
-        ?.map((item) => ({
-          label: item.title,
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
     }
 
     createUISchema(options) {

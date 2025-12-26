@@ -181,7 +181,7 @@
             is_high_risk_account: resp?.is_high_risk_acc ? "Yes" : "No",
           }));
 
-          if (resp?.risk_level?.includes("High")) {
+          if (resp?.is_high_risk_acc) {
             this.setNextStep("quick-account-opening-ecdd-form");
             this.setJsonSchema((prevJsonSchema) => ({
               ...prevJsonSchema,
