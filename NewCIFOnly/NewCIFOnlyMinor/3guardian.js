@@ -111,41 +111,6 @@
         value: item?.fg_code || item?.cbs_code || item?.id,
       }));
     }
-    filterOptionsCustomer(key, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const TARGET_CASCADE = "NP";
-
-      const filteredOptions = cascadeValue
-        ? cascadeValue === TARGET_CASCADE
-          ? this.optionsData[key].filter(
-              (item) => item.cascade_id === TARGET_CASCADE
-            )
-          : this.optionsData[key].filter((item) => item.cascade_id === "")
-        : this.optionsData[key];
-
-      return filteredOptions.map((item) => ({
-        label: item.title,
-        value: item?.fg_code || item?.cbs_code || item?.id,
-      }));
-    }
-
-    filterOptionsOccupation(key, childKey, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const filteredOptions = cascadeValue
-        ? this.optionsData[key][childKey]?.filter((item) =>
-            item.cascade_id?.includes(cascadeValue)
-          ) || []
-        : this.optionsData[key][childKey];
-
-      return filteredOptions
-        ?.filter((item) => item?.id !== "remaining all occopation code")
-        ?.map((item) => ({
-          label: item.title,
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
-    }
 
     dropdownReset = async (dropdownClearObject, arrayName, index) => {
       setTimeout(() => {
@@ -167,6 +132,14 @@
     };
 
     async updateFormAndSchema(formData, schemaConditions) {
+      if (this.functionGroup?.areObjectsEqual(formData, this.formData)) {
+        this.setJsonSchema((prevJsonSchema) => {
+          return {
+            ...prevJsonSchema,
+            isDisabled: true,
+          };
+        });
+      }
       this.formData = formData;
       if (!this.form_status?.includes("case-init")) {
         this.setJsonSchema((prevJsonSchema) => {
@@ -334,14 +307,6 @@
       this.setRenderFormKey((prevData) => {
         return prevData + 1;
       });
-    }
-
-    filterOptionsByCascadeId(options, cascadeId) {
-      const filteredOptions = options.filter(
-        (option) => option.cascade_id == cascadeId
-      );
-
-      return filteredOptions;
     }
 
     async updateSchemaWithEnums(

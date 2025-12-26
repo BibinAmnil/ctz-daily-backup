@@ -31,30 +31,6 @@
 
     //Custom Validation Form Character Count and Screening Check
     customValidate(formData, errors, uiSchema) {
-      const hasUncheckedView = Object.keys(
-        formData?.personal_screening_data || {}
-      ).map((key) => {
-        const items = formData.personal_screening_data[key];
-
-        return (
-          Array.isArray(items) &&
-          items.every(
-            (item) =>
-              typeof item === "object" &&
-              item !== null &&
-              item.hasOwnProperty("isCheckedView")
-          )
-        );
-      });
-      const addHasUncheckedView = hasUncheckedView.some(
-        (value) => value === false
-      );
-      if (addHasUncheckedView) {
-        errors?.personal_screening_data?.addError(
-          "View all Screening Data To Continue"
-        );
-      }
-
       const familyInfo = formData?.family_information;
       const requiredFields = ["family_member_full_name"]; // Add more fields here as needesd
       if (Array.isArray(familyInfo)) {
@@ -152,81 +128,6 @@
       }));
     }
 
-    filterOptionsCustomer(key, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const TARGET_CASCADE = "NP";
-
-      const filteredOptions = cascadeValue
-        ? cascadeValue === TARGET_CASCADE
-          ? this.optionsData[key].filter(
-              (item) => item.cascade_id === TARGET_CASCADE
-            )
-          : this.optionsData[key].filter((item) => item.cascade_id === "")
-        : this.optionsData[key];
-
-      return filteredOptions.map((item) => ({
-        label: item.title,
-        value: item?.fg_code || item?.cbs_code || item?.id,
-      }));
-    }
-
-    filterOptionsOccupation(key, childKey, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const filteredOptions = cascadeValue
-        ? this.optionsData[key][childKey]?.filter((item) =>
-            item.cascade_id?.includes(cascadeValue)
-          ) || []
-        : this.optionsData[key][childKey];
-
-      return filteredOptions
-        ?.filter((item) => item?.id !== "remaining all occopation code")
-        ?.map((item) => ({
-          label: item.title,
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
-    }
-
-    filterMasterData(masterDataKey, formData) {
-      const strictKey = "account_type_id";
-      const softKeys = ["currency", "nationality"];
-
-      return this.optionsData?.[masterDataKey]
-        ?.filter((item) => {
-          const relationMatch =
-            item.individual === formData?.account_info ||
-            item.joint === formData?.account_info ||
-            item.minor === formData?.account_info;
-
-          if (!relationMatch) return false;
-
-          if (
-            formData?.[strictKey] &&
-            item?.[strictKey] !== formData?.[strictKey]
-          ) {
-            return false;
-          }
-
-          const softMatch = softKeys?.every((key) => {
-            if (!formData[key]) return true;
-            const itemValue = item[key];
-            if (itemValue == null) return true;
-            if (Array.isArray(itemValue)) {
-              return itemValue.includes(formData[key]);
-            }
-            return itemValue === formData?.[key];
-          });
-
-          return softMatch;
-        })
-        .map((item) => ({
-          label: `${item.title} - ${item?.cbs_code}`,
-
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
-    }
-
     //Dropdown Reset
     dropdownReset = async (dropdownClearObject, arrayName, index) => {
       this.setFormData((prevFormData) => {
@@ -281,37 +182,6 @@
           };
         });
       }
-    }
-
-    preprocessData(data) {
-      if (!data) return "Empty";
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-        const flatEntry = { key: index };
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-        return acc;
-      }, {});
     }
 
     convertToArray(value, key, parentKey, comparisionKey) {
@@ -423,14 +293,6 @@
       this.setRenderFormKey((prevData) => {
         return prevData + 1;
       });
-    }
-
-    filterOptionsByCascadeId(options, cascadeId) {
-      const filteredOptions = options.filter(
-        (option) => option.cascade_id == cascadeId
-      );
-
-      return filteredOptions;
     }
 
     async updateSchemaWithEnums(
@@ -997,7 +859,6 @@
         ArrayFieldTemplate,
         widgets,
       } = options;
-      !this.formData?.case_status && (this.nationalityChanged = true);
 
       const handleSetNotAvailable = (value, keyName) => {
         setTimeout(
@@ -1042,6 +903,13 @@
                   current_outside_street_name:
                     updatedFormData.permanent_outside_street_name,
                   current_postal_code: updatedFormData.permanent_postal_code,
+                  current_location: updatedFormData.permanent_location,
+                  current_latitude: String(
+                    updatedFormData.permanent_latitude || ""
+                  ),
+                  current_longitude: String(
+                    updatedFormData.permanent_longitude || ""
+                  ),
                 };
               } else {
                 updatedFormData = {
@@ -1132,52 +1000,36 @@
           "family_information",
 
           "permanent_country",
-
           "permanent_province",
-
           "permanent_district",
-
           "permanent_municipality",
-
           "permanent_ward_number",
-
           "permanent_street_name",
-
           "permanent_town",
-
           "permanent_house_number",
-
           "permanent_outside_town",
-
           "permanent_outside_street_name",
-
           "permanent_postal_code",
-
           "residential_status",
+          "permanent_location",
+          "permanent_latitude",
+          "permanent_longitude",
 
           "same_as_permanent",
-
           "current_country",
-
           "current_province",
-
           "current_district",
-
           "current_municipality",
-
           "current_ward_number",
-
           "current_street_name",
-
           "current_town",
-
           "current_house_number",
-
           "current_outside_town",
-
           "current_outside_street_name",
-
           "current_postal_code",
+          "current_location",
+          "current_latitude",
+          "current_longitude",
 
           "contact_type",
 
@@ -1416,6 +1268,41 @@
           },
         },
 
+        permanent_location: {
+          "ui:widget": widgets.MapWidget,
+          "ui:options": {
+            latitude_key: "permanent_latitude",
+            longitude_key: "permanent_longitude",
+            onMapChange: (data) => {
+              setTimeout(() => {
+                this.setFormData((preData) => ({
+                  ...preData,
+                  permanent_latitude: String(data?.permanent_location_latitude),
+                  permanent_longitude: String(
+                    data?.permanent_location_longitude
+                  ),
+                }));
+              }, 600);
+            },
+          },
+        },
+
+        current_location: {
+          "ui:widget": widgets.MapWidget,
+          "ui:options": {
+            latitude_key: "current_latitude",
+            longitude_key: "current_longitude",
+            onMapChange: (data) => {
+              setTimeout(() => {
+                this.setFormData((preData) => ({
+                  ...preData,
+                  current_latitude: String(data?.current_location_latitude),
+                  current_longitude: String(data?.current_location_longitude),
+                }));
+              }, 600);
+            },
+          },
+        },
         mobile_number: {
           "ui:options": {
             inputMode: "decimal",
@@ -1470,93 +1357,6 @@
             },
           },
         },
-
-        account_scheme_id: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) =>
-              this.filterMasterData("scheme_type", formData),
-            onChange: (value) => {
-              // this.handleSchemeChange();
-              this.handleSchemeCheck({
-                cif_number: this.formData?.cif_number,
-                currency: this.formData?.currency,
-                account_scheme_id: value,
-              });
-              if (
-                value === "dc396a31-7c87-42d6-b208-ae973cecb12b" ||
-                value === "2c825f3c-372e-4cf4-aaa2-601652927933" ||
-                value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-              ) {
-                this.setFormData((prev) => {
-                  const items = prev?.id_type_details || [];
-
-                  const targetId =
-                    value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-                      ? "3379d6f6-cc1b-4cdc-ae2a-440292b95c50"
-                      : "e89c962c-0530-4950-bfa6-30bbbd874665";
-
-                  const otherId =
-                    value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-                      ? "e89c962c-0530-4950-bfa6-30bbbd874665"
-                      : "3379d6f6-cc1b-4cdc-ae2a-440292b95c50";
-
-                  // Filter out the otherId if it exists
-                  const filteredItems = items.filter(
-                    (item) => item?.id_type_id !== otherId
-                  );
-
-                  const hasTarget = filteredItems.some(
-                    (item) => item?.id_type_id === targetId
-                  );
-
-                  return {
-                    ...prev,
-                    id_type_details: hasTarget
-                      ? filteredItems.map((item) => ({
-                          ...item,
-                        }))
-                      : [
-                          ...filteredItems.map(
-                            (item) =>
-                              item?.id_type_id && {
-                                ...item,
-                                removable: true,
-                              }
-                          ),
-                          { id_type_id: targetId, removable: false },
-                        ],
-                  };
-                });
-              } else {
-                // setTimeout(
-                //   () =>
-                this.setFormData((prev) => {
-                  const items = prev?.id_type_details || [];
-
-                  return {
-                    ...prev,
-                    id_type_details: items.map((item) => ({
-                      ...item,
-                      ...(item?.id_type_id && { removable: true }),
-                    })),
-                  };
-                });
-              }
-
-              !this.formData?.has_cif &&
-                this.dropdownReset({
-                  account_scheme_id: value,
-                  ...(this.formData?.source !== "ocr" && { salutation: null }),
-                  ...(value === "df09a418-3847-4565-a2c1-eb261f2a8e72" && {
-                    date_of_birth_ad: "",
-                    date_of_birth_bs: "",
-                  }),
-                });
-            },
-          },
-        },
-
         gender: {
           "ui:widget": "CascadeDropdown",
           "ui:options": {

@@ -23,6 +23,7 @@
       this.hasUpdated = options.hasUpdated;
       this.case_id = options.case_id;
       this.toast = options.toast;
+      this.functionGroup = options.functionGroup;
     }
 
     filterOptions(key, cascadeValue) {
@@ -328,6 +329,14 @@
     }
 
     async updateFormAndSchema(formData, schemaConditions) {
+      if (this.functionGroup?.areObjectsEqual(formData, this.formData)) {
+        this.setJsonSchema((prevJsonSchema) => {
+          return {
+            ...prevJsonSchema,
+            isDisabled: true,
+          };
+        });
+      }
       this.formData = formData;
       if (
         this.form_status?.includes("review") &&

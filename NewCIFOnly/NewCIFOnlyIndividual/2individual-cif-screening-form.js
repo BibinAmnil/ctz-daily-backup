@@ -238,82 +238,6 @@
       }
     }
 
-    preprocessData(data) {
-      if (!data) return "Empty";
-      if (!Array.isArray(data)) {
-        data = [data];
-      }
-      return data.reduce((acc, entry, index) => {
-        if (typeof entry !== "object" || entry === null) return acc;
-        const { source, ...rest } = entry;
-        if (source && source.includes("institution")) return acc;
-        const flatEntry = { key: index };
-        for (const key in rest) {
-          if (Array.isArray(rest[key]?.items)) {
-            flatEntry[key] = rest[key].items.map((item) => ({ value: item }));
-          } else {
-            flatEntry[key] = rest[key] || "-";
-          }
-        }
-        if (source) {
-          if (!acc[source]) {
-            acc[source] = [flatEntry];
-          } else {
-            acc[source].push(flatEntry);
-          }
-        } else {
-          acc["Dedup Check"] = acc["Dedup Check"] || [];
-          acc["Dedup Check"].push(flatEntry);
-        }
-        return acc;
-      }, {});
-    }
-
-    convertToArray(value, key, parentKey, comparisionKey) {
-      setTimeout(() => {
-        this.setFormData((prevData) => {
-          if (!prevData[parentKey]) return prevData;
-          if (!comparisionKey || comparisionKey.length === 0) {
-            return {
-              ...prevData,
-              [parentKey]: prevData[parentKey]?.map((data, index) =>
-                index === 0 ? { [key]: value } : data
-              ),
-            };
-          }
-
-          const updatedArray = prevData[parentKey].map((item) => {
-            if (Object.keys(item).length === 0) return { [key]: value };
-            if (
-              comparisionKey &&
-              item[comparisionKey[1]] === prevData[comparisionKey[0]]
-            ) {
-              return { ...item, [key]: value };
-            }
-
-            return item;
-          });
-
-          if (
-            comparisionKey &&
-            !updatedArray.some(
-              (item) => item[comparisionKey[1]] === prevData[comparisionKey[0]]
-            )
-          ) {
-            updatedArray.push({
-              [comparisionKey[1]]: prevData[comparisionKey[0]],
-              [key]: value,
-            });
-          }
-
-          return {
-            ...prevData,
-            [parentKey]: updatedArray,
-          };
-        });
-      }, 100);
-    }
-
     convertDate(
       selectedDate,
       setFormData,
@@ -378,14 +302,6 @@
       this.setRenderFormKey((prevData) => {
         return prevData + 1;
       });
-    }
-
-    filterOptionsByCascadeId(options, cascadeId) {
-      const filteredOptions = options.filter(
-        (option) => option.cascade_id == cascadeId
-      );
-
-      return filteredOptions;
     }
 
     async updateSchemaWithEnums(
@@ -997,6 +913,13 @@
                   current_outside_street_name:
                     updatedFormData.permanent_outside_street_name,
                   current_postal_code: updatedFormData.permanent_postal_code,
+                  current_location: prevFormData.permanent_location,
+                  current_latitude: String(
+                    prevFormData.permanent_latitude || ""
+                  ),
+                  current_longitude: String(
+                    prevFormData.permanent_longitude || ""
+                  ),
                 };
               } else {
                 updatedFormData = {
@@ -1087,55 +1010,37 @@
           "family_information",
 
           "permanent_country",
-
           "permanent_province",
-
           "permanent_district",
-
           "permanent_municipality",
-
           "permanent_ward_number",
-
           "permanent_street_name",
-
           "permanent_town",
-
           "permanent_house_number",
-
           "permanent_outside_town",
-
           "permanent_outside_street_name",
-
           "permanent_postal_code",
-
           "residential_status",
+          "permanent_location",
+          "permanent_latitude",
+          "permanent_longitude",
 
           "same_as_permanent",
-
           "current_country",
-
           "current_province",
-
           "current_district",
-
           "current_municipality",
-
           "current_ward_number",
-
           "current_street_name",
-
           "current_town",
-
           "current_house_number",
-
           "current_outside_town",
-
           "current_outside_street_name",
-
           "current_postal_code",
-
+          "current_location",
+          "current_latitude",
+          "current_longitude",
           "contact_type",
-
           "mobile_country_code",
 
           "mobile_number",
@@ -1328,6 +1233,42 @@
                 permanent_outside_street_name: "",
                 permanent_postal_code: "",
               });
+            },
+          },
+        },
+
+        permanent_location: {
+          "ui:widget": widgets.MapWidget,
+          "ui:options": {
+            latitude_key: "permanent_latitude",
+            longitude_key: "permanent_longitude",
+            onMapChange: (data) => {
+              setTimeout(() => {
+                this.setFormData((preData) => ({
+                  ...preData,
+                  permanent_latitude: String(data?.permanent_location_latitude),
+                  permanent_longitude: String(
+                    data?.permanent_location_longitude
+                  ),
+                }));
+              }, 600);
+            },
+          },
+        },
+
+        current_location: {
+          "ui:widget": widgets.MapWidget,
+          "ui:options": {
+            latitude_key: "current_latitude",
+            longitude_key: "current_longitude",
+            onMapChange: (data) => {
+              setTimeout(() => {
+                this.setFormData((preData) => ({
+                  ...preData,
+                  current_latitude: String(data?.current_location_latitude),
+                  current_longitude: String(data?.current_location_longitude),
+                }));
+              }, 600);
             },
           },
         },

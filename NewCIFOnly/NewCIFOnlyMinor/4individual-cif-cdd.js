@@ -23,6 +23,7 @@
       this.hasUpdated = options.hasUpdated;
       this.case_id = options.case_id;
       this.toast = options.toast;
+      this.functionGroup = options.functionGroup;
     }
 
     filterOptions(key, cascadeValue) {
@@ -328,6 +329,14 @@
     }
 
     async updateFormAndSchema(formData, schemaConditions) {
+      if (this.functionGroup?.areObjectsEqual(formData, this.formData)) {
+        this.setJsonSchema((prevJsonSchema) => {
+          return {
+            ...prevJsonSchema,
+            isDisabled: true,
+          };
+        });
+      }
       this.formData = formData;
       if (
         this.form_status?.includes("review") &&
@@ -390,21 +399,6 @@
           isDisabled: false,
         }));
       }
-    }
-    filterOptionsOccupation(key, childKey, cascadeValue) {
-      if (!this.optionsData[key]) return [];
-
-      const filteredOptions = cascadeValue
-        ? this.optionsData[key][childKey]?.filter((item) =>
-            item.cascade_id?.includes(cascadeValue)
-          ) || []
-        : this.optionsData[key][childKey];
-      return filteredOptions
-        ?.filter((item) => item?.id !== "remaining all occopation code")
-        ?.map((item) => ({
-          label: item.title,
-          value: item?.fg_code || item?.cbs_code || item?.id,
-        }));
     }
 
     createUISchema(options) {

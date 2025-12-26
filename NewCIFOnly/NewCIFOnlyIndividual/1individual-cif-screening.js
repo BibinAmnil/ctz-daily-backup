@@ -142,9 +142,6 @@
             };
           });
         }, 100);
-        this.setRenderFormKey((prevData) => {
-          return prevData + 1;
-        });
       }
       this.formData = JSON.parse(JSON.stringify(formData));
       const next_step = schemaConditions?.accountInfo?.find(
