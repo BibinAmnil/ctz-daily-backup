@@ -24,7 +24,8 @@
     "guardian_loan_status",
     "guardian_is_blacklisted",
     "guardian_customer_introduce_by",
-    "guardian_met_in_person"
+    "guardian_met_in_person",
+    "guardian_personal_screening_data"
   ],
 
   "properties": {

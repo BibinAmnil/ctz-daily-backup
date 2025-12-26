@@ -184,20 +184,24 @@
 
           if (resp?.risk_level?.includes("High")) {
             this.setNextStep("personal-ncna-ecdd-form");
-            this.setJsonSchema((prevJsonSchema) => ({
-              ...prevJsonSchema,
-              hasStep: true,
-              isDisabled: false,
-            }));
+            setTimeout(() => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                hasStep: true,
+                isDisabled: false,
+              }));
+            }, 100);
           } else {
-            this.setJsonSchema((prevJsonSchema) => ({
-              ...prevJsonSchema,
-              hasStep: false,
-              isDisabled: false,
-            }));
+            setTimeout(() => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                hasStep: false,
+                isDisabled: false,
+              }));
+            }, 100);
           }
+          return;
         }
-
         return;
       } catch (error) {
         console.error("Error fetching options:", error);
