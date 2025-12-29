@@ -428,6 +428,9 @@
                   current_outside_street_name:
                     updatedFormData.permanent_outside_street_name,
                   current_postal_code: updatedFormData.permanent_postal_code,
+                  current_location: updatedFormData.permanent_location || null,
+                  current_latitude: updatedFormData.permanent_latitude || "",
+                  current_longitude: updatedFormData.permanent_longitude || "",
                 };
               } else {
                 updatedFormData = {
@@ -444,6 +447,9 @@
                   current_outside_town: "",
                   current_outside_street_name: "",
                   current_postal_code: "",
+                  current_location: null,
+                  current_latitude: "",
+                  current_longitude: "",
                 };
               }
 
@@ -469,6 +475,9 @@
           "permanent_outside_street_name",
           "permanent_postal_code",
           "residential_status",
+          "permanent_location",
+          "permanent_latitude",
+          "permanent_longitude",
 
           "same_as_permanent",
           "current_country",
@@ -482,7 +491,9 @@
           "current_outside_town",
           "current_outside_street_name",
           "current_postal_code",
-
+          "current_location",
+          "current_latitude",
+          "current_longitude",
           "contact_type",
           "mobile_country_code",
           "mobile_number",
@@ -572,6 +583,42 @@
 
                 formData?.permanent_district
               );
+            },
+          },
+        },
+
+        permanent_location: {
+          "ui:widget": widgets.MapWidget,
+          "ui:options": {
+            latitude_key: "permanent_latitude",
+            longitude_key: "permanent_longitude",
+            onMapChange: (data) => {
+              setTimeout(() => {
+                this.setFormData((preData) => ({
+                  ...preData,
+                  permanent_latitude: String(data?.permanent_location_latitude),
+                  permanent_longitude: String(
+                    data?.permanent_location_longitude
+                  ),
+                }));
+              }, 600);
+            },
+          },
+        },
+
+        current_location: {
+          "ui:widget": widgets.MapWidget,
+          "ui:options": {
+            latitude_key: "current_latitude",
+            longitude_key: "current_longitude",
+            onMapChange: (data) => {
+              setTimeout(() => {
+                this.setFormData((preData) => ({
+                  ...preData,
+                  current_latitude: String(data?.current_location_latitude),
+                  current_longitude: String(data?.current_location_longitude),
+                }));
+              }, 600);
             },
           },
         },

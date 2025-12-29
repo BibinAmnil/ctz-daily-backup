@@ -57,6 +57,38 @@
       "group": "Permanent Address",
       "enum": ["Yes", "No"],
       "default": "Yes"
+    },
+    "permanent_location": {
+      "type": "string",
+      "title": "Permanent Location",
+      "group": "Permanent Address",
+      "width": "full"
+    },
+    "permanent_latitude": {
+      "type": "string",
+      "title": "Permanent Latitude",
+      "group": "Permanent Address"
+    },
+    "permanent_longitude": {
+      "type": "string",
+      "title": "Permanent Longitude",
+      "group": "Permanent Address"
+    },
+    "current_location": {
+      "type": "string",
+      "title": "Current Location",
+      "group": "Current Address",
+      "width": "full"
+    },
+    "current_latitude": {
+      "type": "string",
+      "title": "Current Latitude",
+      "group": "Current Address"
+    },
+    "current_longitude": {
+      "type": "string",
+      "title": "Current Longitude",
+      "group": "Current Address"
     }
   },
   "dependencies": {
@@ -532,6 +564,15 @@
                   },
                   "current_house_number": {
                     "readOnly": true
+                  },
+                  "current_location": {
+                    "readOnly": true
+                  },
+                  "current_latitude": {
+                    "readOnly": true
+                  },
+                  "current_longitude": {
+                    "readOnly": true
                   }
                 }
               }
@@ -614,6 +655,15 @@
                     "readOnly": true
                   },
                   "current_postal_code": {
+                    "readOnly": true
+                  },
+                  "current_location": {
+                    "readOnly": true
+                  },
+                  "current_latitude": { 
+                    "readOnly": true
+                  },
+                  "current_longitude": {
                     "readOnly": true
                   }
                 }
