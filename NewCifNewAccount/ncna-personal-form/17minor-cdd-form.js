@@ -185,12 +185,14 @@
             is_high_risk_acc: resp?.is_high_risk_acc,
             is_high_risk_account: resp?.is_high_risk_account ? "Yes" : "No",
           }));
-          this.setJsonSchema((prevJsonSchema) => {
-            return {
-              ...prevJsonSchema,
-              isDisabled: false,
-            };
-          });
+          setTimeout(() => {
+            this.setJsonSchema((prevJsonSchema) => {
+              return {
+                ...prevJsonSchema,
+                isDisabled: false,
+              };
+            });
+          }, 100);
         }
 
         return;

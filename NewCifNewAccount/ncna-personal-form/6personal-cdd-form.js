@@ -184,16 +184,20 @@
           }));
           if (resp?.is_high_risk_acc) {
             this.setNextStep("personal-ncna-ecdd-form");
-            this.setJsonSchema((prevJsonSchema) => ({
-              ...prevJsonSchema,
-              hasStep: true,
-              isDisabled: false,
-            }));
+            setTimeout(() => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                hasStep: true,
+                isDisabled: false,
+              }));
+            }, 100);
           } else {
-            this.setJsonSchema((prevJsonSchema) => ({
-              ...prevJsonSchema,
-              isDisabled: false,
-            }));
+            setTimeout(() => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                isDisabled: false,
+              }));
+            }, 100);
           }
         }
         return;
