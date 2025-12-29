@@ -238,6 +238,113 @@
       "type": "string",
       "title": "Calculate Risk",
       "group": "Risk"
+    },
+    "guardian_id_type_details": {
+      "type": "array",
+      "title": "Identification Detail",
+      "group": "Identification Detail",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "id_type_id": {
+            "type": "string",
+            "title": "Identification",
+            "group": "Identification Detail",
+            "hideTitle": true,
+            "readOnly": true
+          }
+        },
+        "dependencies": {
+          "id_type_id": {
+            "properties": {
+              "id_type_id": {
+                "type": "string"
+              },
+              "issuing_authority": {
+                "type": "string",
+                "title": "Issuing Authority",
+                "group": "Identification Detail",
+                "hideTitle": true,
+                "readOnly": true
+              },
+              "identification_number": {
+                "type": "string",
+                "title": "Identity Number",
+                "hideTitle": true,
+                "readOnly": true
+              },
+              "issue_country": {
+                "type": "string",
+                "title": "Country Of Issue",
+                "group": "Identification Detail",
+                "hideTitle": true,
+                "readOnly": true
+              },
+              "issued_district": {
+                "type": "string",
+                "title": "Place Of Issue",
+                "group": "Identification Detail",
+                "hideTitle": true,
+                "readOnly": true
+              },
+
+              "id_issued_date_ad": {
+                "type": "string",
+                "title": "Issued Date (A.D)",
+                "group": "Identification Detail",
+                "hideTitle": true,
+                "readOnly": true
+              },
+              "id_issued_date_bs": {
+                "type": "string",
+                "title": "Issued Date (B.S)",
+                "group": "Identification Detail",
+                "hideTitle": true,
+                "readOnly": true
+              }
+            },
+            "required": [
+              "identification_number",
+              "issue_country",
+              "issued_district",
+              "issuing_authority",
+              "id_issued_date_ad",
+              "id_issued_date_bs"
+            ],
+            "dependencies": {
+              "id_type_id": {
+                "if": {
+                  "properties": {
+                    "id_type_id": {
+                      "enum": ["DL", "PP", "SSC", "VOT", "WPN", "VISA", "NRN"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "id_expiry_date_ad": {
+                      "type": "string",
+                      "title": "Expiry Date (A.D)",
+                      "group": "Identification Detail",
+                      "hideTitle": true,
+                      "readOnly": true
+                    },
+                    "id_expiry_date_bs": {
+                      "type": "string",
+                      "title": "Expiry Date (B.S)",
+                      "group": "Identification Detail",
+                      "hideTitle": true,
+                      "readOnly": true
+                    }
+                  },
+                  "required": ["id_expiry_date_ad", "id_expiry_date_bs"]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
 

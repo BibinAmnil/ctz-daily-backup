@@ -107,115 +107,7 @@
       }));
     }
 
-    async formDataCleaner(fields, isMultiLayer, index) {
-      if (typeof this.formData !== "object" || this.formData === null)
-        return {};
-      const result = {};
-      const filterData = !isMultiLayer
-        ? this.formData?.related_party?.[index]
-        : this.formData?.related_party?.[index?.[0]]?.related_party_detail?.[
-            index?.[1]
-          ];
-
-      // Keep only specified fields
-      for (const key of fields) {
-        if (key in filterData) {
-          result[key] = filterData[key];
-        }
-      }
-
-      // Handle family_information cleanup
-      if (
-        "family_information" in filterData &&
-        Array.isArray(filterData.family_information) &&
-        filterData.family_information.length > 0
-      ) {
-        const cleanedFamilyInfo = filterData.family_information.map(
-          (item, index) => {
-            if (index === 0) return item;
-            const cleaned = { ...item };
-            delete cleaned.family_member_full_name;
-            delete cleaned.is_family_name_not_available;
-            return cleaned;
-          }
-        );
-        result.family_information = cleanedFamilyInfo;
-      }
-
-      // Handle id_type_details cleanup (only keep first item)
-      if (
-        "id_type_details" in filterData &&
-        Array.isArray(filterData.id_type_details) &&
-        filterData.id_type_details.length > 0
-      ) {
-        const cleanedIdTypes = filterData.id_type_details.map(
-          (item, index) => ({
-            id_type_id: item?.id_type_id,
-            identification_number: index === 0 && item?.identification_number,
-            ...(item?.removable === false && { removable: item?.removable }),
-          })
-        );
-        result.id_type_details = cleanedIdTypes;
-      }
-
-      setTimeout(
-        () =>
-          isMultiLayer
-            ? this.setFormData((prevData) => ({
-                ...prevData,
-                related_party: prevData?.related_party?.map((item, idx) =>
-                  index?.[0] === idx
-                    ? {
-                        ...item,
-                        related_party_detail: item?.related_party_detail?.map(
-                          (data, idx2) =>
-                            index[1] === idx2 ? { ...result } : data
-                        ),
-                      }
-                    : item
-                ),
-              }))
-            : this.setFormData((prevData) => ({
-                ...prevData,
-                related_party: prevData?.related_party?.map((item, idx) =>
-                  index === idx ? { ...result } : item
-                ),
-              })),
-        100
-      );
-
-      // this.setFormData(result)
-      return result;
-    }
     async getDedupCheck(index, isMultiLayer = false) {
-      // const nonClearableField = [
-      //   "designation",
-      //   "has_cif",
-      //   "cif_number",
-      //   "first_name",
-      //   "middle_name",
-      //   "last_name",
-      //   "last_name_not_available",
-      //   "father_name",
-      //   "dedup_id_number",
-      //   "dedup_identification",
-      //   "date_of_birth_ad",
-      //   "date_of_birth_bs",
-      //   "account_info",
-      //   "account_type_id",
-      //   "account_scheme_id",
-      //   "currency",
-      //   "nationality",
-      //   "customer_type_id",
-      //   "customer_status",
-      // ];
-      // !(
-      //   this.formData?.related_party?.[index]?.has_cif ||
-      //   this.formData?.related_party?.[index?.[0]]?.related_party_detail[
-      //     index?.[1]
-      //   ]?.has_cif
-      // ) && this.formDataCleaner(nonClearableField, isMultiLayer, index);
-
       isMultiLayer
         ? this.addLoaderMultiple(
             ["related_party", "related_party_detail", "dedup_check"],
@@ -1200,6 +1092,8 @@
               "personal_screening_data",
               "screening_ref_code",
 
+              "id_type_details",
+
               "hpp",
               "hpp_category",
               "hpp_sub_category",
@@ -1261,6 +1155,94 @@
                 getOptions: (formData, index) => {
                   const options = this.filterOptions("relationships");
                   return options;
+                },
+              },
+            },
+            id_type_details: {
+              "ui:options": {
+                addable: false,
+                orderable: false,
+                removable: false,
+              },
+              items: {
+                "ui:order": [
+                  "id_type_id",
+                  "issuing_authority",
+                  "identification_number",
+                  "issue_country",
+                  "issued_district",
+                  "id_issued_date_ad",
+                  "id_issued_date_bs",
+                  "id_expiry_date_ad",
+                  "id_expiry_date_bs",
+                  "disable",
+                  "removable",
+                  "nationality",
+                  "national_id_number",
+                  "comment",
+                  "citizenship_number",
+                ],
+                disable: {
+                  "ui:widget": "hidden",
+                },
+                removable: {
+                  "ui:widget": "hidden",
+                },
+                nationality: {
+                  "ui:widget": "hidden",
+                },
+
+                id_type_id: {},
+                issuing_authority: {},
+                identification_number: {},
+                issue_country: {},
+                issued_district: {},
+
+                id_issued_date_ad: {
+                  "ui:widget": widgets.CustomDatePicker,
+                  "ui:placeholder": "Select Issued Date (A.D)",
+                  "ui:help": "Date Format: YYYY-MM-DD",
+                  "ui:options": {
+                    name: "id_issued_date_ad",
+                    enforceAgeRestriction: true,
+                    validAge: 0,
+                    disableFutureDates: true,
+                  },
+                },
+
+                id_issued_date_bs: {
+                  "ui:widget": widgets.NepaliDatePickerR,
+                  "ui:help": "Date Format: YYYY-MM-DD",
+                  "ui:options": {
+                    name: "id_issued_date_bs",
+                    enforceAgeRestriction: true,
+                    validAge: 0,
+                    disableFutureDates: true,
+                  },
+                },
+
+                id_expiry_date_ad: {
+                  "ui:widget": widgets.CustomDatePicker,
+                  "ui:placeholder": "Select Expiry Date (A.D)",
+                  "ui:help": "Date Format: YYYY-MM-DD",
+                  "ui:options": {
+                    name: "id_expiry_date_ad",
+                    enforceAgeRestriction: false,
+                    validAge: 0,
+                    disableFutureDates: false,
+                    enableFutureDates: true,
+                  },
+                },
+
+                id_expiry_date_bs: {
+                  "ui:widget": widgets.NepaliDatePickerR,
+                  "ui:help": "Date Format: YYYY-MM-DD",
+                  "ui:options": {
+                    name: "id_expiry_date_bs",
+                    enforceAgeRestriction: true,
+                    validAge: 0,
+                    enableFutureDates: true,
+                  },
                 },
               },
             },
@@ -1478,6 +1460,8 @@
                   "dedup_module_data",
                   "personal_screening_data",
                   "screening_ref_code",
+
+                  "id_type_details",
 
                   "hpp",
                   "hpp_category",
@@ -1761,6 +1745,94 @@
                 screening_ref_code: {
                   "ui:widget": "hidden",
                   "ui:label": false,
+                },
+                id_type_details: {
+                  "ui:options": {
+                    addable: false,
+                    orderable: false,
+                    removable: false,
+                  },
+                  items: {
+                    "ui:order": [
+                      "id_type_id",
+                      "issuing_authority",
+                      "identification_number",
+                      "issue_country",
+                      "issued_district",
+                      "id_issued_date_ad",
+                      "id_issued_date_bs",
+                      "id_expiry_date_ad",
+                      "id_expiry_date_bs",
+                      "disable",
+                      "removable",
+                      "nationality",
+                      "national_id_number",
+                      "comment",
+                      "citizenship_number",
+                    ],
+                    disable: {
+                      "ui:widget": "hidden",
+                    },
+                    removable: {
+                      "ui:widget": "hidden",
+                    },
+                    nationality: {
+                      "ui:widget": "hidden",
+                    },
+
+                    id_type_id: {},
+                    issuing_authority: {},
+                    identification_number: {},
+                    issue_country: {},
+                    issued_district: {},
+
+                    id_issued_date_ad: {
+                      "ui:widget": widgets.CustomDatePicker,
+                      "ui:placeholder": "Select Issued Date (A.D)",
+                      "ui:help": "Date Format: YYYY-MM-DD",
+                      "ui:options": {
+                        name: "id_issued_date_ad",
+                        enforceAgeRestriction: true,
+                        validAge: 0,
+                        disableFutureDates: true,
+                      },
+                    },
+
+                    id_issued_date_bs: {
+                      "ui:widget": widgets.NepaliDatePickerR,
+                      "ui:help": "Date Format: YYYY-MM-DD",
+                      "ui:options": {
+                        name: "id_issued_date_bs",
+                        enforceAgeRestriction: true,
+                        validAge: 0,
+                        disableFutureDates: true,
+                      },
+                    },
+
+                    id_expiry_date_ad: {
+                      "ui:widget": widgets.CustomDatePicker,
+                      "ui:placeholder": "Select Expiry Date (A.D)",
+                      "ui:help": "Date Format: YYYY-MM-DD",
+                      "ui:options": {
+                        name: "id_expiry_date_ad",
+                        enforceAgeRestriction: false,
+                        validAge: 0,
+                        disableFutureDates: false,
+                        enableFutureDates: true,
+                      },
+                    },
+
+                    id_expiry_date_bs: {
+                      "ui:widget": widgets.NepaliDatePickerR,
+                      "ui:help": "Date Format: YYYY-MM-DD",
+                      "ui:options": {
+                        name: "id_expiry_date_bs",
+                        enforceAgeRestriction: true,
+                        validAge: 0,
+                        enableFutureDates: true,
+                      },
+                    },
+                  },
                 },
               },
             },

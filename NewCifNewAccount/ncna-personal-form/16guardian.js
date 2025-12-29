@@ -698,88 +698,7 @@
       }
     }
 
-    async formDataCleaner(fields) {
-      if (typeof this.formData !== "object" || this.formData === null)
-        return {};
-
-      const result = {};
-      // Keep only specified fields
-      for (const key of fields) {
-        if (key in this.formData) {
-          result[key] = this.formData[key];
-        }
-      }
-
-      // Handle family_information cleanup
-      if (
-        "guardian_family_information" in this.formData &&
-        Array.isArray(this.formData.guardian_family_information) &&
-        this.formData.guardian_family_information.length > 0
-      ) {
-        const cleanedFamilyInfo = this.formData.guardian_family_information.map(
-          (item, index) => {
-            if (index === 0) return item;
-            const cleaned = { ...item };
-            delete cleaned.guardian_family_member_full_name;
-            delete cleaned.guardian_is_family_name_not_available;
-            return cleaned;
-          }
-        );
-        result.guardian_family_information = cleanedFamilyInfo;
-      }
-
-      const validId = "WPERM";
-
-      if (
-        "guardian_id_type_details" in this.formData &&
-        Array.isArray(this.formData.guardian_id_type_details) &&
-        this.formData.guardian_id_type_details.length > 0
-      ) {
-        const [firstItem, ...restItems] =
-          this.formData.guardian_id_type_details;
-
-        // Filter remaining items for valid id_type_id
-        const matchingItems = restItems.filter(
-          (item) => item?.id_type_id === validId
-        );
-
-        // Always include the first item, plus any valid matches from the rest
-        result.guardian_id_type_details =
-          this.formData.guardian_id_type_details?.map((item, index) => ({
-            id_type_id: item?.id_type_id,
-            identification_number: index === 0 && item?.identification_number,
-            ...(item?.removable === false && { removable: item?.removable }),
-          }));
-      }
-
-      setTimeout(() => this.setFormData(result), 100);
-      return result;
-    }
-
     async getDedupCheck(formData) {
-      const nonClearableField = [
-        "first_name",
-        "middle_name",
-        "last_name",
-        "last_name_not_available",
-        "father_name",
-        "dedup_id_number",
-        "dedup_identification",
-        "date_of_birth_ad",
-        "date_of_birth_bs",
-        "account_info",
-        "account_type_id",
-        "account_scheme_id",
-        "currency",
-        "nationality",
-        "customer_status",
-        "place_of_issue",
-        "occupation_type",
-        "current_country",
-        "issuing_authority",
-        "family_information",
-      ];
-
       if (!formData?.guardian_first_name) {
         this.toast.error("Enter name for dedup module");
 
@@ -1053,6 +972,7 @@
           "guardian_dedup_check",
           "guardian_personal_screening_data",
           "guardian_screening_ref_code",
+          "guardian_id_type_details",
 
           "guardian_hpp",
           "guardian_hpp_category",
@@ -1303,6 +1223,95 @@
             },
             actionHandlers: {
               view: (record) => setIsModalVisible(true),
+            },
+          },
+        },
+
+        guardian_id_type_details: {
+          "ui:options": {
+            addable: false,
+            orderable: false,
+            removable: false,
+          },
+          items: {
+            "ui:order": [
+              "id_type_id",
+              "issuing_authority",
+              "identification_number",
+              "issue_country",
+              "issued_district",
+              "id_issued_date_ad",
+              "id_issued_date_bs",
+              "id_expiry_date_ad",
+              "id_expiry_date_bs",
+              "disable",
+              "removable",
+              "nationality",
+              "national_id_number",
+              "comment",
+              "citizenship_number",
+            ],
+            disable: {
+              "ui:widget": "hidden",
+            },
+            removable: {
+              "ui:widget": "hidden",
+            },
+            nationality: {
+              "ui:widget": "hidden",
+            },
+
+            id_type_id: {},
+            issuing_authority: {},
+            identification_number: {},
+            issue_country: {},
+            issued_district: {},
+
+            id_issued_date_ad: {
+              "ui:widget": widgets.CustomDatePicker,
+              "ui:placeholder": "Select Issued Date (A.D)",
+              "ui:help": "Date Format: YYYY-MM-DD",
+              "ui:options": {
+                name: "id_issued_date_ad",
+                enforceAgeRestriction: true,
+                validAge: 0,
+                disableFutureDates: true,
+              },
+            },
+
+            id_issued_date_bs: {
+              "ui:widget": widgets.NepaliDatePickerR,
+              "ui:help": "Date Format: YYYY-MM-DD",
+              "ui:options": {
+                name: "id_issued_date_bs",
+                enforceAgeRestriction: true,
+                validAge: 0,
+                disableFutureDates: true,
+              },
+            },
+
+            id_expiry_date_ad: {
+              "ui:widget": widgets.CustomDatePicker,
+              "ui:placeholder": "Select Expiry Date (A.D)",
+              "ui:help": "Date Format: YYYY-MM-DD",
+              "ui:options": {
+                name: "id_expiry_date_ad",
+                enforceAgeRestriction: false,
+                validAge: 0,
+                disableFutureDates: false,
+                enableFutureDates: true,
+              },
+            },
+
+            id_expiry_date_bs: {
+              "ui:widget": widgets.NepaliDatePickerR,
+              "ui:help": "Date Format: YYYY-MM-DD",
+              "ui:options": {
+                name: "id_expiry_date_bs",
+                enforceAgeRestriction: true,
+                validAge: 0,
+                enableFutureDates: true,
+              },
             },
           },
         },
