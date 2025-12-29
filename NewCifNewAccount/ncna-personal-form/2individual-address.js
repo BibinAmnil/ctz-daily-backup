@@ -441,7 +441,7 @@
                   current_outside_street_name:
                     updatedFormData.permanent_outside_street_name,
                   current_postal_code: updatedFormData.permanent_postal_code,
-                  current_location: updatedFormData.permanent_location || null,
+                  current_location: updatedFormData.permanent_location || "",
                   current_latitude: updatedFormData.permanent_latitude || "",
                   current_longitude: updatedFormData.permanent_longitude || "",
                 };
@@ -460,7 +460,7 @@
                   current_outside_town: "",
                   current_outside_street_name: "",
                   current_postal_code: "",
-                  current_location: null,
+                  current_location: "",
                   current_latitude: "",
                   current_longitude: "",
                 };
