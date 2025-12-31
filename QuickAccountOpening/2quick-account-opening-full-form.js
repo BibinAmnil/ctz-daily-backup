@@ -1350,72 +1350,40 @@
         },
 
         nid_verify: {
-          "ui:widget": this.form_status?.includes("init")
+          "ui:widget": this.form_status?.includes("update-case")
             ? "ButtonPopupWidget"
             : "hidden",
           "ui:label": false,
           "ui:classNames": "mt-3 w-100",
-        },
-        nid_reset: {
-          "ui:widget": this.form_status?.includes("init")
-            ? "ButtonField"
-            : "hidden",
-          "ui:label": false,
-          "ui:classNames": "mt-5 w-100",
           "ui:options": {
-            disableButton: (formData) => !formData?.nid_verified,
-            buttonClassName: "w-100",
-            onClick: async (formData) => {
-              this.dropdownReset({
-                national_id_number: null,
-                national_id_issue_date_ad: "",
-                national_id_issue_date_bs: "",
-                national_id_issue_place: "",
-                nid_verified: "",
-              });
+            onButtonClick: () => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                dependencies: {
+                  ...prevJsonSchema.dependencies,
+                  nationality: {
+                    ...prevJsonSchema.dependencies.nationality,
+                    then: {
+                      ...prevJsonSchema.dependencies.nationality.then,
+                      properties: {
+                        ...prevJsonSchema.dependencies.nationality.then
+                          .properties,
+                        nid_verified: {
+                          ...prevJsonSchema.dependencies.nationality.then
+                            .properties.nid_verified,
+                          readOnly: false,
+                        },
+                      },
+                    },
+                  },
+                },
+              }));
             },
           },
         },
 
         customer_type_id: {},
-        dedup_identification: {
-          // "ui:widget": "CascadeDropdown",
-          // "ui:options": {
-          //   setDisabled: (formData, index) =>
-          //     !(
-          //       formData?.nationality == "NP" ||
-          //       formData?.nationality == "IN"
-          //     ),
-          //   getOptions: (formData) => {
-          //     if (
-          //       formData?.dedup_identification &&
-          //       this.nationalityChanged === true
-          //     ) {
-          //       this.convertToArray(
-          //         formData?.dedup_identification,
-          //         "id_type_id",
-          //         "id_type_details",
-          //         ["dedup_identification", "id_type_id"]
-          //       );
-          //       this.nationalityChanged = false;
-          //     }
-          //     const d = this.functionGroup?.getRequiredDocuments(
-          //       this.optionsData["multi_validation_mapping"],
-          //       {
-          //         nationality: formData?.nationality,
-          //         account_type: formData?.account_info,
-          //       }
-          //     );
-          //     return d;
-          //   },
-          //   onChange: (value) => {
-          //     this.convertToArray(value, "id_type_id", "id_type_details", [
-          //       "dedup_identification",
-          //       "id_type_id",
-          //     ]);
-          //   },
-          // },
-        },
+        dedup_identification: {},
 
         dedup_id_number: {
           "ui:options": {
@@ -1555,91 +1523,7 @@
           },
         },
 
-        account_scheme_id: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) =>
-              this.filterMasterData("scheme_type", formData),
-            onChange: (value) => {
-              // this.handleSchemeChange();
-              this.handleSchemeCheck({
-                cif_number: this.formData?.cif_number,
-                currency: this.formData?.currency,
-                account_scheme_id: value,
-              });
-              if (
-                value === "dc396a31-7c87-42d6-b208-ae973cecb12b" ||
-                value === "2c825f3c-372e-4cf4-aaa2-601652927933" ||
-                value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-              ) {
-                this.setFormData((prev) => {
-                  const items = prev?.id_type_details || [];
-
-                  const targetId =
-                    value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-                      ? "3379d6f6-cc1b-4cdc-ae2a-440292b95c50"
-                      : "e89c962c-0530-4950-bfa6-30bbbd874665";
-
-                  const otherId =
-                    value === "c711e377-393a-4e8b-b1df-8531bbb4184f"
-                      ? "e89c962c-0530-4950-bfa6-30bbbd874665"
-                      : "3379d6f6-cc1b-4cdc-ae2a-440292b95c50";
-
-                  // Filter out the otherId if it exists
-                  const filteredItems = items.filter(
-                    (item) => item?.id_type_id !== otherId
-                  );
-
-                  const hasTarget = filteredItems.some(
-                    (item) => item?.id_type_id === targetId
-                  );
-
-                  return {
-                    ...prev,
-                    id_type_details: hasTarget
-                      ? filteredItems.map((item) => ({
-                          ...item,
-                        }))
-                      : [
-                          ...filteredItems.map(
-                            (item) =>
-                              item?.id_type_id && {
-                                ...item,
-                                removable: true,
-                              }
-                          ),
-                          { id_type_id: targetId, removable: false },
-                        ],
-                  };
-                });
-              } else {
-                // setTimeout(
-                //   () =>
-                this.setFormData((prev) => {
-                  const items = prev?.id_type_details || [];
-
-                  return {
-                    ...prev,
-                    id_type_details: items.map((item) => ({
-                      ...item,
-                      ...(item?.id_type_id && { removable: true }),
-                    })),
-                  };
-                });
-              }
-
-              !this.formData?.has_cif &&
-                this.dropdownReset({
-                  account_scheme_id: value,
-                  ...(this.formData?.source !== "ocr" && { salutation: null }),
-                  ...(value === "df09a418-3847-4565-a2c1-eb261f2a8e72" && {
-                    date_of_birth_ad: "",
-                    date_of_birth_bs: "",
-                  }),
-                });
-            },
-          },
-        },
+        account_scheme_id: {},
 
         gender: {
           "ui:widget": "CascadeDropdown",

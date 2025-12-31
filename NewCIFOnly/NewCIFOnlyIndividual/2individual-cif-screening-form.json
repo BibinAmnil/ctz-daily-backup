@@ -641,7 +641,8 @@
             "type": "string",
             "title": "NID Verified",
             "group": "National ID Details",
-            "enum": ["Yes", "No"]
+            "enum": ["Yes", "No"],
+            "readOnly": true
           },
           "nid_verify": {
             "type": "string",

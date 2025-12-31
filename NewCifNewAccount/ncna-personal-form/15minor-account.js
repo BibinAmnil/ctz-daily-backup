@@ -1325,6 +1325,31 @@
             : "hidden",
           "ui:label": false,
           "ui:classNames": "mt-3 w-100",
+          "ui:options": {
+            onButtonClick: () => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                dependencies: {
+                  ...prevJsonSchema.dependencies,
+                  nationality: {
+                    ...prevJsonSchema.dependencies.nationality,
+                    then: {
+                      ...prevJsonSchema.dependencies.nationality.then,
+                      properties: {
+                        ...prevJsonSchema.dependencies.nationality.then
+                          .properties,
+                        nid_verified: {
+                          ...prevJsonSchema.dependencies.nationality.then
+                            .properties.nid_verified,
+                          readOnly: false,
+                        },
+                      },
+                    },
+                  },
+                },
+              }));
+            },
+          },
         },
         nid_reset: {
           "ui:widget": this.form_status?.includes("init")
