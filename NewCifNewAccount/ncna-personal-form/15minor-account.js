@@ -1164,6 +1164,9 @@
           "permanent_postal_code",
 
           "residential_status",
+          "permanent_location",
+          "permanent_latitude",
+          "permanent_longitude",
 
           "same_as_permanent",
 
@@ -1188,6 +1191,9 @@
           "current_outside_street_name",
 
           "current_postal_code",
+          "current_location",
+          "current_latitude",
+          "current_longitude",
 
           "contact_type",
 
