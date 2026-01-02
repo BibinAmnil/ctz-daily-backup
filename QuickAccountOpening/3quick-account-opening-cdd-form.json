@@ -582,6 +582,25 @@
         },
         "required": ["adverse_category"]
       }
+    },
+    "approval_status": {
+      "if": {
+        "properties": {
+          "approval_status": {
+            "enum": ["Revert"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "revert_to": {
+            "type": "string",
+            "title": "Revert To",
+            "width": "half"
+          }
+        },
+        "required": ["revert_to"]
+      }
     }
   }
 }

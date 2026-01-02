@@ -473,6 +473,7 @@
           "risk_score",
           "acknowledge",
           "approval_status",
+          "revert_to",
           "approval_remarks",
           "account_info",
           "is_sanction",
@@ -690,6 +691,36 @@
           "ui:widget": this.form_status?.includes("approval")
             ? "CustomCheckBoxWidget"
             : "hidden",
+        },
+        revert_to: {
+          "ui:disabled": !(
+            this.form_status?.includes("review") ||
+            this.form_status?.includes("approval")
+          ),
+
+          "ui:widget":
+            this.formData?.current_step?.includes("review") &&
+            this.formData?.risk_level.includes("High")
+              ? "hidden"
+              : this.form_status?.includes("review") ||
+                this.form_status?.includes("approval")
+              ? "CascadeDropdown"
+              : "hidden",
+
+          "ui:options": {
+            getOptions: (formData, index) => {
+              const option = (
+                this.formData?.revert_list || formData?.revert_list
+              )?.map((item) => {
+                return {
+                  label: item,
+                  value: item,
+                };
+              });
+
+              return option || [];
+            },
+          },
         },
         approval_remarks: {
           "ui:disabled": !(
