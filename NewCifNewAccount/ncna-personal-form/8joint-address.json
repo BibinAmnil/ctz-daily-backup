@@ -109,18 +109,62 @@
             "default": "NP",
             "readOnly": true
           },
-          "same_as_permanent": {
-            "type": "boolean",
-            "title": "Same As Permanent Address",
-            "group": "Current Address",
-            "width": "full",
-            "default": false
-          },
           "current_country": {
             "type": "string",
             "title": "Current Country",
             "group": "Current Address",
-            "default": "NP"
+            "default": "NP",
+            "readOnly": true
+          },
+          "is_customer_disabled": {
+            "type": "boolean",
+            "title": "Is Customer Disabled or Senior Citizen?",
+            "group": "National ID Details",
+            "default": false,
+            "width": "full"
+          },
+          "national_id_number": {
+            "type": "string",
+            "title": "National ID Number",
+            "group": "National ID Details"
+          },
+          "national_id_issue_date_ad": {
+            "type": "string",
+
+            "title": "National Id Issue Date(A.D)",
+            "group": "National ID Details"
+          },
+          "national_id_issue_date_bs": {
+            "type": "string",
+
+            "title": "National Id Issue Date(B.S)",
+            "group": "National ID Details"
+          },
+          "national_id_issue_place": {
+            "type": "string",
+            "title": "National Id Issue Place",
+            "group": "National ID Details"
+          },
+          "national_id_issuing_authority": {
+            "type": "string",
+            "title": "Issuing Authority",
+            "group": "National ID Details",
+            "default": "DONICR",
+            "readOnly": true
+          },
+          "nid_verified": {
+            "type": "string",
+            "title": "NID Verified",
+            "group": "National ID Details",
+            "enum": ["Yes", "No"],
+            "readOnly": true
+          },
+          "nid_verify": {
+            "type": "string",
+            "title": "Verify NID",
+            "group": "National ID Details",
+            "width": 4,
+            "url": "https://citizenportal.donidcr.gov.np/ne/check-national-id-number"
           }
         },
         "dependencies": {
@@ -248,7 +292,7 @@
                 },
                 "permanent_postal_code": {
                   "type": "string",
-                  "title": "",
+                  "title": "Postal Code",
                   "group": "Permanent Address",
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
@@ -262,6 +306,29 @@
                 "permanent_postal_code"
               ]
             }
+          },
+          "is_customer_disabled": {
+            "if": {
+              "properties": {
+                "is_customer_disabled": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {}
+            },
+            "else": {
+              "properties": {},
+              "required": [
+                "national_id_number",
+                "national_id_issue_date_ad",
+                "national_id_issue_date_bs",
+                "national_id_issue_place",
+                "national_id_issuing_authority",
+                "nid_verified"
+              ]
+            }
           }
         },
         "required": ["permanent_country"]
@@ -271,19 +338,16 @@
           "permanent_country": {
             "type": "string",
             "title": "Permanent Country",
-            "group": "Permanent Address"
+            "group": "Permanent Address",
+            "readOnly": true
           },
-          "same_as_permanent": {
-            "type": "boolean",
-            "title": "Same As Permanent Address",
-            "group": "Current Address",
-            "width": "full"
-          },
+
           "current_country": {
             "type": "string",
             "title": "Current Country",
             "group": "Current Address",
-            "default": "NP"
+            "default": "NP",
+            "readOnly": true
           }
         },
         "dependencies": {
@@ -300,17 +364,20 @@
                 "permanent_province": {
                   "type": "string",
                   "title": "Permanent Province",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_district": {
                   "type": "string",
                   "title": "Permanent District",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_municipality": {
                   "type": "string",
                   "title": "Permanent Municipality",
-                  "group": "Permanent Address"
+                  "group": "Permanent Address",
+                  "readOnly": true
                 },
                 "permanent_ward_number": {
                   "type": "string",
@@ -350,7 +417,8 @@
                     "31",
                     "32",
                     "33"
-                  ]
+                  ],
+                  "readOnly": true
                 },
                 "permanent_street_name": {
                   "type": "string",
@@ -359,7 +427,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_town": {
                   "type": "string",
@@ -368,7 +437,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_house_number": {
                   "type": "string",
@@ -377,7 +447,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [
@@ -398,7 +469,8 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_outside_street_name": {
                   "type": "string",
@@ -407,16 +479,18 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  }
+                  },
+                  "readOnly": true
                 },
                 "permanent_postal_code": {
                   "type": "string",
-                  "title": "",
+                  "title": "Postal Code",
                   "group": "Permanent Address",
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
-                  }
+                  },
+                  "readOnly": true
                 }
               },
               "required": [
@@ -441,7 +515,8 @@
               "type": "boolean",
               "title": "Same As Permanent Address",
               "group": "Current Address",
-              "width": "full"
+              "width": "full",
+              "default": false
             },
             "current_province": {
               "type": "string",
@@ -594,12 +669,6 @@
                 "enum": ["NP"]
               }
             },
-            "same_as_permanent": {
-              "type": "boolean",
-              "title": "Same As Permanent Address",
-              "group": "Current Address",
-              "width": "full"
-            },
             "current_outside_town": {
               "type": "string",
               "title": "Outside Town",
@@ -621,7 +690,7 @@
             "current_postal_code": {
               "type": "string",
               "title": "Postal Code",
-              "group": "Current",
+              "group": "Current Address",
               "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
               "errorMessage": {
                 "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
@@ -655,6 +724,15 @@
                     "readOnly": true
                   },
                   "current_postal_code": {
+                    "readOnly": true
+                  },
+                  "current_location": {
+                    "readOnly": true
+                  },
+                  "current_latitude": {
+                    "readOnly": true
+                  },
+                  "current_longitude": {
                     "readOnly": true
                   }
                 }
