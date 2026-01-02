@@ -1168,9 +1168,9 @@
                 "ui:order": [
                   "id_type_id",
                   "issuing_authority",
-                  "identification_number",
                   "issue_country",
                   "issued_district",
+                  "identification_number",
                   "id_issued_date_ad",
                   "id_issued_date_bs",
                   "id_expiry_date_ad",
@@ -1192,11 +1192,43 @@
                   "ui:widget": "hidden",
                 },
 
-                id_type_id: {},
-                issuing_authority: {},
+                id_type_id: {
+                  "ui:widget": "CascadeDropdown",
+                  "ui:options": {
+                    getOptions: (formData, index) => {
+                      const options = this.filterOptions("document_types");
+                      return options;
+                    },
+                  },
+                },
+                issuing_authority: {
+                  "ui:widget": "CascadeDropdown",
+                  "ui:options": {
+                    getOptions: (formData, index) => {
+                      const options = this.filterOptions("issuing_authorities");
+                      return options;
+                    },
+                  },
+                },
+                issue_country: {
+                  "ui:widget": "CascadeDropdown",
+                  "ui:options": {
+                    getOptions: (formData, index) => {
+                      const options = this.filterOptions("countries");
+                      return options;
+                    },
+                  },
+                },
+                issued_district: {
+                  "ui:widget": "CascadeDropdown",
+                  "ui:options": {
+                    getOptions: (formData, index) => {
+                      const options = this.filterOptions("districts");
+                      return options;
+                    },
+                  },
+                },
                 identification_number: {},
-                issue_country: {},
-                issued_district: {},
 
                 id_issued_date_ad: {
                   "ui:widget": widgets.CustomDatePicker,
@@ -1388,7 +1420,7 @@
               "ui:widget": "ScreeningReportCard",
               "ui:label": false,
               showCheckbox: true,
-              showActionText: true,
+              showViewedColumn: false,
               fixedActionsColumn: true,
               showFooter: true,
               "ui:options": {
@@ -1691,10 +1723,10 @@
                 personal_screening_data: {
                   "ui:widget": "ScreeningReportCard",
                   "ui:label": false,
-                  showFooter: true,
                   showCheckbox: true,
-                  showActionText: true,
+                  showViewedColumn: false,
                   fixedActionsColumn: true,
+                  showFooter: true,
                   "ui:options": {
                     onCheckboxChange: (
                       tableData,
@@ -1756,9 +1788,9 @@
                     "ui:order": [
                       "id_type_id",
                       "issuing_authority",
-                      "identification_number",
                       "issue_country",
                       "issued_district",
+                      "identification_number",
                       "id_issued_date_ad",
                       "id_issued_date_bs",
                       "id_expiry_date_ad",
@@ -1780,12 +1812,45 @@
                       "ui:widget": "hidden",
                     },
 
-                    id_type_id: {},
-                    issuing_authority: {},
+                    id_type_id: {
+                      "ui:widget": "CascadeDropdown",
+                      "ui:options": {
+                        getOptions: (formData, index) => {
+                          const options = this.filterOptions("document_types");
+                          return options;
+                        },
+                      },
+                    },
+                    issuing_authority: {
+                      "ui:widget": "CascadeDropdown",
+                      "ui:options": {
+                        getOptions: (formData, index) => {
+                          const options = this.filterOptions(
+                            "issuing_authorities"
+                          );
+                          return options;
+                        },
+                      },
+                    },
+                    issue_country: {
+                      "ui:widget": "CascadeDropdown",
+                      "ui:options": {
+                        getOptions: (formData, index) => {
+                          const options = this.filterOptions("countries");
+                          return options;
+                        },
+                      },
+                    },
+                    issued_district: {
+                      "ui:widget": "CascadeDropdown",
+                      "ui:options": {
+                        getOptions: (formData, index) => {
+                          const options = this.filterOptions("districts");
+                          return options;
+                        },
+                      },
+                    },
                     identification_number: {},
-                    issue_country: {},
-                    issued_district: {},
-
                     id_issued_date_ad: {
                       "ui:widget": widgets.CustomDatePicker,
                       "ui:placeholder": "Select Issued Date (A.D)",

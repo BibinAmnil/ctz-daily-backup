@@ -344,12 +344,7 @@
                     "hideTitle": true,
                     "readOnly": true
                   },
-                  "identification_number": {
-                    "type": "string",
-                    "title": "Identity Number",
-                    "hideTitle": true,
-                    "readOnly": true
-                  },
+
                   "issue_country": {
                     "type": "string",
                     "title": "Country Of Issue",
@@ -361,6 +356,12 @@
                     "type": "string",
                     "title": "Place Of Issue",
                     "group": "Identification Detail",
+                    "hideTitle": true,
+                    "readOnly": true
+                  },
+                  "identification_number": {
+                    "type": "string",
+                    "title": "Identity Number",
                     "hideTitle": true,
                     "readOnly": true
                   },
