@@ -40,8 +40,14 @@
     },
     "occupation_type": {
       "type": "string",
-      "title": "Type of occupation",
-      "group": "OccupationProfessionBusinessDetails",
+      "title": "Occupation Type",
+      "group": "OccupationAndIncome",
+      "readOnly": true
+    },
+    "source_of_income": {
+      "type": "string",
+      "title": "Source of Income",
+      "group": "OccupationAndIncome",
       "readOnly": true
     },
 
@@ -81,6 +87,63 @@
       "type": "string",
       "title": "High Risk Category",
       "group": "Risk"
+    },
+    "annual_volume_of_transactions": {
+      "type": "string",
+      "title": "Annual Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      },
+      "readOnly": true
+    },
+
+    "annual_number_of_transactions": {
+      "type": "string",
+      "title": "Annual Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8,
+      "readOnly": true
+    },
+
+    "monthly_volume_of_transactions": {
+      "type": "string",
+      "title": "Monthly Volume of Transactions",
+      "group": "Transaction Details",
+      "width": 8,
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      },
+      "readOnly": true
+    },
+
+    "monthly_number_of_transactions": {
+      "type": "string",
+      "title": "Monthly Number of Transactions",
+      "group": "Transaction Details",
+      "pattern": "^[0-9]{1,3}$",
+      "errorMessage": {
+        "pattern": "Only 3 numbers are allowed"
+      },
+      "width": 8,
+      "readOnly": true
+    },
+    "yearly_income": {
+      "type": "string",
+      "title": "Yearly Income (Gross Income)",
+      "group": "Transaction Details",
+      "pattern": "^[0-9,]+$",
+      "errorMessage": {
+        "pattern": "Only numbers are allowed"
+      },
+      "readOnly": true
     }
   },
   "dependencies": {
@@ -194,159 +257,6 @@
                   "group": "PEP Section"
                 }
               }
-            }
-          }
-        }
-      }
-    },
-
-    "occupation_type": {
-      "if": {
-        "properties": {
-          "occupation_type": {
-            "not": {
-              "enum": ["BUSIN", "EMPLO", "SELFE"]
-            }
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "source_of_income": {
-            "type": "string",
-            "title": "Type of Income Source",
-            "group": "OccupationProfessionBusinessDetails",
-            "readOnly": true
-          },
-          "declared_anticipated_annual_transaction": {
-            "type": "string",
-            "title": "Anticipated Annual Transaction",
-            "group": "AccountLevelInformation",
-            "pattern": "^[0-9,]*$",
-            "errorMessage": {
-              "pattern": "Only numbers are allowed"
-            },
-            "readOnly": true
-          },
-          "expected_anticipated_annual_transaction": {
-            "type": "string",
-            "title": "Expected Annual Transaction",
-            "group": "AccountLevelInformation",
-            "pattern": "^[0-9,]*$",
-            "errorMessage": {
-              "pattern": "Only numbers are allowed"
-            },
-            "readOnly": true
-          },
-          "number_of_transaction": {
-            "type": "string",
-            "title": "Number of Transaction",
-            "group": "AccountLevelInformation",
-            "pattern": "^[0-9]*$",
-            "errorMessage": {
-              "pattern": "Only numbers are allowed"
-            },
-            "readOnly": true
-          }
-        }
-      },
-      "else": {
-        "properties": {
-          "occupation_detail": {
-            "type": "array",
-            "title": "Occupation / Profession / Business Details",
-            "minItems": 1,
-            "readOnly": true,
-            "items": {
-              "type": "object",
-              "properties": {
-                "name_of_organization": {
-                  "type": "string",
-                  "title": "Name Of Organization"
-                },
-                "organization_address": {
-                  "type": "string",
-                  "title": "Organization Full Address"
-                },
-                "organization_contact_number": {
-                  "type": "number",
-                  "title": "Contact Numbers",
-                  "pattern": "^[0-9]{7,12}$",
-                  "errorMessage": {
-                    "pattern": "Mobile number must be 7 to 12 digits."
-                  }
-                },
-                "business_type": {
-                  "type": "string",
-                  "title": "Nature of Business"
-                },
-                "designation": {
-                  "type": "string",
-                  "title": "Designation"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "source_of_income": {
-      "if": {
-        "properties": {
-          "source_of_income": {
-            "enum": ["Family income"]
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "earner_name": {
-            "type": "string",
-
-            "title": "Name of the person who earns",
-            "group": "OccupationProfessionBusinessDetails",
-            "readOnly": true
-          },
-          "earner_relationship": {
-            "type": "string",
-
-            "title": "Relationship",
-            "group": "OccupationProfessionBusinessDetails",
-            "readOnly": true
-          }
-        }
-      },
-      "else": {
-        "if": {
-          "properties": {
-            "source_of_income": {
-              "enum": ["Remittance"]
-            },
-            "readOnly": true
-          }
-        },
-        "then": {
-          "properties": {
-            "earner_remittance_country": {
-              "type": "string",
-
-              "title": "Remittance Country",
-              "group": "OccupationProfessionBusinessDetails",
-              "readOnly": true
-            },
-            "earner_nature_of_job": {
-              "type": "string",
-
-              "title": "Nature of job of Remitters",
-              "group": "OccupationProfessionBusinessDetails",
-              "readOnly": true
-            },
-            "earner_status": {
-              "type": "string",
-
-              "title": "Status of workers",
-              "group": "OccupationProfessionBusinessDetails",
-              "readOnly": true
             }
           }
         }

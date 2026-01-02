@@ -183,17 +183,21 @@
 
           if (resp?.is_high_risk_acc) {
             this.setNextStep("quick-account-opening-ecdd-form");
-            this.setJsonSchema((prevJsonSchema) => ({
-              ...prevJsonSchema,
-              hasStep: true,
-              isDisabled: false,
-            }));
+            setTimeout(() => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                hasStep: true,
+                isDisabled: false,
+              }));
+            }, 100);
           } else {
-            this.setJsonSchema((prevJsonSchema) => ({
-              ...prevJsonSchema,
-              hasStep: true,
-              isDisabled: false,
-            }));
+            setTimeout(() => {
+              this.setJsonSchema((prevJsonSchema) => ({
+                ...prevJsonSchema,
+                hasStep: true,
+                isDisabled: false,
+              }));
+            }, 100);
             this.setNextStep("instant-documents");
           }
         }
@@ -446,8 +450,8 @@
           "related_party",
           "related_party_detail",
           "entitled_with_fund",
-          "occupation_type",
           "source_of_income",
+          "occupation_type",
           "occupation_detail",
           "business_type",
           "existing_risk_rating",

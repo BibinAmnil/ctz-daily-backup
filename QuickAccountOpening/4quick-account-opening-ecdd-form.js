@@ -201,27 +201,20 @@
     }
 
     async initializeSchema(setJsonSchema, formData) {
-      if (
-        !this.formData?.current_step?.includes("case-init") &&
-        !this.formData?.current_step?.includes("update-case")
-      ) {
-        // this.setJsonSchema((prevSchema) => {
-        //   if (!prevSchema) return prevSchema;
-        //   return {
-        //     ...prevSchema,
-        //     isDisabled: false,
-        //     required: [
-        //       ...new Set([
-        //         ...(prevSchema.required || []),
-        //         "approval_status",
-        //         "approval_remarks",
-        //       ]),
-        //     ],
-        //   };
-        // });
-      }
-      if (this.formData?.current_step?.includes("update-case")) {
+      if (this.formData?.current_step?.includes("Completed")) {
+        this.setJsonSchema((prevJsonSchema) => ({
+          ...prevJsonSchema,
+          hasStep: false,
+          submissionHidden: true,
+        }));
+      } else if (this.formData?.current_step?.includes("update-case")) {
         this.setNextStep("instant-documents");
+      } else {
+        this.setDivide(true);
+        this.setJsonSchema((prevJsonSchema) => ({
+          ...prevJsonSchema,
+          hasStep: false,
+        }));
       }
       const fieldsToUpdate = [
         "id_type_id",
@@ -262,31 +255,19 @@
 
     async updateFormAndSchema(formData, schemaConditions) {
       this.formData = formData;
-      if (
-        !this.formData?.current_step?.includes("case-init") &&
-        !this.formData?.current_step?.includes("update-case")
-      ) {
-        // this.setJsonSchema((prevSchema) => {
-        //   if (!prevSchema) return prevSchema;
-        //   return {
-        //     ...prevSchema,
-        //     isDisabled: false,
-        //     required: [
-        //       ...new Set([
-        //         ...(prevSchema.required || []),
-        //         "approval_status",
-        //         "approval_remarks",
-        //       ]),
-        //     ],
-        //   };
-        // });
-      }
-
       if (this.formData?.current_step?.includes("Completed")) {
         this.setJsonSchema((prevJsonSchema) => ({
           ...prevJsonSchema,
           hasStep: false,
           submissionHidden: true,
+        }));
+      } else if (this.formData?.current_step?.includes("update-case")) {
+        this.setNextStep("instant-documents");
+      } else {
+        this.setDivide(true);
+        this.setJsonSchema((prevJsonSchema) => ({
+          ...prevJsonSchema,
+          hasStep: false,
         }));
       }
     }
@@ -334,17 +315,16 @@
           "pep_related_member_relationship",
           "pep_related_member_risk_category",
           "pep_related_member_recommended_to_change",
-          "occupation_type",
-          "occupation_detail",
-          "name_of_organization",
-          "organization_address",
-          "organization_contact_number",
-          "nature_of_business",
-          "designation",
-          "declared_anticipated_annual_transaction",
-          "expected_anticipated_annual_transaction",
-          "number_of_transaction",
+
           "source_of_income",
+          "occupation_type",
+
+          "annual_volume_of_transactions",
+          "annual_number_of_transactions",
+          "monthly_volume_of_transactions",
+          "monthly_number_of_transactions",
+          "yearly_income",
+
           "earner_name",
           "earner_relationship",
           "earner_remittance_country",
@@ -382,78 +362,10 @@
         is_high_risk_account: {
           "ui:widget": "hidden",
         },
-        occupation_type: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptionsOccupation(
-                "occupation_rule",
-                "occupation_list"
-              );
-            },
-            onChange: (value) =>
-              this.dropdownReset({
-                occupation_type: value,
-                source_of_income: this.optionsData["occupation_rule"]?.[
-                  `source_of_income_list`
-                ]?.find((item) => item?.cascade_id?.includes(value))?.id,
-              }),
-          },
-        },
+        occupation_type: {},
 
-        source_of_income: {
-          "ui:widget": "CascadeDropdown",
-          "ui:options": {
-            getOptions: (formData) => {
-              return this.filterOptionsOccupation(
-                "occupation_rule",
-                "source_of_income_list",
-                formData?.occupation_type
-              );
-            },
-          },
-        },
+        source_of_income: {},
 
-        occupation_detail: {
-          "ui:classNames": "my-1",
-          "ui:options": {
-            addable: false,
-
-            orderable: false,
-
-            removable: false,
-          },
-
-          items: {
-            business_type: {
-              "ui:widget": "CascadeDropdown",
-              "ui:options": {
-                getOptions: (formData) => {
-                  const filteredData = this.filterOptionsOccupation(
-                    "occupation_rule",
-                    "business_type_list",
-                    formData?.occupation_type
-                  );
-                  return [
-                    ...filteredData,
-                    { label: "Others", value: "others" },
-                  ];
-                },
-              },
-            },
-          },
-        },
-
-        declared_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Customer",
-          },
-        },
-        expected_anticipated_annual_transaction: {
-          "ui:options": {
-            addonBefore: "Branch",
-          },
-        },
         pep_retirement_date_ad: {
           "ui:widget": widgets.CustomDatePicker,
           "ui:placeholder": "Select Date of Retirement (A.D)",
