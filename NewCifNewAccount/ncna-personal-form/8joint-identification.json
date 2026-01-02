@@ -107,11 +107,7 @@
                 "type": "string",
                 "title": "Identity Number",
                 "hideTitle": true,
-                "group": "Identification Detail",
-                "pattern": "^(?!.*//)(?!.*--)(?!.*\\(\\()(?!.*\\)\\))[0-9a-zA-Z/().-]*$",
-                "errorMessage": {
-                  "pattern": "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
-                }
+                "group": "Identification Detail"
               },
               "issue_country": {
                 "type": "string",

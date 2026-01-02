@@ -34,6 +34,41 @@
 
     //Custom Validation Form Character Count and Screening Check
     customValidate(formData, errors, uiSchema) {
+      const idTypeDetails = formData?.id_type_details;
+      if (Array.isArray(idTypeDetails)) {
+        idTypeDetails.forEach((item, index) => {
+          // Validate identification_number with pattern and addError
+          if (item?.id_type_id === "PAN") {
+            const identificationNumber = item?.identification_number;
+            if (typeof identificationNumber === "string") {
+              const pattern =
+                /^(?!.*\/\/)(?!.*--)(?!.*\(\()(?!.*\)\))[0-9a-zA-Z/().-]{1,9}$/;
+              if (!pattern.test(identificationNumber)) {
+                errors.id_type_details ??= [];
+                errors.id_type_details[index] ??= {};
+                errors.id_type_details[index].identification_number ??= {};
+                errors.id_type_details[index].identification_number.addError(
+                  "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed. Maximum length is 9 characters."
+                );
+              }
+            }
+          } else if (item?.id_type_id !== "PAN") {
+            const identificationNumber = item?.identification_number;
+            if (typeof identificationNumber === "string") {
+              const pattern =
+                /^(?!.*\/\/)(?!.*--)(?!.*\(\()(?!.*\)\))[0-9a-zA-Z/().-]+$/;
+              if (!pattern.test(identificationNumber)) {
+                errors.id_type_details ??= [];
+                errors.id_type_details[index] ??= {};
+                errors.id_type_details[index].identification_number ??= {};
+                errors.id_type_details[index].identification_number.addError(
+                  "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+                );
+              }
+            }
+          }
+        });
+      }
       return errors;
     }
 

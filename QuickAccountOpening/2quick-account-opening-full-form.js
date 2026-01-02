@@ -31,30 +31,6 @@
 
     //Custom Validation Form Character Count and Screening Check
     customValidate(formData, errors, uiSchema) {
-      const hasUncheckedView = Object.keys(
-        formData?.personal_screening_data || {}
-      ).map((key) => {
-        const items = formData?.personal_screening_data[key];
-
-        return (
-          Array.isArray(items) &&
-          items.every(
-            (item) =>
-              typeof item === "object" &&
-              item !== null &&
-              item.hasOwnProperty("isCheckedView")
-          )
-        );
-      });
-      const addHasUncheckedView = hasUncheckedView.some(
-        (value) => value === false
-      );
-      if (addHasUncheckedView) {
-        errors?.personal_screening_data?.addError(
-          "View all Screening Data To Continue"
-        );
-      }
-
       const familyInfo = formData?.family_information;
       const requiredFields = ["family_member_full_name"]; // Add more fields here as needesd
       if (Array.isArray(familyInfo)) {
@@ -68,6 +44,42 @@
               errors.family_information[index][field].addError("Required");
             }
           });
+        });
+      }
+
+      const idTypeDetails = formData?.id_type_details;
+      if (Array.isArray(idTypeDetails)) {
+        idTypeDetails.forEach((item, index) => {
+          // Validate identification_number with pattern and addError
+          if (item?.id_type_id === "PAN") {
+            const identificationNumber = item?.identification_number;
+            if (typeof identificationNumber === "string") {
+              const pattern =
+                /^(?!.*\/\/)(?!.*--)(?!.*\(\()(?!.*\)\))[0-9a-zA-Z/().-]{1,9}$/;
+              if (!pattern.test(identificationNumber)) {
+                errors.id_type_details ??= [];
+                errors.id_type_details[index] ??= {};
+                errors.id_type_details[index].identification_number ??= {};
+                errors.id_type_details[index].identification_number.addError(
+                  "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed. Maximum length is 9 characters."
+                );
+              }
+            }
+          } else if (item?.id_type_id !== "PAN") {
+            const identificationNumber = item?.identification_number;
+            if (typeof identificationNumber === "string") {
+              const pattern =
+                /^(?!.*\/\/)(?!.*--)(?!.*\(\()(?!.*\)\))[0-9a-zA-Z/().-]+$/;
+              if (!pattern.test(identificationNumber)) {
+                errors.id_type_details ??= [];
+                errors.id_type_details[index] ??= {};
+                errors.id_type_details[index].identification_number ??= {};
+                errors.id_type_details[index].identification_number.addError(
+                  "Only alphanumeric characters and single symbols [/, -, ., ()] are allowed."
+                );
+              }
+            }
+          }
         });
       }
 
