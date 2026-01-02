@@ -338,15 +338,13 @@
           "permanent_country": {
             "type": "string",
             "title": "Permanent Country",
-            "group": "Permanent Address",
-            "readOnly": true
+            "group": "Permanent Address"
           },
 
           "current_country": {
             "type": "string",
             "title": "Current Country",
             "group": "Current Address",
-            "default": "NP",
             "readOnly": true
           }
         },
