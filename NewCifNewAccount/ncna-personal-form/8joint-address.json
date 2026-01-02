@@ -362,20 +362,17 @@
                 "permanent_province": {
                   "type": "string",
                   "title": "Permanent Province",
-                  "group": "Permanent Address",
-                  "readOnly": true
+                  "group": "Permanent Address"
                 },
                 "permanent_district": {
                   "type": "string",
                   "title": "Permanent District",
-                  "group": "Permanent Address",
-                  "readOnly": true
+                  "group": "Permanent Address"
                 },
                 "permanent_municipality": {
                   "type": "string",
                   "title": "Permanent Municipality",
-                  "group": "Permanent Address",
-                  "readOnly": true
+                  "group": "Permanent Address"
                 },
                 "permanent_ward_number": {
                   "type": "string",
@@ -415,8 +412,7 @@
                     "31",
                     "32",
                     "33"
-                  ],
-                  "readOnly": true
+                  ]
                 },
                 "permanent_street_name": {
                   "type": "string",
@@ -425,8 +421,7 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  },
-                  "readOnly": true
+                  }
                 },
                 "permanent_town": {
                   "type": "string",
@@ -435,8 +430,7 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  },
-                  "readOnly": true
+                  }
                 },
                 "permanent_house_number": {
                   "type": "string",
@@ -445,8 +439,7 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  },
-                  "readOnly": true
+                  }
                 }
               },
               "required": [
@@ -467,8 +460,7 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  },
-                  "readOnly": true
+                  }
                 },
                 "permanent_outside_street_name": {
                   "type": "string",
@@ -477,8 +469,7 @@
                   "pattern": "^[a-zA-Z0-9/\\.\\-,\\s]*$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed."
-                  },
-                  "readOnly": true
+                  }
                 },
                 "permanent_postal_code": {
                   "type": "string",
@@ -487,8 +478,7 @@
                   "pattern": "^[a-zA-Z0-9\\s]{0,10}$",
                   "errorMessage": {
                     "pattern": "Only alphanumeric characters and spaces are allowed (Max 10 Digits)."
-                  },
-                  "readOnly": true
+                  }
                 }
               },
               "required": [
