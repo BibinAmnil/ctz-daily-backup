@@ -161,8 +161,10 @@
 
     "currency": {
       "type": "string",
-      "title": "CIF Currency",
-      "group": "Account Information"
+      "title": "Currency",
+      "group": "Account Information",
+      "default": "NPR",
+      "readOnly": true
     },
     "is_nrn": {
       "type": "string",
@@ -563,6 +565,55 @@
       "group": "Personal Information",
       "enum": ["US Resident", "US Citizen", "US Green Card Holder", "None"],
       "default": "None"
+    },
+
+    "permanent_location": {
+      "type": "string",
+      "title": "Choose a Location",
+      "group": "Permanent Address",
+      "width": "full"
+    },
+    "permanent_latitude": {
+      "type": "string",
+      "title": "Latitude",
+      "group": "Permanent Address",
+      "pattern": "^[0-9.-]+$",
+      "errorMessage": {
+        "pattern": "Only accepts numbers, decimal points, and minus signs"
+      }
+    },
+    "permanent_longitude": {
+      "type": "string",
+      "group": "Permanent Address",
+      "title": "Longitude",
+      "pattern": "^[0-9.-]+$",
+      "errorMessage": {
+        "pattern": "Only accepts numbers, decimal points, and minus signs"
+      }
+    },
+    "current_location": {
+      "type": "string",
+      "title": "Choose a Location",
+      "group": "Current Address",
+      "width": "full"
+    },
+    "current_latitude": {
+      "type": "string",
+      "title": "Latitude",
+      "group": "Current Address",
+      "pattern": "^[0-9.-]+$",
+      "errorMessage": {
+        "pattern": "Only accepts numbers, decimal points, and minus signs"
+      }
+    },
+    "current_longitude": {
+      "type": "string",
+      "group": "Current Address",
+      "title": "Longitude",
+      "pattern": "^[0-9.-]+$",
+      "errorMessage": {
+        "pattern": "Only accepts numbers, decimal points, and minus signs"
+      }
     }
   },
 
@@ -631,18 +682,12 @@
             "default": "NP",
             "readOnly": true
           },
-          "same_as_permanent": {
-            "type": "boolean",
-            "title": "Same As Permanent Address",
-            "group": "Current Address",
-            "width": "full",
-            "default": false
-          },
           "current_country": {
             "type": "string",
             "title": "Current Country",
             "group": "Current Address",
-            "default": "NP"
+            "default": "NP",
+            "readOnly": true
           },
           "is_customer_disabled": {
             "type": "boolean",
@@ -879,17 +924,13 @@
             "group": "Permanent Address",
             "readOnly": true
           },
-          "same_as_permanent": {
-            "type": "boolean",
-            "title": "Same As Permanent Address",
-            "group": "Current Address",
-            "width": "full"
-          },
+
           "current_country": {
             "type": "string",
             "title": "Current Country",
             "group": "Current Address",
-            "default": "NP"
+            "default": "NP",
+            "readOnly": true
           }
         },
         "dependencies": {
@@ -1057,7 +1098,8 @@
               "type": "boolean",
               "title": "Same As Permanent Address",
               "group": "Current Address",
-              "width": "full"
+              "width": "full",
+              "default": false
             },
             "current_province": {
               "type": "string",
@@ -1180,6 +1222,15 @@
                   },
                   "current_house_number": {
                     "readOnly": true
+                  },
+                  "current_location": {
+                    "readOnly": true
+                  },
+                  "current_latitude": {
+                    "readOnly": true
+                  },
+                  "current_longitude": {
+                    "readOnly": true
                   }
                 }
               }
@@ -1200,12 +1251,6 @@
               "not": {
                 "enum": ["NP"]
               }
-            },
-            "same_as_permanent": {
-              "type": "boolean",
-              "title": "Same As Permanent Address",
-              "group": "Current Address",
-              "width": "full"
             },
             "current_outside_town": {
               "type": "string",
@@ -1262,6 +1307,15 @@
                     "readOnly": true
                   },
                   "current_postal_code": {
+                    "readOnly": true
+                  },
+                  "current_location": {
+                    "readOnly": true
+                  },
+                  "current_latitude": {
+                    "readOnly": true
+                  },
+                  "current_longitude": {
                     "readOnly": true
                   }
                 }

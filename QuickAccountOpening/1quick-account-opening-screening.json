@@ -156,6 +156,7 @@
       "group": "Customer Information",
       "readOnly": true
     },
+
     "account_scheme_id": {
       "type": "string",
       "title": "Product Scheme",
